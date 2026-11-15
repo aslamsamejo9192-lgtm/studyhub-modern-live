@@ -150,7 +150,7 @@
       .hicon{width:40px;height:40px;border:0;background:transparent;border-radius:50%;display:grid;place-items:center;color:rgba(255,255,255,.88)}
       .hicon:hover{background:var(--blue-soft)}
       .havatar{width:40px;height:40px;border-radius:50%;border:2px solid #BFDBFE;background:linear-gradient(135deg,#3B82F6,#2563EB);
-        color:#fff;font-weight:800;font-size:13.5px;display:grid;place-items:center;padding:0}
+        color:#fff;font-weight:800;font-size:13.5px;display:grid;place-items:center;padding:0;overflow:hidden}
 
       /* ---------- Buttons ---------- */
       .btn-grad{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--grad);border:1px solid transparent;color:#fff;
@@ -263,7 +263,10 @@
 
       /* ---------- Profile (ShopFlow style) ---------- */
       .prof-user{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:15px;margin-top:14px}
-      .prof-user .pu-avatar{flex:none;width:64px;height:64px;border-radius:50%;background:#DBEAFE;color:#2563EB;display:grid;place-items:center;font-size:24px;font-weight:800}
+      .pu-avatar{flex:none;width:64px;height:64px;border-radius:50%;background:#DBEAFE;color:#2563EB;display:grid;place-items:center;font-size:24px;font-weight:800;overflow:hidden;position:relative}
+      #headAvatar{display:grid;place-items:center;width:100%;height:100%}
+      .pu-avatar img,.havatar img{width:100%;height:100%;object-fit:cover;display:block}
+      .avatar-cam{position:absolute;right:-2px;bottom:-2px;width:26px;height:26px;border-radius:50%;border:2px solid var(--card);background:var(--blue);color:#fff;display:grid;place-items:center;padding:0;cursor:pointer;font-size:13px}
       .prof-user .pu-name{font-size:17px;font-weight:800;margin:0}
       .prof-user .pu-email{color:var(--muted);font-weight:600;font-size:13.5px;margin:2px 0 8px;word-break:break-all}
       .pu-pills{display:flex;gap:8px;flex-wrap:wrap}
@@ -836,13 +839,17 @@
         <!-- ======== PROFILE ======== -->
         <div class="view" id="view-profile">
           <div class="prof-user">
-            <div class="pu-avatar" id="profAvatar">S</div>
+            <div style="position:relative;flex:none">
+              <div class="pu-avatar" id="profAvatar">S</div>
+              <button class="avatar-cam" id="avatarCamBtn" type="button" aria-label="Change profile photo">📷</button>
+            </div>
             <div style="min-width:0;flex:1">
               <h3 class="pu-name" id="profName">Student</h3>
               <p class="pu-email" id="profEmail">—</p>
               <div class="pu-pills"><span class="pill pill-teal">Student</span></div>
             </div>
           </div>
+          <input type="file" id="photoInput" accept="image/*" class="hidden" />
 
                     <div class="prof-menu">
   <button class="prow2" id="rowEdit" type="button">
@@ -856,6 +863,16 @@
                 <div class="sf-grow"><h1>Edit Profile</h1><div class="sf-sub">Your account details</div></div>
               </div>
               <div class="set-card pad">
+              <div class="field">
+                <label>Profile Photo</label>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <div class="pu-avatar" id="epPhotoPrev" style="width:56px;height:56px;font-size:20px">S</div>
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <button class="btn-grad" id="epChangePhoto" type="button" style="padding:10px 18px;min-height:40px;font-size:13.5px">Change Photo</button>
+                    <button class="link-btn" id="epRemovePhoto" type="button" style="align-self:flex-start;display:none">Remove photo</button>
+                  </div>
+                </div>
+              </div>
               <div class="field">
                 <label for="epName">Full Name</label>
                 <input id="epName" type="text" autocomplete="name" />
@@ -1408,6 +1425,7 @@
       $("greetName").textContent = currentUser.email === DEMO_EMAIL ? "Muhammad" : displayName.split(" ")[0];
       var h = new Date().getHours();
       $("greetTime").textContent = h < 12 ? "Good Morning," : (h < 17 ? "Good Afternoon," : "Good Evening,");
+      applySavedPhoto();
     }
     function enterApp(user){
       currentUser = user;
@@ -2100,6 +2118,49 @@
       var body = encodeURIComponent(msg + "\n\nFrom: " + name + " (" + email + ")");
       window.location.href = "mailto:mdcatprime@gmail.com?subject=" + subject + "&body=" + body;
       $("ctOk").textContent = "Opening your email app to send the message.";
+    });
+
+    /* ==================== PROFILE PHOTO (device-only) ==================== */
+    function photoKey(){ return currentUser ? ("studyhub_photo_" + currentUser.uid) : null; }
+    function applySavedPhoto(){
+      var key = photoKey(), data = key ? localStorage.getItem(key) : null;
+      var name = (profile && profile.fullName) || (currentUser && currentUser.name) || "Student";
+      var img = data ? '<img src="' + data + '" alt="Profile photo" />' : null;
+      if ($("headAvatar")) $("headAvatar").innerHTML = img || initials(name);
+      if ($("profAvatar")) $("profAvatar").innerHTML = img || initials(name);
+      if ($("epPhotoPrev")) $("epPhotoPrev").innerHTML = img || initials(name);
+      var rm = $("epRemovePhoto"); if (rm) rm.style.display = data ? "" : "none";
+    }
+    function pickPhoto(){ $("photoInput").click(); }
+    $("avatarCamBtn").addEventListener("click", pickPhoto);
+    $("epChangePhoto").addEventListener("click", pickPhoto);
+    $("epRemovePhoto").addEventListener("click", function(){
+      var key = photoKey(); if (key) localStorage.removeItem(key);
+      applySavedPhoto();
+    });
+    $("photoInput").addEventListener("change", function(){
+      var f = this.files && this.files[0]; if (!f) return;
+      if (!f.type || f.type.indexOf("image/") !== 0){ toast("Please choose an image file."); this.value = ""; return; }
+      var reader = new FileReader();
+      reader.onload = function(){
+        var im = new Image();
+        im.onload = function(){
+          var size = 256, w = im.width, h = im.height, s = Math.min(1, size / Math.max(w, h));
+          var cv = document.createElement("canvas");
+          cv.width = Math.max(1, Math.round(w * s)); cv.height = Math.max(1, Math.round(h * s));
+          cv.getContext("2d").drawImage(im, 0, 0, cv.width, cv.height);
+          try {
+            var key = photoKey(); if (key) localStorage.setItem(key, cv.toDataURL("image/jpeg", 0.82));
+            applySavedPhoto();
+            toast("Profile photo updated.");
+          } catch (e) { toast("Could not save the photo. Try a smaller image."); }
+        };
+        im.onerror = function(){ toast("That image could not be read. Try another one."); };
+        im.src = reader.result;
+      };
+      reader.onerror = function(){ toast("Could not read that file. Try another image."); };
+      reader.readAsDataURL(f);
+      this.value = "";
     });
 
     /* ==================== SETTINGS ==================== */
