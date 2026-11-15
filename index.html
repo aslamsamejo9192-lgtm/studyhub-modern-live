@@ -185,7 +185,7 @@
       .banner .subj-pills{position:absolute;right:20px;bottom:22px;display:flex;flex-direction:column;gap:7px}
       .banner .subj-pills span{font-size:12px;font-weight:800;color:#fff;border-radius:8px;padding:5px 14px;text-align:center;box-shadow:0 4px 10px rgba(10,20,40,.25)}
       @media (max-width:560px){ .banner .subj-pills{display:none} .banner h2{font-size:22px} }
-      .quick-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
+      .quick-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
       .quick{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);
         padding:20px 10px 16px;display:flex;flex-direction:column;align-items:center;gap:11px;text-align:center;width:100%}
       .quick .qtile{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;color:#fff}
@@ -226,6 +226,7 @@
       .chips{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0 4px}
       .fchip{border:0;background:#EFF6FF;color:var(--ink2);font-weight:800;font-size:13.5px;border-radius:15px;padding:11px 20px;min-height:42px}
       .fchip.active{background:var(--grad);color:#fff;box-shadow:0 8px 18px rgba(19,91,250,.28)}
+      .cq-label{font-size:13px;font-weight:800;color:var(--ink2);margin:16px 0 0}
       .list-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:18px 0 14px}
       .list-head h3{font-size:17px;font-weight:800;margin:0}
       .list-head .cnt{color:var(--muted);font-weight:700;font-size:13.5px;white-space:nowrap}
@@ -583,6 +584,11 @@
                 <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 20v-6M11 20V6M17 20v-9"/><path d="M3 20h18"/></svg>
               </span><span class="qlbl">My Progress</span>
             </button>
+            <button class="quick" id="quickCustom" type="button">
+              <span class="qtile" style="background:linear-gradient(135deg,#A78BFA,#7C3AED)">
+                <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="2" y1="14" x2="6" y2="14"/><line x1="10" y1="8" x2="14" y2="8"/><line x1="18" y1="16" x2="22" y2="16"/></svg>
+              </span><span class="qlbl">Create Custom Test</span>
+            </button>
           </div>
 
           <div class="card perf">
@@ -934,6 +940,35 @@
       </div>
     </div>
 
+    <!-- ================= CUSTOM TEST BUILDER ================= -->
+    <div class="overlay" id="customOverlay">
+      <div class="modal-card" style="max-height:88vh;overflow:auto">
+        <h3>Create Custom Test</h3>
+        <p>Pick a subject and the number of questions. Questions are taken from the published tests — nothing new is invented.</p>
+        <div class="cq-label">Subject</div>
+        <div class="chips" id="cqSubjects">
+          <button class="fchip active" type="button" data-cqsubj="all">All Subjects</button>
+          <button class="fchip" type="button" data-cqsubj="biology">Biology</button>
+          <button class="fchip" type="button" data-cqsubj="chemistry">Chemistry</button>
+          <button class="fchip" type="button" data-cqsubj="physics">Physics</button>
+          <button class="fchip" type="button" data-cqsubj="english">English</button>
+          <button class="fchip" type="button" data-cqsubj="logical">Logical Reasoning</button>
+        </div>
+        <div class="cq-label">Number of questions</div>
+        <div class="chips" id="cqCounts">
+          <button class="fchip" type="button" data-cqcount="10">10</button>
+          <button class="fchip active" type="button" data-cqcount="20">20</button>
+          <button class="fchip" type="button" data-cqcount="30">30</button>
+          <button class="fchip" type="button" data-cqcount="50">50</button>
+        </div>
+        <p id="cqSummary" style="margin-top:14px">20 questions · 20 minutes · 1 mark each</p>
+        <div class="modal-actions" style="margin-top:16px">
+          <button class="btn-ghost" id="cqCancel" type="button">Cancel</button>
+          <button class="btn-grad" id="cqStart" type="button">Start Custom Test</button>
+        </div>
+      </div>
+    </div>
+
     <!-- ================= NOTE VIEWER ================= -->
     <div class="overlay" id="noteViewerOverlay">
       <div class="modal-card" style="width:min(560px,100%);max-height:88vh;display:flex;flex-direction:column">
@@ -1280,6 +1315,51 @@
     $("quickTests").addEventListener("click", function(){ showView("tests"); });
     $("quickNotes").addEventListener("click", function(){ showView("notes"); });
     $("quickProgress").addEventListener("click", function(){ showView("dashboard"); });
+
+    /* ==================== CUSTOM TEST ==================== */
+    var cqSubject = "all", cqCount = 20;
+    var CQ_SUBJ_LABEL = { all:"All Subjects", biology:"Biology", chemistry:"Chemistry", physics:"Physics", english:"English", logical:"Logical Reasoning" };
+    function cqShuffle(arr){ for (var i=arr.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var tmp=arr[i]; arr[i]=arr[j]; arr[j]=tmp; } return arr; }
+    function cqRender(){
+      var sBtns = $("cqSubjects").querySelectorAll("[data-cqsubj]");
+      for (var i=0;i<sBtns.length;i++) sBtns[i].classList.toggle("active", sBtns[i].getAttribute("data-cqsubj") === cqSubject);
+      var cBtns = $("cqCounts").querySelectorAll("[data-cqcount]");
+      for (var j=0;j<cBtns.length;j++) cBtns[j].classList.toggle("active", parseInt(cBtns[j].getAttribute("data-cqcount"),10) === cqCount);
+      $("cqSummary").textContent = cqCount + " questions · " + cqCount + " minutes · 1 mark each";
+    }
+    function openCustom(){ cqRender(); $("customOverlay").classList.add("on"); }
+    function closeCustom(){ $("customOverlay").classList.remove("on"); }
+    async function buildCustomPool(subjectId, count){
+      var cand = [];
+      for (var i=0;i<liveTests.length;i++){ var t = liveTests[i]; if (subjectId === "all" || subjIdOf(t.subject) === subjectId) cand.push(t); }
+      cqShuffle(cand);
+      var pool = [];
+      for (var k=0;k<cand.length && pool.length < count;k++){
+        try {
+          var snap = await getDocs(collection(db, "tests", cand[k].id, "questions"));
+          snap.forEach(function(d){ var data = d.data(); data.id = d.id; if (!data.subject) data.subject = cand[k].subject; if (!data.topic) data.topic = cand[k].topic; pool.push(data); });
+        } catch (e) { console.warn("Custom pool load failed:", e); }
+      }
+      cqShuffle(pool);
+      return pool.slice(0, count);
+    }
+    $("quickCustom").addEventListener("click", openCustom);
+    $("cqCancel").addEventListener("click", closeCustom);
+    $("customOverlay").addEventListener("click", function(e){ if (e.target === this) closeCustom(); });
+    $("cqSubjects").addEventListener("click", function(e){ var b = e.target.closest("[data-cqsubj]"); if (!b) return; cqSubject = b.getAttribute("data-cqsubj"); cqRender(); });
+    $("cqCounts").addEventListener("click", function(e){ var b = e.target.closest("[data-cqcount]"); if (!b) return; cqCount = parseInt(b.getAttribute("data-cqcount"),10); cqRender(); });
+    $("cqStart").addEventListener("click", async function(){
+      if (!testsReady) { toast("Tests are still loading. Please try again in a moment."); return; }
+      var btn = this; btn.disabled = true; btn.textContent = "Building your test…";
+      try {
+        var picked = await buildCustomPool(cqSubject, cqCount);
+        if (!picked.length) { toast("No questions available for this subject yet."); return; }
+        closeCustom();
+        var label = CQ_SUBJ_LABEL[cqSubject] || "All Subjects";
+        var t = { id:"custom-"+Date.now(), title:"Custom Test · "+label, subject:label, topic:"Custom Test", durationSeconds:picked.length*60, totalMarks:picked.length };
+        startExam(t, picked);
+      } finally { btn.disabled = false; btn.textContent = "Start Custom Test"; }
+    });
     $("perfViewAll").addEventListener("click", function(){ showView("dashboard"); });
     $("subjViewAll").addEventListener("click", function(){ setTestFilter("all"); showView("tests"); });
     $("startPractice").addEventListener("click", function(){ showView("tests"); });
@@ -1655,15 +1735,20 @@
       }
       return out;
     }
-    async function startExam(test){
+    async function startExam(test, preQs){
       if (!test) return;
       var qs = [];
       var usedFallback = false;
-      try {
-        var snap = await getDocs(collection(db, "tests", test.id, "questions"));
-        snap.forEach(function(d){ var data = d.data(); data.id = d.id; qs.push(data); });
-        qs.sort(function(a,b){ return (a.order || 0) - (b.order || 0); });
-      } catch (e) { console.warn("Questions load failed:", e); }
+      if (preQs && preQs.length) {
+        qs = preQs;
+        test._customQs = preQs;
+      } else {
+        try {
+          var snap = await getDocs(collection(db, "tests", test.id, "questions"));
+          snap.forEach(function(d){ var data = d.data(); data.id = d.id; qs.push(data); });
+          qs.sort(function(a,b){ return (a.order || 0) - (b.order || 0); });
+        } catch (e) { console.warn("Questions load failed:", e); }
+      }
       if (!qs.length) { qs = fallbackQuestionsFor(test); usedFallback = true; }
       if (!qs.length) { toast("This test has no questions attached yet. Please try another test."); return; }
       var norm = [];
@@ -1684,7 +1769,7 @@
           neg: (typeof q.negativeMarks === "number" ? q.negativeMarks : 0), fallback: usedFallback });
       }
       var liveTest = { id: test.id, title: test.title, subject: test.subject, topic: test.topic,
-        durationSeconds: test.durationSeconds, totalMarks: test.totalMarks, qs: norm };
+        durationSeconds: test.durationSeconds, totalMarks: test.totalMarks, qs: norm, _customQs: (test._customQs || null) };
       var mins = Math.round(((test.durationSeconds || 0) / 60) || norm.length);
       exam = { test: liveTest, idx:0, answers:[], marked:[], left: (test.durationSeconds || norm.length * 60), startedAt:Date.now(), fallback: usedFallback };
       for (var k=0;k<norm.length;k++){ exam.answers.push(-1); exam.marked.push(false); }
@@ -1840,7 +1925,7 @@
       rl.classList.remove("hidden");
       rl.scrollIntoView({ behavior:"smooth", block:"start" });
     });
-    $("retakeBtn").addEventListener("click", function(){ if (exam) startExam(exam.test); });
+    $("retakeBtn").addEventListener("click", function(){ if (exam) startExam(exam.test, exam.test._customQs); });
     $("backDashBtn").addEventListener("click", function(){ showView("home"); });
 
     /* ==================== PROFILE ==================== */
