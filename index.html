@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
+    <script>try{if(JSON.parse(localStorage.getItem("studyhub_settings_v1")||"{}").dark){document.documentElement.setAttribute("data-theme","dark");}}catch(e){}</script>
     <link rel="icon" href="data:," />
     <title>StudyHub — MDCAT Preparation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -36,6 +37,28 @@
         --shadow:0 8px 24px rgba(6,40,36,.06);
         --font:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
       }
+      /* ---------- Settings ---------- */
+      .set-row{display:flex;align-items:center;gap:14px;padding:15px 0;border-top:1px solid var(--line)}
+      .set-row:first-of-type{border-top:0}
+      .set-row .stxt{flex:1;min-width:0}
+      .set-row .stxt b{display:block;font-size:14.5px;font-weight:800}
+      .set-row .stxt span{display:block;color:var(--muted);font-weight:600;font-size:12.5px;margin-top:2px}
+      .switch{position:relative;flex:none;width:52px;height:30px}
+      .switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+      .switch .tr{position:absolute;inset:0;background:#dbe4f0;border-radius:999px;transition:.2s;pointer-events:none}
+      .switch .tr:before{content:"";position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(6,40,36,.25);transition:.2s}
+      .switch input:checked + .tr{background:var(--blue)}
+      .switch input:checked + .tr:before{transform:translateX(22px)}
+      .set-sub{margin:18px 0 4px;font-size:13px;font-weight:800;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+      /* ---------- Dark theme ---------- */
+      [data-theme="dark"]{--bg:#071210;--card:#0e1b18;--ink:#e8f2ee;--ink2:#b7d2c9;--muted:#8ba69d;--muted2:#63796f;--line:#1d2f29;--blue-soft:#0d2b26;--green-soft:#0e2a1c;--purple-soft:#1b2334;--orange-soft:#2c1e0d;--pink-soft:#2c1420;--shadow:0 8px 24px rgba(0,0,0,.4)}
+      [data-theme="dark"] .app-header,[data-theme="dark"] .bottom-nav,[data-theme="dark"] .searchbar,[data-theme="dark"] .auth-card,[data-theme="dark"] .btn-ghost,[data-theme="dark"] .btn-white,[data-theme="dark"] .modal-card,[data-theme="dark"] .opt,[data-theme="dark"] .tabs button.active,[data-theme="dark"] .field input:focus{background:#0e1b18;color:var(--ink)}
+      [data-theme="dark"] .tabs,[data-theme="dark"] .auth-tabs,[data-theme="dark"] .fchip,[data-theme="dark"] .prog-row .track{background:#132420}
+      [data-theme="dark"] .field input,[data-theme="dark"] .pal-btn,[data-theme="dark"] .sum-cell,[data-theme="dark"] .btn-ghost:hover{background:#132420;color:var(--ink)}
+      [data-theme="dark"] .opt .ol{background:#1d2f29;color:var(--blue)}
+      [data-theme="dark"] .mark-btn.on{background:#2e2410;border-color:#f2c14e;color:#f2c14e}
+      [data-theme="dark"] .timer-chip{background:#2e2410;border-color:#92600a;color:#f2c14e}
+      [data-theme="dark"] .greet-line,[data-theme="dark"] .qmeta .qn,[data-theme="dark"] .view-all,[data-theme="dark"] .auth-brand .bsub,[data-theme="dark"] .link-btn,[data-theme="dark"] .tabs button.active,[data-theme="dark"] .bottom-nav button.active{color:#2dd4bf}
       *{box-sizing:border-box}
       html{-webkit-text-size-adjust:100%}
       body{
@@ -701,6 +724,19 @@
               </button>
   <div class="panel-box hidden" id="settingsPanel">
               <h4>Settings</h4>
+              <div class="set-row">
+                <div class="stxt"><b>Dark mode</b><span>Easier on the eyes at night</span></div>
+                <label class="switch"><input type="checkbox" id="setDark"><span class="tr"></span></label>
+              </div>
+              <div class="set-row">
+                <div class="stxt"><b>Notifications</b><span>Show unread updates on the bell</span></div>
+                <label class="switch"><input type="checkbox" id="setNotif" checked><span class="tr"></span></label>
+              </div>
+              <div class="set-row">
+                <div class="stxt"><b>Auto-advance</b><span>Move to the next question after answering</span></div>
+                <label class="switch"><input type="checkbox" id="setAutoAdv"><span class="tr"></span></label>
+              </div>
+              <div class="set-sub">Account</div>
               <p>Account type: Email &amp; password<br/>Session: stays signed in on this device<br/>Test timer: 1 minute per question<br/>Marking: 1 mark per question, no negative marking</p>
             </div>
   <button class="prow2" id="rowFaqs" type="button">
@@ -1085,6 +1121,7 @@
     $("headAvatarBtn").addEventListener("click", function(){ showView("profile"); });
     $("bellBtn").addEventListener("click", async function(){
       if (!currentUser) return;
+      if (!settings.notif){ toast("Notifications are turned off. Turn them on in Profile → Settings."); return; }
       try {
         var snap = await getDocs(query(collection(db, "notifications"), where("uid", "==", currentUser.uid)));
         var unread = 0;
@@ -1538,6 +1575,10 @@
         opts[j].addEventListener("click", function(){
           exam.answers[exam.idx] = parseInt(this.getAttribute("data-opt"),10);
           renderQuestion();
+          if (settings.autoAdv && exam.idx < exam.test.qs.length-1){
+            var qi = exam.idx;
+            setTimeout(function(){ if (exam && exam.idx === qi){ exam.idx++; renderQuestion(); } }, 450);
+          }
         });
       }
       $("markBtn").classList.toggle("on", exam.marked[exam.idx]);
@@ -1664,6 +1705,26 @@
     $("rowSettings").addEventListener("click", function(){ togglePanel("settingsPanel"); });
     $("rowFaqs").addEventListener("click", function(){ togglePanel("faqPanel"); });
     $("rowAbout").addEventListener("click", function(){ togglePanel("aboutPanel"); });
+
+    /* ==================== SETTINGS ==================== */
+    var SETTINGS_KEY = "studyhub_settings_v1";
+    function loadSettings(){
+      try { var s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}"); return { dark: !!s.dark, notif: s.notif !== false, autoAdv: !!s.autoAdv }; }
+      catch (e) { return { dark:false, notif:true, autoAdv:false }; }
+    }
+    var settings = loadSettings();
+    function saveSettings(){ try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch (e) {} }
+    function applySettings(){
+      if (settings.dark) document.documentElement.setAttribute("data-theme", "dark");
+      else document.documentElement.removeAttribute("data-theme");
+      if ($("setDark")) $("setDark").checked = settings.dark;
+      if ($("setNotif")) $("setNotif").checked = settings.notif;
+      if ($("setAutoAdv")) $("setAutoAdv").checked = settings.autoAdv;
+    }
+    applySettings();
+    $("setDark").addEventListener("change", function(){ settings.dark = this.checked; saveSettings(); applySettings(); });
+    $("setNotif").addEventListener("change", function(){ settings.notif = this.checked; saveSettings(); });
+    $("setAutoAdv").addEventListener("change", function(){ settings.autoAdv = this.checked; saveSettings(); });
     $("epSave").addEventListener("click", async function(){
       var name = $("epName").value.trim();
       var father = $("epFather") ? $("epFather").value.trim() : ((profile && profile.fatherName) || "");
