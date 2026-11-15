@@ -59,8 +59,8 @@
       .set-sub{margin:18px 0 4px;font-size:13px;font-weight:800;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
       /* ---------- Dark theme (MDCAT Prime) ---------- */
       [data-theme="dark"]{--bg:#070D1F;--card:#0E1B33;--ink:#F1F5FF;--ink2:#A9B8D4;--muted:#A9B8D4;--muted2:#7E8FAD;--line:rgba(148,180,255,.13);--blue:#135BFA;--blue-dark:#3B82F6;--blue-soft:rgba(59,130,246,.16);--violet:#F6A202;--green:#22C55E;--green-soft:rgba(34,197,94,.14);--purple:#38BDF8;--purple-soft:rgba(139,92,246,.16);--orange:#F6A202;--orange-soft:rgba(246,162,2,.14);--pink:#F472B6;--pink-soft:rgba(244,114,182,.14);--shadow:0 2px 6px rgba(0,0,0,.18),0 16px 36px rgba(0,0,0,.22)}
-      [data-theme="dark"] .app-header,[data-theme="dark"] .bottom-nav,[data-theme="dark"] .searchbar,[data-theme="dark"] .auth-card,[data-theme="dark"] .btn-white,[data-theme="dark"] .modal-card,[data-theme="dark"] .opt,[data-theme="dark"] .tabs button.active,[data-theme="dark"] .field input:focus{background:#0E1B33;color:var(--ink)}
-      [data-theme="dark"] .tabs,[data-theme="dark"] .auth-tabs,[data-theme="dark"] .fchip,[data-theme="dark"] .prog-row .track,[data-theme="dark"] .switch .tr,[data-theme="dark"] .wel-bar{background:#12233F}
+      [data-theme="dark"] .app-header,[data-theme="dark"] .bottom-nav,[data-theme="dark"] .searchbar,[data-theme="dark"] .btn-white,[data-theme="dark"] .modal-card,[data-theme="dark"] .opt,[data-theme="dark"] .tabs button.active,[data-theme="dark"] .field input:focus{background:#0E1B33;color:var(--ink)}
+      [data-theme="dark"] .tabs,[data-theme="dark"] .fchip,[data-theme="dark"] .prog-row .track,[data-theme="dark"] .switch .tr,[data-theme="dark"] .wel-bar{background:#12233F}
       [data-theme="dark"] .field input,[data-theme="dark"] .pal-btn,[data-theme="dark"] .sum-cell{background:#12233F;color:var(--ink)}
       [data-theme="dark"] .btn-ghost{background:rgba(148,180,255,.05);border-color:rgba(148,180,255,.22);color:var(--ink)}
       [data-theme="dark"] .btn-ghost:hover{background:rgba(148,180,255,.12);border-color:rgba(148,180,255,.32)}
@@ -301,13 +301,34 @@
       .auth-brand .bname{font-size:26px;font-weight:800;color:#3B82F6}
       .auth-brand .bname span{color:#F59E0B}
       .auth-brand .bsub{color:var(--blue);font-weight:700;font-size:13.5px}
-      .auth-card{background:#fff;border:1px solid var(--line);border-radius:26px;box-shadow:0 20px 44px rgba(10,20,40,.10);padding:22px 20px}
-      .auth-tabs{display:grid;grid-template-columns:1fr 1fr;background:#EFF6FF;border-radius:14px;padding:5px;gap:5px;margin-bottom:20px}
-      .auth-tab{border:0;background:transparent;color:var(--ink2);font-weight:800;font-size:13.5px;border-radius:10px;padding:11px;min-height:42px}
-      .auth-tab.active{background:var(--grad);color:#fff;box-shadow:0 8px 18px rgba(19,91,250,.28)}
-      .auth-card h2{font-size:18px;font-weight:800;margin:0 0 4px}
-      .auth-card .sub{color:var(--muted);font-weight:600;font-size:13.5px;margin:0 0 18px}
-      .auth-links{display:flex;justify-content:flex-end;margin:2px 0 14px}
+      /* ---------- Auth screens (welcome + video-style forms) ---------- */
+      #authWelcome{min-height:100dvh;display:flex;flex-direction:column;background:var(--bg)}
+      #authWelcome.hidden{display:none}
+      .wel-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px 28px;text-align:center}
+      .wel-hero .auth-brand{margin-bottom:0}
+      .wel-panel{background:linear-gradient(135deg,#01143E 0%,#012269 55%,#00339E 135%);border-radius:50% 50% 0 0/56px 56px 0 0;box-shadow:0 -14px 40px rgba(31,191,255,.18);padding:46px 24px 42px;text-align:center}
+      .wel-panel h1{color:#fff;font-size:30px;font-weight:800;line-height:1.25;margin:0 0 12px}
+      .wel-panel h1 .gold{color:#F6A202}
+      .wel-panel p{color:rgba(255,255,255,.78);font-weight:600;font-size:14.5px;line-height:1.6;margin:0 0 26px}
+      .wel-btn-white{display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;border-radius:16px;border:0;background:#fff;color:#01143E;font-weight:800;font-size:16px}
+      .wel-btn-outline{display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;border-radius:16px;border:1.5px solid rgba(255,255,255,.7);background:transparent;color:#fff;font-weight:800;font-size:16px;margin-top:12px}
+      .auth-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+      .auth-back{border:0;background:transparent;color:var(--ink2);font-weight:800;font-size:14px;padding:10px 6px;display:inline-flex;align-items:center;gap:6px}
+      .auth-theme-btn{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink2);display:grid;place-items:center}
+      .auth-pill{display:inline-block;background:rgba(37,99,235,.12);color:var(--blue);font-weight:800;font-size:12.5px;padding:7px 14px;border-radius:999px;margin-bottom:14px}
+      .auth-title{font-size:30px;font-weight:800;margin:0 0 8px;color:var(--ink)}
+      .auth-sub{color:var(--muted);font-weight:600;font-size:14px;margin:0 0 22px}
+      #authScreen .field label{text-transform:uppercase;letter-spacing:.08em;font-size:12px}
+      .fin{position:relative}
+      .fin .fic{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);display:grid;place-items:center;pointer-events:none}
+      .fin input{padding-left:44px}
+      .fin input.has-eye{padding-right:46px}
+      .eye-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--muted);width:36px;height:36px;display:grid;place-items:center;border-radius:50%}
+      .auth-switch{text-align:center;color:var(--muted);font-weight:600;font-size:14px;margin-top:20px}
+      .auth-switch button{background:none;border:0;color:var(--blue);font-weight:800;font-size:14px;padding:4px}
+      .auth-terms{text-align:center;color:var(--muted);font-weight:600;font-size:12.5px;line-height:1.6;margin-top:22px}
+      .auth-terms u{text-underline-offset:3px}
+      .field .fp-link{float:right;color:var(--blue);font-weight:800;text-transform:none;letter-spacing:0;font-size:12.5px;background:none;border:0;padding:0}
       .link-btn{background:none;border:0;color:var(--blue-dark);font-weight:800;font-size:13px;padding:8px 4px;min-height:34px}
       .link-btn:hover{text-decoration:underline}
       .auth-note{color:var(--muted2);font-size:12.5px;font-weight:600;text-align:center;margin:16px 0 0}
@@ -441,79 +462,111 @@
       <p class="wel-pct" id="welPct">0%</p>
     </section>
 
-    <!-- ================= AUTH SCREEN ================= -->
+    <!-- ================= AUTH SCREENS ================= -->
     <section id="authScreen">
-      <div class="auth-wrap">
-        <div class="auth-brand">
-          <img src="/icons/logo.jpg" width="64" height="64" alt="MDCAT Prime" />
-          <div class="bname">MDCAT <span>Prime</span></div>
-          <div class="bsub">MDCAT Prep</div>
-        </div>
-        <div class="auth-card">
-          <div class="auth-tabs" role="tablist">
-            <button class="auth-tab active" id="tabLogin" type="button">Login</button>
-            <button class="auth-tab" id="tabRegister" type="button">Create Account</button>
+      <!-- Welcome (start screen) -->
+      <div id="authWelcome">
+        <div class="wel-hero">
+          <div class="auth-brand">
+            <img src="/icons/logo.jpg" width="64" height="64" alt="MDCAT Prime" />
+            <div class="bname">MDCAT <span>Prime</span></div>
+            <div class="bsub">MDCAT Prep</div>
           </div>
+        </div>
+        <div class="wel-panel">
+          <h1>Start Your <span class="gold">Journey</span><br />Today</h1>
+          <p>Practice smarter. Learn better. Track your progress.</p>
+          <button class="wel-btn-white" id="welRegister" type="button">Register</button>
+          <button class="wel-btn-outline" id="welSignin" type="button">Sign In</button>
+        </div>
+      </div>
 
-          <form id="loginForm" novalidate>
-            <h2>Welcome back</h2>
-            <p class="sub">Login to continue to your dashboard.</p>
-            <div class="field">
-              <label for="liEmail">Email</label>
-              <input id="liEmail" type="email" autocomplete="email" placeholder="you@example.com" />
-            </div>
-            <div class="field">
-              <label for="liPass">Password</label>
-              <input id="liPass" type="password" autocomplete="current-password" placeholder="Your password" />
-            </div>
-            <div class="auth-links">
-              <button class="link-btn" id="forgotLink" type="button">Forgot password?</button>
-            </div>
-            <button class="btn-grad" type="submit" style="width:100%">Login</button>
-            <button class="btn-ghost demo-btn" id="demoBtn" type="button">Use Demo Account</button>
-            <div class="err-msg" id="loginErr"></div>
-          </form>
-
-          <form id="registerForm" class="hidden" novalidate>
-            <h2>Create your account</h2>
-            <p class="sub">Start practising subject MCQs and smart tests.</p>
-            <div class="field">
-              <label for="rgName">Full Name</label>
-              <input id="rgName" type="text" autocomplete="name" placeholder="Your full name" />
-            </div>
-            <div class="field">
-              <label for="rgFather">Father's Name</label>
-              <input id="rgFather" type="text" autocomplete="off" placeholder="Your father's name" />
-            </div>
+      <!-- Register -->
+      <div id="authRegister" class="hidden">
+        <div class="auth-wrap">
+          <div class="auth-top">
+            <button class="auth-back" id="regBack" type="button">&larr; Back</button>
+            <button class="auth-theme-btn" type="button" aria-label="Switch theme"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+          </div>
+          <h1 class="auth-title">Create Account</h1>
+          <p class="auth-sub">Join the MDCAT Prime learning community today.</p>
+          <form id="registerForm" novalidate>
             <div class="field">
               <label for="rgEmail">Email</label>
-              <input id="rgEmail" type="email" autocomplete="email" placeholder="you@example.com" />
+              <div class="fin"><span class="fic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span><input id="rgEmail" type="email" autocomplete="email" placeholder="name@example.com" /></div>
             </div>
             <div class="field">
               <label for="rgPass">Password</label>
-              <input id="rgPass" type="password" autocomplete="new-password" placeholder="At least 6 characters" />
+              <div class="fin"><span class="fic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><input id="rgPass" class="has-eye" type="password" autocomplete="new-password" placeholder="Create a password" /><button class="eye-btn" id="eyeRgPass" type="button" aria-label="Show password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
             </div>
-            <button class="btn-grad" type="submit" style="width:100%">Create Account</button>
+            <div class="field">
+              <label for="rgPass2">Confirm Password</label>
+              <div class="fin"><span class="fic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><input id="rgPass2" class="has-eye" type="password" autocomplete="new-password" placeholder="Confirm your password" /><button class="eye-btn" id="eyeRgPass2" type="button" aria-label="Show password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+            </div>
+            <div class="field">
+              <label for="rgName">Full Name</label>
+              <div class="fin"><span class="fic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></span><input id="rgName" type="text" autocomplete="name" placeholder="Your full name" /></div>
+            </div>
+            <div class="field">
+              <label for="rgFather">Father's Name</label>
+              <div class="fin"><span class="fic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></span><input id="rgFather" type="text" autocomplete="off" placeholder="Your father's name" /></div>
+            </div>
+            <button class="btn-grad" type="submit" style="width:100%">Join Now</button>
             <div class="err-msg" id="regErr"></div>
           </form>
+          <p class="auth-switch">Already have an account? <button id="toLoginLink" type="button">Sign in</button></p>
+          <p class="auth-terms">By signing up, you agree to our <u>Terms and Conditions</u></p>
+        </div>
+      </div>
 
-          <form id="forgotForm" class="hidden" novalidate>
-            <h2>Reset password</h2>
-            <p class="sub">Enter your account email and we will send you a password reset link.</p>
+      <!-- Sign In -->
+      <div id="authLogin" class="hidden">
+        <div class="auth-wrap">
+          <div class="auth-top">
+            <button class="auth-back" id="loginBack" type="button">&larr; Back</button>
+            <button class="auth-theme-btn" type="button" aria-label="Switch theme"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+          </div>
+          <span class="auth-pill">Account Access</span>
+          <h1 class="auth-title">Sign In</h1>
+          <p class="auth-sub">Enter your credentials to access your portal.</p>
+          <form id="loginForm" novalidate>
+            <div class="field">
+              <label for="liEmail">Email</label>
+              <div class="fin"><span class="fic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span><input id="liEmail" type="email" autocomplete="email" placeholder="name@example.com" /></div>
+            </div>
+            <div class="field">
+              <label for="liPass">Password <button class="fp-link" id="forgotLink" type="button">Forgot password?</button></label>
+              <div class="fin"><span class="fic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><input id="liPass" class="has-eye" type="password" autocomplete="current-password" placeholder="Enter password" /><button class="eye-btn" id="eyeLiPass" type="button" aria-label="Show password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+            </div>
+            <button class="btn-grad" type="submit" style="width:100%">Sign In</button>
+            <div class="err-msg" id="loginErr"></div>
+          </form>
+          <p class="auth-switch">New here? <button id="toRegisterLink" type="button">Create account</button></p>
+          <p class="auth-terms">By signing in, you agree to our <u>Terms and Conditions</u></p>
+        </div>
+      </div>
+
+      <!-- Forgot password -->
+      <div id="authForgot" class="hidden">
+        <div class="auth-wrap">
+          <div class="auth-top">
+            <button class="auth-back" id="forgotBack" type="button">&larr; Back</button>
+            <button class="auth-theme-btn" type="button" aria-label="Switch theme"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+          </div>
+          <h1 class="auth-title">Reset Password</h1>
+          <p class="auth-sub">Enter your account email and we will send you a password reset link.</p>
+          <form id="forgotForm" novalidate>
             <div class="field">
               <label for="fpEmail">Email</label>
-              <input id="fpEmail" type="email" autocomplete="email" placeholder="you@example.com" />
+              <div class="fin"><span class="fic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span><input id="fpEmail" type="email" autocomplete="email" placeholder="you@example.com" /></div>
             </div>
-            <p class="sub" style="margin-top:-8px">We will email you a secure link to set a new password.</p>
             <button class="btn-grad" type="submit" style="width:100%">Send Reset Link</button>
             <div style="margin-top:8px">
-              <button class="link-btn" id="backLogin" type="button">&larr; Back to Login</button>
+              <button class="link-btn" id="backLogin" type="button">&larr; Back to Sign In</button>
             </div>
             <div class="err-msg" id="fpErr"></div>
             <div class="ok-msg" id="fpOk"></div>
           </form>
-
-          <p class="auth-note">Email &amp; password only — no Google sign-in.</p>
         </div>
       </div>
     </section>
@@ -1128,19 +1181,50 @@
       if (code === "auth/too-many-requests") return "Too many attempts. Account temporarily locked for security. Please try later.";
       return (err && err.message) ? err.message : "Something went wrong. Please try again.";
     }
-    function showAuthForm(which){
-      $("loginForm").classList.toggle("hidden", which!=="login");
-      $("registerForm").classList.toggle("hidden", which!=="register");
-      $("forgotForm").classList.toggle("hidden", which!=="forgot");
-      $("tabLogin").classList.toggle("active", which==="login");
-      $("tabRegister").classList.toggle("active", which==="register");
+    var AUTH_IDS = { welcome:"authWelcome", register:"authRegister", login:"authLogin", forgot:"authForgot" };
+    function showAuthScreen(name){
+      var keys = Object.keys(AUTH_IDS);
+      for (var i=0;i<keys.length;i++){ var el = $(AUTH_IDS[keys[i]]); if (el) el.classList.toggle("hidden", keys[i] !== name); }
       $("loginErr").textContent=""; $("regErr").textContent=""; $("fpErr").textContent=""; $("fpOk").textContent="";
+      syncAuthThemeBtns();
+      window.scrollTo(0,0);
     }
-    $("tabLogin").addEventListener("click", function(){ showAuthForm("login"); });
-    $("tabRegister").addEventListener("click", function(){ showAuthForm("register"); });
-    $("forgotLink").addEventListener("click", function(){ showAuthForm("forgot"); });
-    $("backLogin").addEventListener("click", function(){ showAuthForm("login"); });
+    $("welRegister").addEventListener("click", function(){ showAuthScreen("register"); });
+    $("welSignin").addEventListener("click", function(){ showAuthScreen("login"); });
+    $("toLoginLink").addEventListener("click", function(){ showAuthScreen("login"); });
+    $("toRegisterLink").addEventListener("click", function(){ showAuthScreen("register"); });
+    $("regBack").addEventListener("click", function(){ showAuthScreen("welcome"); });
+    $("loginBack").addEventListener("click", function(){ showAuthScreen("welcome"); });
+    $("forgotBack").addEventListener("click", function(){ showAuthScreen("login"); });
+    $("forgotLink").addEventListener("click", function(){ showAuthScreen("forgot"); });
+    $("backLogin").addEventListener("click", function(){ showAuthScreen("login"); });
     function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+    /* Password eye toggles. */
+    var EYE_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    var EYE_OFF_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+    function bindEye(btnId, inputId){
+      var b = $(btnId), inp = $(inputId);
+      if (!b || !inp) return;
+      b.addEventListener("click", function(){
+        var show = inp.type === "password";
+        inp.type = show ? "text" : "password";
+        b.innerHTML = show ? EYE_OFF_SVG : EYE_SVG;
+      });
+    }
+    bindEye("eyeRgPass", "rgPass"); bindEye("eyeRgPass2", "rgPass2"); bindEye("eyeLiPass", "liPass");
+    /* Theme toggle on the auth screens (same setting as Profile → Settings). */
+    var MOON_SVG = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+    var SUN_SVG = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+    function syncAuthThemeBtns(){
+      var btns = document.querySelectorAll(".auth-theme-btn");
+      for (var i=0;i<btns.length;i++) btns[i].innerHTML = settings.dark ? SUN_SVG : MOON_SVG;
+    }
+    var authThemeBtns = document.querySelectorAll(".auth-theme-btn");
+    for (var t=0;t<authThemeBtns.length;t++){
+      authThemeBtns[t].addEventListener("click", function(){
+        settings.dark = !settings.dark; saveSettings(); applySettings(); syncAuthThemeBtns();
+      });
+    }
 
     /* Register: Firebase Auth + students/{uid} doc, same shape as the real StudyHub app. */
     $("registerForm").addEventListener("submit", async function(ev){
@@ -1150,6 +1234,7 @@
       if (!name) { $("regErr").textContent = "Please enter your full name."; return; }
       if (!validEmail(email)) { $("regErr").textContent = "Please enter a valid email address."; return; }
       if (pass.length < 6) { $("regErr").textContent = "Password must be at least 6 characters."; return; }
+      if (pass !== $("rgPass2").value) { $("regErr").textContent = "Passwords do not match."; return; }
       $("regErr").textContent = "";
       try {
         var cred = await createUserWithEmailAndPassword(auth, email, pass);
@@ -1169,17 +1254,7 @@
       try { await signInWithEmailAndPassword(auth, email, pass); }
       catch (err) { $("loginErr").textContent = authErrMessage(err); }
     });
-    /* Demo login: real Firebase Auth sign-in with the shared demo account.
-       The demo account must exist in Firebase Auth — nothing here is faked. */
-    $("demoBtn").addEventListener("click", async function(){
-      $("loginErr").textContent = "";
-      try { await signInWithEmailAndPassword(auth, DEMO_EMAIL, DEMO_PASS); }
-      catch (err) {
-        if (err.code === "auth/user-not-found" || err.code === "auth/invalid-credential")
-          $("loginErr").textContent = "Demo account is not set up yet. Create the demo account in Firebase Auth, or create your own account.";
-        else $("loginErr").textContent = authErrMessage(err);
-      }
-    });
+    /* Demo button removed with the old auth card (new auth screens have no demo entry). */
     /* Forgot password: sends a real reset link to the account email. */
     $("forgotForm").addEventListener("submit", async function(ev){
       ev.preventDefault();
@@ -1250,7 +1325,7 @@
         testsReady = false; notesReady = false;
         $("appScreen").classList.add("hidden");
         $("authScreen").classList.remove("hidden");
-        showAuthForm("login");
+        showAuthScreen("welcome");
       }
     });
     function refreshUserUI(){
@@ -1997,3 +2072,4 @@
     </script>
   </body>
 </html>
+
