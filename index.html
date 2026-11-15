@@ -169,16 +169,26 @@
       .hist-score{font-weight:800;font-size:17px}
       .empty-note{color:var(--muted);font-weight:600;font-size:14.5px;text-align:center;padding:20px 8px}
 
-      /* ---------- Profile ---------- */
-      .profile-top{text-align:center;padding-top:10px}
-      .profile-top .pavatar{width:118px;height:118px;border-radius:50%;margin:0 auto;background:var(--grad);color:#fff;
-        display:grid;place-items:center;font-size:38px;font-weight:800;border:5px solid #ccfbf1;box-shadow:0 14px 30px rgba(13,148,136,.30)}
-      .profile-top h3{font-size:24px;font-weight:800;margin:16px 0 2px}
-      .profile-top p{color:var(--muted);font-weight:600;font-size:16px;margin:0}
-      .prow{display:flex;align-items:center;gap:15px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:19px;
-        box-shadow:var(--shadow);padding:18px;margin-top:13px;text-align:left}
-      .prow .plbl{flex:1;font-weight:700;font-size:17px;color:var(--ink)}
-      .prow .parr{color:var(--muted2);flex:none}
+      /* ---------- Profile (ShopFlow style) ---------- */
+      .prof-head{background:linear-gradient(135deg,#032622,#0a5c50);border-radius:0 0 26px 26px;margin:-20px -16px 0;padding:26px 20px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+      .prof-head h2{color:#fff;font-size:28px;font-weight:800;margin:0}
+      .prof-head .psub{color:#a7f3d0;font-weight:600;font-size:15px;margin:4px 0 0}
+      .prof-bell{flex:none;width:48px;height:48px;border-radius:50%;border:1.5px solid rgba(255,255,255,.45);background:rgba(255,255,255,.12);color:#fff;display:grid;place-items:center;cursor:pointer}
+      .prof-user{display:flex;align-items:center;gap:15px;background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:18px;margin-top:16px}
+      .prof-user .pu-avatar{flex:none;width:64px;height:64px;border-radius:50%;background:#ccfbf1;color:#0f766e;display:grid;place-items:center;font-size:28px;font-weight:800}
+      .prof-user .pu-name{font-size:20px;font-weight:800;margin:0}
+      .prof-user .pu-email{color:var(--muted);font-weight:600;font-size:14.5px;margin:2px 0 8px;word-break:break-all}
+      .pu-pills{display:flex;gap:8px;flex-wrap:wrap}
+      .pill{display:inline-block;font-size:13.5px;font-weight:800;border-radius:999px;padding:5px 13px}
+      .pill-teal{background:#ccfbf1;color:#0f766e}
+      .pill-grey{background:#eef2f7;color:#475569}
+      .prof-menu{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);margin-top:16px;overflow:hidden}
+      .prow2{display:flex;align-items:center;gap:15px;width:100%;background:none;border:0;border-top:1px solid var(--line);padding:17px 18px;text-align:left;cursor:pointer}
+      .prow2:first-child{border-top:0}
+      .prow2 .ric{flex:none;width:42px;height:42px;border-radius:13px;display:grid;place-items:center}
+      .prow2 .plbl{flex:1;font-weight:700;font-size:16.5px;color:var(--ink)}
+      .prow2 .parr{color:var(--muted2);flex:none}
+      .prow2.danger .plbl{color:#e11d48}
       .panel-box{background:var(--card);border:1px solid var(--line);border-radius:19px;box-shadow:var(--shadow);padding:20px;margin-top:13px}
       .panel-box h4{margin:0 0 12px;font-size:17px;font-weight:800}
       .panel-box p{color:var(--muted);font-weight:600;font-size:14.5px}
@@ -634,18 +644,54 @@
 
         <!-- ======== PROFILE ======== -->
         <div class="view" id="view-profile">
-          <div class="profile-top">
-            <div class="pavatar" id="profAvatar">S</div>
-            <h3 id="profName">Student</h3>
-            <p id="profEmail">—</p>
+          <div class="prof-head">
+            <div>
+              <h2>Profile</h2>
+              <p class="psub">MDCAT Preparation</p>
+            </div>
+            <button class="prof-bell" id="profBellBtn" type="button" aria-label="Notifications">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            </button>
           </div>
 
-          <button class="prow" id="rowEdit" type="button">
-            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
-            <span class="plbl">Edit Profile</span>
-            <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
-          </button>
-          <div class="panel-box hidden" id="editPanel">
+          <div class="prof-user">
+            <div class="pu-avatar" id="profAvatar">S</div>
+            <div style="min-width:0;flex:1">
+              <h3 class="pu-name" id="profName">Student</h3>
+              <p class="pu-email" id="profEmail">—</p>
+              <div class="pu-pills"><span class="pill pill-teal">Student</span><span class="pill pill-grey">Free Plan</span></div>
+            </div>
+          </div>
+
+          <div class="prof-menu">
+  <button class="prow2" id="rowEdit" type="button">
+              <span class="ric" style="background:#e0f2f1"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></span>
+              <span class="plbl">Edit Profile</span>
+              <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+            </button>
+  <button class="prow2" id="rowSettings" type="button">
+              <span class="ric" style="background:#e0f2fe"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.51 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.23.6.85 1 1.51 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/></svg></span>
+              <span class="plbl">Settings</span>
+              <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+            </button>
+  <button class="prow2" id="rowFaqs" type="button">
+              <span class="ric" style="background:#fef3c7"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#f5a623" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M9.4 9.2A2.7 2.7 0 1 1 12 12.5c-.8.3-1.1.9-1.1 1.7"/><circle cx="11.6" cy="17.4" r=".5" fill="#f5a623"/></svg></span>
+              <span class="plbl">FAQs</span>
+              <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+            </button>
+  <button class="prow2" id="rowAbout" type="button">
+              <span class="ric" style="background:#dcfce7"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#17a865" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r=".6" fill="#17a865"/></svg></span>
+              <span class="plbl">About App</span>
+              <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+            </button>
+  <button class="prow2 danger" id="logoutBtn" type="button">
+              <span class="ric" style="background:#ffe4e6"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#ef3f6c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></span>
+              <span class="plbl">Log out</span>
+              <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+            </button>
+          </div>
+
+          <div class="panel-box hidden id="editPanel">
             <h4>Edit Profile</h4>
             <div class="field">
               <label for="epName">Full Name</label>
@@ -675,22 +721,12 @@
             </form>
           </div>
 
-          <button class="prow" id="rowSettings" type="button">
-            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.51 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.23.6.85 1 1.51 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/></svg>
-            <span class="plbl">Settings</span>
-            <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
-          </button>
-          <div class="panel-box hidden" id="settingsPanel">
+          <div class="panel-box hidden id="settingsPanel">
             <h4>Settings</h4>
             <p>Account type: Email &amp; password<br/>Session: stays signed in on this device<br/>Test timer: 1 minute per question<br/>Marking: 1 mark per question, no negative marking</p>
           </div>
 
-          <button class="prow" id="rowFaqs" type="button">
-            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#f5a623" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M9.4 9.2A2.7 2.7 0 1 1 12 12.5c-.8.3-1.1.9-1.1 1.7"/><circle cx="11.6" cy="17.4" r=".5" fill="#f5a623"/></svg>
-            <span class="plbl">FAQs</span>
-            <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
-          </button>
-          <div class="panel-box hidden" id="faqPanel">
+          <div class="panel-box hidden id="faqPanel">
             <h4>Frequently Asked Questions</h4>
             <div class="faq-item"><b>How do I start a test?</b><p>Open Tests, pick any chapter, subject, smart or mock test, and tap Start Test.</p></div>
             <div class="faq-item"><b>What is Smart Test Mode?</b><p>Smart Test mixes questions from every subject in one timed test, like the real MDCAT pattern.</p></div>
@@ -698,21 +734,10 @@
             <div class="faq-item"><b>Where can I see my results?</b><p>Every finished test appears on the Dashboard with your score, accuracy and a full answer review.</p></div>
           </div>
 
-          <button class="prow" id="rowAbout" type="button">
-            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#17a865" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r=".6" fill="#17a865"/></svg>
-            <span class="plbl">About App</span>
-            <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
-          </button>
-          <div class="panel-box hidden" id="aboutPanel">
+          <div class="panel-box hidden id="aboutPanel">
             <h4>About StudyHub</h4>
             <p>StudyHub — MDCAT Preparation. Subject-wise MCQs, Smart Test Mode and progress tracking to help you practice smarter, learn better and track your progress.</p>
           </div>
-
-          <button class="prow" id="logoutBtn" type="button">
-            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#ef3f6c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
-            <span class="plbl">Log out</span>
-            <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
-          </button>
         </div>
 
       </div><!-- /col -->
@@ -1067,6 +1092,7 @@
         toast(unread ? "You have " + unread + " unread notification" + (unread === 1 ? "" : "s") + "." : "No new notifications yet.");
       } catch (e) { toast("No new notifications yet."); }
     });
+    $("profBellBtn").addEventListener("click", function(){ $("bellBtn").click(); });
     $("quickTests").addEventListener("click", function(){ showView("tests"); });
     $("quickNotes").addEventListener("click", function(){ showView("notes"); });
     $("quickProgress").addEventListener("click", function(){ showView("dashboard"); });
