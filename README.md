@@ -1,6 +1,6 @@
-# StudyHub Modern — Live Site
+# MDCAT Prime — Live Site
 
-A new, separate StudyHub web app: the real StudyHub infrastructure
+A new, separate MDCAT Prime web app: the real StudyHub infrastructure
 (screens and flows from the StudyHub app) with the ShopFlow design
 (teal, Plus Jakarta Sans, ShopFlow-style boxes).
 
