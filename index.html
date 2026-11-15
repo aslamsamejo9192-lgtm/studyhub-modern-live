@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark" />
-    <script>try{if(JSON.parse(localStorage.getItem("studyhub_settings_v1")||"{}").dark){document.documentElement.setAttribute("data-theme","dark");}}catch(e){}</script>
+    <script>try{if(JSON.parse(localStorage.getItem("studyhub_settings_v1")||"{}").dark){document.documentElement.setAttribute("data-theme","dark");}}catch(e){}setTimeout(function(){if(!window.__shBooted){var b=document.getElementById("bootScreen");if(b)b.classList.add("hidden");}},12000);</script>
     <link rel="icon" href="data:," />
     <title>StudyHub — MDCAT Preparation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -59,6 +59,19 @@
       [data-theme="dark"] .mark-btn.on{background:#2e2410;border-color:#f2c14e;color:#f2c14e}
       [data-theme="dark"] .timer-chip{background:#2e2410;border-color:#92600a;color:#f2c14e}
       [data-theme="dark"] .greet-line,[data-theme="dark"] .qmeta .qn,[data-theme="dark"] .view-all,[data-theme="dark"] .auth-brand .bsub,[data-theme="dark"] .link-btn,[data-theme="dark"] .tabs button.active,[data-theme="dark"] .bottom-nav button.active{color:#2dd4bf}
+      /* ---------- Boot & Welcome ---------- */
+      .boot-screen{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px}
+      .boot-name{font-size:30px;font-weight:800}
+      .boot-name span{color:var(--blue)}
+      .boot-sub{color:var(--blue);font-weight:700;font-size:15px}
+      .boot-spin{width:34px;height:34px;border-radius:50%;border:3.5px solid #dbe4f0;border-top-color:var(--blue);animation:bootspin .8s linear infinite;margin-top:12px}
+      @keyframes bootspin{to{transform:rotate(360deg)}}
+      .welcome-screen{position:fixed;inset:0;z-index:90;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px;text-align:center}
+      .welcome-screen h2{font-size:28px;font-weight:800;margin:18px 0 4px}
+      .welcome-screen .wel-name{font-size:20px;font-weight:800;color:var(--blue-dark);margin:0}
+      .wel-bar{width:min(280px,80%);height:8px;border-radius:999px;background:#dbe4f0;overflow:hidden;margin-top:28px}
+      .wel-fill{height:100%;width:0%;background:var(--grad);border-radius:999px;transition:width .1s linear}
+      .wel-pct{color:var(--muted);font-weight:800;font-size:13.5px;margin:10px 0 0}
       *{box-sizing:border-box}
       html{-webkit-text-size-adjust:100%}
       body{
@@ -357,6 +370,23 @@
   </head>
   <body>
 
+    <!-- ================= BOOT SCREEN ================= -->
+    <div class="boot-screen" id="bootScreen">
+      <svg width="64" height="64" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#0f766e"/></linearGradient></defs><path d="M24 3 43 13.5v21L24 45 5 34.5v-21Z" fill="url(#lgB)"/><path d="M24 12 36 18.2 24 24.4 12 18.2Z" fill="#fff"/><path d="M17.5 21.6v4.6c0 1.8 2.9 3.2 6.5 3.2s6.5-1.4 6.5-3.2v-4.6L24 25Z" fill="#fff"/><path d="M35.4 19.4v6.8" stroke="#ffd34d" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <div class="boot-name">Study<span>Hub</span></div>
+      <div class="boot-sub">MDCAT Preparation</div>
+      <div class="boot-spin" aria-hidden="true"></div>
+    </div>
+
+    <!-- ================= WELCOME BACK ================= -->
+    <section class="welcome-screen hidden" id="welcomeScreen">
+      <svg width="64" height="64" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#0f766e"/></linearGradient></defs><path d="M24 3 43 13.5v21L24 45 5 34.5v-21Z" fill="url(#lgC)"/><path d="M24 12 36 18.2 24 24.4 12 18.2Z" fill="#fff"/><path d="M17.5 21.6v4.6c0 1.8 2.9 3.2 6.5 3.2s6.5-1.4 6.5-3.2v-4.6L24 25Z" fill="#fff"/><path d="M35.4 19.4v6.8" stroke="#ffd34d" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <h2>Welcome Back</h2>
+      <p class="wel-name" id="welName">Student</p>
+      <div class="wel-bar"><div class="wel-fill" id="welFill"></div></div>
+      <p class="wel-pct" id="welPct">0%</p>
+    </section>
+
     <!-- ================= AUTH SCREEN ================= -->
     <section id="authScreen">
       <div class="auth-wrap">
@@ -366,7 +396,6 @@
           <div class="bsub">MDCAT Preparation</div>
         </div>
         <div class="auth-card">
-          <p class="auth-note" id="authState" style="margin:0 0 14px">Connecting to StudyHub…</p>
           <div class="auth-tabs" role="tablist">
             <button class="auth-tab active" id="tabLogin" type="button">Login</button>
             <button class="auth-tab" id="tabRegister" type="button">Create Account</button>
@@ -1051,17 +1080,42 @@
       cacheProfile(profile);
     }
     /* Auth state drives the whole app. */
+    var booted = false;
+    function hideBoot(){ var b = $("bootScreen"); if (b) b.classList.add("hidden"); }
+    function showWelcome(user, done){
+      var first = (user.name || "Student").split(" ")[0];
+      $("welName").textContent = first;
+      $("authScreen").classList.add("hidden");
+      $("appScreen").classList.add("hidden");
+      $("welcomeScreen").classList.remove("hidden");
+      var pct = 0;
+      $("welFill").style.width = "0%"; $("welPct").textContent = "0%";
+      var iv = setInterval(function(){
+        pct += 8;
+        if (pct >= 100){ pct = 100; clearInterval(iv); setTimeout(done, 250); }
+        $("welFill").style.width = pct + "%"; $("welPct").textContent = pct + "%";
+      }, 90);
+    }
     onAuthStateChanged(auth, async function(user){
       authReady = true;
-      var st = $("authState"); if (st) st.textContent = "";
+      window.__shBooted = true;
       if (user) {
         var cached = readCachedProfile(user.uid);
         if (cached) { profile = cached; currentUser = { uid: user.uid, name: cached.fullName, email: cached.email || user.email }; refreshUserUI(); }
         try { await loadProfile(user); } catch (e) { console.warn("Profile load failed:", e); }
         currentUser = { uid: user.uid, name: (profile && profile.fullName) || "Student", email: user.email || "" };
-        enterApp(currentUser);
-        subscribeAll();
+        if (!booted) {
+          booted = true;
+          hideBoot();
+          showWelcome(currentUser, function(){ enterApp(currentUser); subscribeAll(); });
+        } else {
+          enterApp(currentUser);
+          subscribeAll();
+        }
       } else {
+        booted = true;
+        hideBoot();
+        $("welcomeScreen").classList.add("hidden");
         unsubscribeAll();
         stopExamTimer();
         exam = null;
@@ -1089,6 +1143,7 @@
     function enterApp(user){
       currentUser = user;
       $("authScreen").classList.add("hidden");
+      $("welcomeScreen").classList.add("hidden");
       $("appScreen").classList.remove("hidden");
       refreshUserUI();
       renderAll();
