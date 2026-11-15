@@ -36,7 +36,7 @@
         --green-soft:#DCFCE7;
         --purple:#0284C7;
         --purple-soft:#EDE9FE;
-        --orange:#F59E0B;
+        --orange:#F6A202;
         --orange-soft:#FEF3C7;
         --pink:#F472B6;
         --pink-soft:#FCE7F3;
@@ -58,15 +58,15 @@
       .switch input:checked + .tr:before{transform:translateX(22px)}
       .set-sub{margin:18px 0 4px;font-size:13px;font-weight:800;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
       /* ---------- Dark theme (MDCAT Prime) ---------- */
-      [data-theme="dark"]{--bg:#070D1F;--card:#0E1B33;--ink:#F1F5FF;--ink2:#A9B8D4;--muted:#A9B8D4;--muted2:#7E8FAD;--line:rgba(148,180,255,.13);--blue:#135BFA;--blue-dark:#3B82F6;--blue-soft:rgba(59,130,246,.16);--violet:#F59E0B;--green:#22C55E;--green-soft:rgba(34,197,94,.14);--purple:#38BDF8;--purple-soft:rgba(139,92,246,.16);--orange:#F59E0B;--orange-soft:rgba(245,158,11,.14);--pink:#F472B6;--pink-soft:rgba(244,114,182,.14);--shadow:0 2px 6px rgba(0,0,0,.18),0 16px 36px rgba(0,0,0,.22)}
+      [data-theme="dark"]{--bg:#070D1F;--card:#0E1B33;--ink:#F1F5FF;--ink2:#A9B8D4;--muted:#A9B8D4;--muted2:#7E8FAD;--line:rgba(148,180,255,.13);--blue:#135BFA;--blue-dark:#3B82F6;--blue-soft:rgba(59,130,246,.16);--violet:#F6A202;--green:#22C55E;--green-soft:rgba(34,197,94,.14);--purple:#38BDF8;--purple-soft:rgba(139,92,246,.16);--orange:#F6A202;--orange-soft:rgba(246,162,2,.14);--pink:#F472B6;--pink-soft:rgba(244,114,182,.14);--shadow:0 2px 6px rgba(0,0,0,.18),0 16px 36px rgba(0,0,0,.22)}
       [data-theme="dark"] .app-header,[data-theme="dark"] .bottom-nav,[data-theme="dark"] .searchbar,[data-theme="dark"] .auth-card,[data-theme="dark"] .btn-white,[data-theme="dark"] .modal-card,[data-theme="dark"] .opt,[data-theme="dark"] .tabs button.active,[data-theme="dark"] .field input:focus{background:#0E1B33;color:var(--ink)}
       [data-theme="dark"] .tabs,[data-theme="dark"] .auth-tabs,[data-theme="dark"] .fchip,[data-theme="dark"] .prog-row .track,[data-theme="dark"] .switch .tr,[data-theme="dark"] .wel-bar{background:#12233F}
       [data-theme="dark"] .field input,[data-theme="dark"] .pal-btn,[data-theme="dark"] .sum-cell{background:#12233F;color:var(--ink)}
       [data-theme="dark"] .btn-ghost{background:rgba(148,180,255,.05);border-color:rgba(148,180,255,.22);color:var(--ink)}
       [data-theme="dark"] .btn-ghost:hover{background:rgba(148,180,255,.12);border-color:rgba(148,180,255,.32)}
       [data-theme="dark"] .opt .ol{background:#12233F;color:#3B82F6}
-      [data-theme="dark"] .mark-btn.on{background:rgba(245,158,11,.14);border-color:#F59E0B;color:#FBBF24}
-      [data-theme="dark"] .timer-chip{background:rgba(245,158,11,.14);border-color:#F59E0B;color:#FBBF24}
+      [data-theme="dark"] .mark-btn.on{background:rgba(246,162,2,.14);border-color:#F6A202;color:#FBBF24}
+      [data-theme="dark"] .timer-chip{background:rgba(246,162,2,.14);border-color:#F6A202;color:#FBBF24}
       [data-theme="dark"] .greet-line,[data-theme="dark"] .qmeta .qn,[data-theme="dark"] .view-all,[data-theme="dark"] .auth-brand .bsub,[data-theme="dark"] .link-btn,[data-theme="dark"] .tabs button.active,[data-theme="dark"] .bottom-nav button.active{color:#38BDF8}
       [data-theme="dark"] .pal-btn.answered{border-color:rgba(34,197,94,.45);color:#4ADE80}
       [data-theme="dark"] .badge-done{border-color:rgba(34,197,94,.45);color:#4ADE80}
@@ -98,7 +98,7 @@
       .panel-box.open-full .panel-back{display:inline-flex}
       /* ---------- ShopFlow-style page headers + cards ---------- */
       .prof-menu .panel-box.open-full > .sf-topbar{margin:-18px -16px 0;max-width:none}
-      .sf-topbar{background:linear-gradient(135deg,#3B82F6 0%,#135BFA 55%,#0B3D91 135%);color:#fff;padding:20px 18px 18px;display:flex;align-items:center;gap:12px;border-radius:0 0 26px 26px;box-shadow:0 14px 30px -14px rgba(19,91,250,.45)}
+      .sf-topbar{background:linear-gradient(135deg,#01143E 0%,#012269 55%,#00339E 135%);color:#fff;padding:20px 18px 18px;display:flex;align-items:center;gap:12px;border-radius:0 0 26px 26px;box-shadow:0 14px 30px -14px rgba(31,191,255,.45);border-bottom:2px solid rgba(31,191,255,.65)}
       .sf-back{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);color:#fff;width:40px;height:40px;border-radius:999px;font-size:19px;flex:none;display:grid;place-items:center;cursor:pointer}
       .sf-grow{flex:1;min-width:0}
       .sf-grow h1{font-size:20px;margin:0;font-weight:800;line-height:1.2;letter-spacing:-.01em;color:#fff}
@@ -345,14 +345,14 @@
         #markBtn{grid-column:1;grid-row:2}
         #clearBtn{grid-column:2;grid-row:2}
       }
-      .mark-btn.on{background:#FEF3C7;border-color:#F59E0B;color:#B45309}
+      .mark-btn.on{background:#FEF3C7;border-color:#F6A202;color:#B45309}
       .palette{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:15px}
       .palette h4{margin:0 0 12px;font-size:13.5px;font-weight:800}
       .pal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
       .pal-btn{aspect-ratio:1;border-radius:11px;border:1.5px solid var(--line);background:#F8FAFC;color:var(--muted);
         font-weight:800;font-size:13px;display:grid;place-items:center;min-height:36px;padding:0}
       .pal-btn.answered{background:var(--green-soft);border-color:#86EFAC;color:#15803D}
-      .pal-btn.marked{background:#FEF3C7;border-color:#F59E0B;color:#B45309}
+      .pal-btn.marked{background:#FEF3C7;border-color:#F6A202;color:#B45309}
       .pal-btn.current{box-shadow:0 0 0 2px var(--blue);color:var(--ink)}
       .legend{display:flex;flex-direction:column;gap:7px;margin-top:14px;font-size:12px;color:var(--muted);font-weight:600}
       .legend span{display:flex;align-items:center;gap:8px}
@@ -406,7 +406,7 @@
       .sum-cell{background:#F8FAFC;border:1px solid var(--line);border-radius:14px;padding:13px 6px;text-align:center}
       .sum-cell .v{font-size:19px;font-weight:800}
       .sum-cell .l{font-size:11.5px;color:var(--muted);font-weight:700}
-      .warn{background:#FFFBEB;border:1px solid #F59E0B;color:#92400E;border-radius:12px;padding:11px 13px;
+      .warn{background:#FFFBEB;border:1px solid #F6A202;color:#92400E;border-radius:12px;padding:11px 13px;
         font-size:13px;font-weight:700;margin-bottom:16px}
       .modal-actions{display:flex;gap:10px}
       .modal-actions .btn-grad,.modal-actions .btn-ghost{flex:1}
@@ -556,7 +556,7 @@
             </button>
             <div class="subj-pills" aria-hidden="true">
               <span style="background:#22b573">Biology</span>
-              <span style="background:#F59E0B">Chemistry</span>
+              <span style="background:#F6A202">Chemistry</span>
               <span style="background:#eab308">Physics</span>
               <span style="background:#e84393">English</span>
             </div>
@@ -713,7 +713,7 @@
               <div class="pal-grid" id="palGrid"></div>
               <div class="legend">
                 <span><i style="background:#22C55E"></i> Answered</span>
-                <span><i style="background:#F59E0B"></i> Marked for review</span>
+                <span><i style="background:#F6A202"></i> Marked for review</span>
                 <span><i style="background:#EFF6FF;border:1px solid #DBEAFE"></i> Not answered</span>
               </div>
               <button class="btn-grad" id="submitBtn" type="button">Submit Test</button>
@@ -846,7 +846,7 @@
               </div>
             </div>
   <button class="prow2" id="rowFaqs" type="button">
-                <span class="ric" style="background:#fef3c7"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M9.4 9.2A2.7 2.7 0 1 1 12 12.5c-.8.3-1.1.9-1.1 1.7"/><circle cx="11.6" cy="17.4" r=".5" fill="#F59E0B"/></svg></span>
+                <span class="ric" style="background:#fef3c7"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#F6A202" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M9.4 9.2A2.7 2.7 0 1 1 12 12.5c-.8.3-1.1.9-1.1 1.7"/><circle cx="11.6" cy="17.4" r=".5" fill="#F6A202"/></svg></span>
                 <span class="plbl">FAQs</span>
                 <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
               </button>
