@@ -251,6 +251,15 @@
       .exam-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
       .exam-actions .sp{flex:1}
       .exam-actions .btn-ghost,.exam-actions .btn-blue{width:auto}
+      @media (max-width:560px){
+        .exam-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        .exam-actions .sp{display:none}
+        .exam-actions .btn-ghost,.exam-actions .btn-blue{width:100%;min-height:48px}
+        #prevBtn{grid-column:1;grid-row:1}
+        #nextBtn{grid-column:2;grid-row:1}
+        #markBtn{grid-column:1;grid-row:2}
+        #clearBtn{grid-column:2;grid-row:2}
+      }
       .mark-btn.on{background:#fff7e0;border-color:#f2c14e;color:#92600a}
       .palette{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:18px}
       .palette h4{margin:0 0 12px;font-size:15px;font-weight:800}
