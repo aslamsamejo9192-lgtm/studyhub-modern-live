@@ -185,6 +185,7 @@
       .prow2 .plbl{flex:1;font-weight:700;font-size:15px;color:var(--ink)}
       .prow2 .parr{color:var(--muted2);flex:none}
       .prow2.danger .plbl{color:#e11d48}
+      .prof-menu .panel-box{border:0;border-top:1px solid var(--line);border-radius:0;box-shadow:none;background:transparent;padding:17px 18px;margin-top:0}
       .panel-box{background:var(--card);border:1px solid var(--line);border-radius:19px;box-shadow:var(--shadow);padding:17px;margin-top:12px}
       .panel-box h4{margin:0 0 12px;font-size:15px;font-weight:800}
       .panel-box p{color:var(--muted);font-weight:600;font-size:13.5px}
@@ -658,81 +659,85 @@
             </div>
           </div>
 
-          <div class="prof-menu">
+                    <div class="prof-menu">
   <button class="prow2" id="rowEdit" type="button">
-              <span class="ric" style="background:#e0f2f1"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></span>
-              <span class="plbl">Edit Profile</span>
-              <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
-            </button>
-  <button class="prow2" id="rowSettings" type="button">
-              <span class="ric" style="background:#e0f2fe"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.51 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.23.6.85 1 1.51 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/></svg></span>
-              <span class="plbl">Settings</span>
-              <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
-            </button>
-  <button class="prow2" id="rowFaqs" type="button">
-              <span class="ric" style="background:#fef3c7"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#f5a623" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M9.4 9.2A2.7 2.7 0 1 1 12 12.5c-.8.3-1.1.9-1.1 1.7"/><circle cx="11.6" cy="17.4" r=".5" fill="#f5a623"/></svg></span>
-              <span class="plbl">FAQs</span>
-              <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
-            </button>
-  <button class="prow2" id="rowAbout" type="button">
-              <span class="ric" style="background:#dcfce7"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#17a865" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r=".6" fill="#17a865"/></svg></span>
-              <span class="plbl">About App</span>
-              <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
-            </button>
-  <button class="prow2 danger" id="logoutBtn" type="button">
-              <span class="ric" style="background:#ffe4e6"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#ef3f6c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></span>
-              <span class="plbl">Log out</span>
-              <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
-            </button>
-          </div>
-
-          <div class="panel-box hidden id="editPanel">
-            <h4>Edit Profile</h4>
-            <div class="field">
-              <label for="epName">Full Name</label>
-              <input id="epName" type="text" autocomplete="name" />
-            </div>
-            <div class="field">
-              <label for="epFather">Father's Name</label>
-              <input id="epFather" type="text" autocomplete="off" />
-            </div>
-            <button class="btn-grad" id="epSave" type="button" style="padding:11px 22px;min-height:42px;font-size:13.5px">Save Name</button>
-            <div class="ok-msg" id="epOk"></div>
-            <h4 style="margin-top:22px">Change Password</h4>
-            <form id="pwForm" novalidate>
-              <div class="form-grid">
-                <div class="field">
-                  <label for="pwCur">Current Password</label>
-                  <input id="pwCur" type="password" autocomplete="current-password" placeholder="Current password" />
-                </div>
-                <div class="field">
-                  <label for="pwNew">New Password</label>
-                  <input id="pwNew" type="password" autocomplete="new-password" placeholder="At least 6 characters" />
-                </div>
+                <span class="ric" style="background:#e0f2f1"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></span>
+                <span class="plbl">Edit Profile</span>
+                <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+              </button>
+  <div class="panel-box hidden" id="editPanel">
+              <h4>Edit Profile</h4>
+              <div class="field">
+                <label for="epName">Full Name</label>
+                <input id="epName" type="text" autocomplete="name" />
               </div>
-              <button class="btn-grad" type="submit" style="padding:11px 22px;min-height:42px;font-size:13.5px">Update Password</button>
-              <div class="err-msg" id="pwErr"></div>
-              <div class="ok-msg" id="pwOk"></div>
-            </form>
+              <div class="field">
+                <label for="epFather">Father's Name</label>
+                <input id="epFather" type="text" autocomplete="off" />
+              </div>
+              <button class="btn-grad" id="epSave" type="button" style="padding:11px 22px;min-height:42px;font-size:13.5px">Save Name</button>
+              <div class="ok-msg" id="epOk"></div>
+              <h4 style="margin-top:22px">Change Password</h4>
+              <form id="pwForm" novalidate>
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="pwCur">Current Password</label>
+                    <input id="pwCur" type="password" autocomplete="current-password" placeholder="Current password" />
+                  </div>
+                  <div class="field">
+                    <label for="pwNew">New Password</label>
+                    <input id="pwNew" type="password" autocomplete="new-password" placeholder="At least 6 characters" />
+                  </div>
+                </div>
+                <button class="btn-grad" type="submit" style="padding:11px 22px;min-height:42px;font-size:13.5px">Update Password</button>
+                <div class="err-msg" id="pwErr"></div>
+                <div class="ok-msg" id="pwOk"></div>
+              </form>
+            </div>
+  <button class="prow2" id="rowSettings" type="button">
+                <span class="ric" style="background:#e0f2fe"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.51 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.23.6.85 1 1.51 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/></svg></span>
+                <span class="plbl">Settings</span>
+                <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+              </button>
+  <div class="panel-box hidden" id="settingsPanel">
+              <h4>Settings</h4>
+              <p>Account type: Email &amp; password<br/>Session: stays signed in on this device<br/>Test timer: 1 minute per question<br/>Marking: 1 mark per question, no negative marking</p>
+            </div>
+  <button class="prow2" id="rowFaqs" type="button">
+                <span class="ric" style="background:#fef3c7"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#f5a623" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M9.4 9.2A2.7 2.7 0 1 1 12 12.5c-.8.3-1.1.9-1.1 1.7"/><circle cx="11.6" cy="17.4" r=".5" fill="#f5a623"/></svg></span>
+                <span class="plbl">FAQs</span>
+                <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+              </button>
+  <div class="panel-box hidden" id="faqPanel">
+              <h4>Frequently Asked Questions</h4>
+              <div class="faq-item"><b>How do I start a test?</b><p>Open Tests, pick any chapter, subject, smart or mock test, and tap Start Test.</p></div>
+              <div class="faq-item"><b>What is Smart Test Mode?</b><p>Smart Test mixes questions from every subject in one timed test, like the real MDCAT pattern.</p></div>
+              <div class="faq-item"><b>Is there negative marking?</b><p>No. A wrong or unattempted answer scores 0, and every correct answer scores 1 mark.</p></div>
+              <div class="faq-item"><b>Where can I see my results?</b><p>Every finished test appears on the Dashboard with your score, accuracy and a full answer review.</p></div>
+            </div>
+  <button class="prow2" id="rowAbout" type="button">
+                <span class="ric" style="background:#dcfce7"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#17a865" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9.2"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r=".6" fill="#17a865"/></svg></span>
+                <span class="plbl">About App</span>
+                <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+              </button>
+  <div class="panel-box hidden" id="aboutPanel">
+              <h4>About StudyHub</h4>
+              <p>StudyHub — MDCAT Preparation. Subject-wise MCQs, Smart Test Mode and progress tracking to help you practice smarter, learn better and track your progress.</p>
+            </div>
+  <button class="prow2 danger" id="logoutBtn" type="button">
+                <span class="ric" style="background:#ffe4e6"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#ef3f6c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></span>
+                <span class="plbl">Log out</span>
+                <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+              </button>
           </div>
 
-          <div class="panel-box hidden id="settingsPanel">
-            <h4>Settings</h4>
-            <p>Account type: Email &amp; password<br/>Session: stays signed in on this device<br/>Test timer: 1 minute per question<br/>Marking: 1 mark per question, no negative marking</p>
-          </div>
+          
 
-          <div class="panel-box hidden id="faqPanel">
-            <h4>Frequently Asked Questions</h4>
-            <div class="faq-item"><b>How do I start a test?</b><p>Open Tests, pick any chapter, subject, smart or mock test, and tap Start Test.</p></div>
-            <div class="faq-item"><b>What is Smart Test Mode?</b><p>Smart Test mixes questions from every subject in one timed test, like the real MDCAT pattern.</p></div>
-            <div class="faq-item"><b>Is there negative marking?</b><p>No. A wrong or unattempted answer scores 0, and every correct answer scores 1 mark.</p></div>
-            <div class="faq-item"><b>Where can I see my results?</b><p>Every finished test appears on the Dashboard with your score, accuracy and a full answer review.</p></div>
-          </div>
+          
 
-          <div class="panel-box hidden id="aboutPanel">
-            <h4>About StudyHub</h4>
-            <p>StudyHub — MDCAT Preparation. Subject-wise MCQs, Smart Test Mode and progress tracking to help you practice smarter, learn better and track your progress.</p>
-          </div>
+          
+
+          
         </div>
 
       </div><!-- /col -->
@@ -1653,7 +1658,7 @@
       var p = $(id), wasHidden = p.classList.contains("hidden");
       var panels = ["editPanel","settingsPanel","faqPanel","aboutPanel"];
       for (var i=0;i<panels.length;i++) $(panels[i]).classList.add("hidden");
-      if (wasHidden) p.classList.remove("hidden");
+      if (wasHidden) { p.classList.remove("hidden"); p.scrollIntoView({ behavior:"smooth", block:"nearest" }); }
     }
     $("rowEdit").addEventListener("click", function(){ togglePanel("editPanel"); });
     $("rowSettings").addEventListener("click", function(){ togglePanel("settingsPanel"); });
