@@ -85,6 +85,8 @@
       .boot-sub{color:var(--blue);font-weight:700;font-size:15px}
       .boot-spin{width:34px;height:34px;border-radius:50%;border:3.5px solid #DBEAFE;border-top-color:var(--blue);animation:bootspin .8s linear infinite;margin-top:12px}
       @keyframes bootspin{to{transform:rotate(360deg)}}
+      .btn-spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:bootspin .7s linear infinite;flex:none}
+      .btn-grad:disabled{opacity:.8;cursor:wait}
       .welcome-screen{position:fixed;inset:0;z-index:90;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px;text-align:center}
       .welcome-screen h2{font-size:28px;font-weight:800;margin:18px 0 4px}
       .welcome-screen .wel-name{font-size:20px;font-weight:800;color:var(--blue-dark);margin:0}
@@ -1235,6 +1237,15 @@
     }
 
     /* Register: Firebase Auth + students/{uid} doc, same shape as the real StudyHub app. */
+    /* Button busy state: spinner + label while an auth call runs, so the form never looks stuck. */
+    function setBusy(form, label){
+      var b = form.querySelector("button[type=submit]");
+      if (b){ b.disabled = true; b.dataset.label = b.textContent; b.innerHTML = '<span class="btn-spin"></span>' + label; }
+    }
+    function clearBusy(form){
+      var b = form.querySelector("button[type=submit]");
+      if (b){ b.disabled = false; b.textContent = b.dataset.label || b.textContent; }
+    }
     $("registerForm").addEventListener("submit", async function(ev){
       ev.preventDefault();
       var name = $("rgName").value.trim(), father = $("rgFather").value.trim(),
@@ -1244,6 +1255,7 @@
       if (pass.length < 6) { $("regErr").textContent = "Password must be at least 6 characters."; return; }
       if (pass !== $("rgPass2").value) { $("regErr").textContent = "Passwords do not match."; return; }
       $("regErr").textContent = "";
+      setBusy(ev.target, "Creating account...");
       try {
         var cred = await createUserWithEmailAndPassword(auth, email, pass);
         var u = cred.user;
@@ -1251,7 +1263,7 @@
         await setDoc(doc(db, "students", u.uid), data);
         profile = { uid: u.uid, fullName: name, fatherName: father, email: email, role: "student" };
         cacheProfile(profile);
-      } catch (err) { $("regErr").textContent = authErrMessage(err); }
+      } catch (err) { $("regErr").textContent = authErrMessage(err); clearBusy(ev.target); }
     });
     /* Login: Firebase Auth email/password. */
     $("loginForm").addEventListener("submit", async function(ev){
@@ -1259,8 +1271,9 @@
       var email = $("liEmail").value.trim().toLowerCase(), pass = $("liPass").value;
       if (!validEmail(email)) { $("loginErr").textContent = "Please enter a valid email address."; return; }
       $("loginErr").textContent = "";
+      setBusy(ev.target, "Signing in...");
       try { await signInWithEmailAndPassword(auth, email, pass); }
-      catch (err) { $("loginErr").textContent = authErrMessage(err); }
+      catch (err) { $("loginErr").textContent = authErrMessage(err); clearBusy(ev.target); }
     });
     /* Demo button removed with the old auth card (new auth screens have no demo entry). */
     /* Forgot password: sends a real reset link to the account email. */
@@ -1269,10 +1282,12 @@
       var email = $("fpEmail").value.trim().toLowerCase();
       if (!validEmail(email)) { $("fpErr").textContent = "Please enter a valid email address."; return; }
       $("fpErr").textContent = ""; $("fpOk").textContent = "";
+      setBusy(ev.target, "Sending...");
       try {
         await sendPasswordResetEmail(auth, email);
         $("fpOk").textContent = "Reset link sent. Check your email inbox and follow the link to set a new password.";
-      } catch (err) { $("fpErr").textContent = authErrMessage(err); }
+        clearBusy(ev.target);
+      } catch (err) { $("fpErr").textContent = authErrMessage(err); clearBusy(ev.target); }
     });
     /* Load (or create) the signed-in student's profile, exactly like the real StudyHub app. */
     async function loadProfile(user){
@@ -1312,8 +1327,9 @@
       if (user) {
         var cached = readCachedProfile(user.uid);
         if (cached) { profile = cached; currentUser = { uid: user.uid, name: cached.fullName, email: cached.email || user.email }; refreshUserUI(); }
-        try { await loadProfile(user); } catch (e) { console.warn("Profile load failed:", e); }
         currentUser = { uid: user.uid, name: (profile && profile.fullName) || "Student", email: user.email || "" };
+        /* Profile loads in the background — Home opens at once with the cached name, no waiting on slow internet. */
+        loadProfile(user).then(function(){ if (currentUser && currentUser.uid === user.uid){ currentUser.name = (profile && profile.fullName) || currentUser.name; refreshUserUI(); var w = $("welName"); if (w) w.textContent = currentUser.name.split(" ")[0]; } }).catch(function(e){ console.warn("Profile load failed:", e); });
         if (!booted) {
           booted = true;
           hideBoot();
