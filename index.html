@@ -292,6 +292,9 @@
       .field input{width:100%;background:#F8FAFC;border:1.5px solid var(--line);border-radius:14px;color:var(--ink);
         padding:12px 15px;font-size:14.5px;font-weight:600;min-height:46px}
       .field input:focus{border-color:var(--blue);outline:none;background:#fff}
+      .field textarea{width:100%;background:#F8FAFC;border:1.5px solid var(--line);border-radius:14px;color:var(--ink);font-family:inherit;font-size:14px;font-weight:600;padding:13px 14px;min-height:96px;resize:vertical}
+      .field textarea:focus{border-color:var(--blue);outline:none;background:#fff}
+      a.set-val{text-decoration:none;color:inherit}
       .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
       @media (max-width:560px){ .form-grid{grid-template-columns:1fr} }
       .err-msg{color:#DC2626;font-weight:700;font-size:13px;margin-top:10px;min-height:20px}
@@ -954,11 +957,47 @@
                 <p>MDCAT Prime — MDCAT Prep. Subject-wise MCQs, Smart Test Mode and progress tracking to help you practice smarter, learn better and track your progress.</p>
               </div>
             </div>
-  <button class="prow2 danger" id="logoutBtn" type="button">
-                <span class="ric" style="background:#ffe4e6"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#F472B6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></span>
-                <span class="plbl">Log out</span>
+  <button class="prow2" id="rowContact" type="button">
+                <span class="ric" style="background:#DBEAFE"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
+                <span class="plbl">Contact Us</span>
                 <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
               </button>
+  <div class="panel-box hidden" id="contactPanel">
+              <div class="sf-topbar">
+                <button class="sf-back" type="button" data-close-panel aria-label="Back">‹</button>
+                <div class="sf-grow"><h1>Contact Us</h1><div class="sf-sub">Get in touch with MDCAT Prime</div></div>
+              </div>
+              <div class="set-card pad">
+                <h3 style="font-size:19px;font-weight:800;margin:6px 0">Get in Touch</h3>
+                <p style="color:var(--muted);font-weight:600;font-size:14px;line-height:1.6;margin:0">Have questions or need help with your MDCAT preparation? Contact us for support, feedback, or any queries. We're here to help you succeed!</p>
+              </div>
+              <div class="set-card">
+                <h3 class="set-card-t">📞 Contact Information</h3>
+                <p style="color:var(--muted);font-weight:600;font-size:13.5px;line-height:1.6;margin:0 0 4px">Reach out to our team for questions, support, or feedback. We're always happy to assist you through our official contact channels.</p>
+                <a class="set-val" href="tel:03343759613"><span>Phone</span><b style="color:var(--blue)">03343759613</b></a>
+                <a class="set-val" href="https://wa.me/923343759613" target="_blank" rel="noopener"><span>WhatsApp</span><b style="color:var(--blue)">03343759613</b></a>
+                <a class="set-val" href="mailto:mdcatprime@gmail.com"><span>Email</span><b style="color:var(--blue)">mdcatprime@gmail.com</b></a>
+                <div class="set-val"><span>Response time</span><b>Within 24 hours</b></div>
+              </div>
+              <div class="set-card pad">
+                <h3 class="set-card-t">✉️ Send us a Message</h3>
+                <form id="contactForm" novalidate>
+                  <div class="field"><label for="ctName">Full Name</label><input id="ctName" type="text" autocomplete="name" placeholder="Your full name" /></div>
+                  <div class="field"><label for="ctEmail">Email Address</label><input id="ctEmail" type="email" autocomplete="email" placeholder="name@example.com" /></div>
+                  <div class="field"><label for="ctMsg">Message</label><textarea id="ctMsg" placeholder="Write your message here..."></textarea></div>
+                  <button class="btn-grad" type="submit" style="width:100%">Send Message</button>
+                  <div class="err-msg" id="ctErr"></div>
+                  <div class="ok-msg" id="ctOk"></div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="set-card" style="padding:0;overflow:hidden">
+            <button class="prow2 danger" id="logoutBtn" type="button">
+              <span class="ric" style="background:#ffe4e6"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#F472B6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg></span>
+              <span class="plbl">Log out</span>
+              <svg class="parr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+            </button>
           </div>
 
           
@@ -2032,7 +2071,7 @@
     $("backDashBtn").addEventListener("click", function(){ showView("home"); });
 
     /* ==================== PROFILE ==================== */
-    var PANEL_IDS = ["editPanel","settingsPanel","faqPanel","aboutPanel"];
+    var PANEL_IDS = ["editPanel","settingsPanel","faqPanel","aboutPanel","contactPanel"];
     function closePanels(){
       for (var i=0;i<PANEL_IDS.length;i++){ var el = $(PANEL_IDS[i]); el.classList.add("hidden"); el.classList.remove("open-full"); }
     }
@@ -2048,6 +2087,20 @@
     $("rowFaqs").addEventListener("click", function(){ togglePanel("faqPanel"); });
     $("rowChangePw").addEventListener("click", function(){ togglePanel("editPanel"); setTimeout(function(){ var f = $("pwForm"); if (f) f.scrollIntoView({ behavior:"smooth", block:"start" }); }, 60); });
     $("rowAbout").addEventListener("click", function(){ togglePanel("aboutPanel"); });
+    $("rowContact").addEventListener("click", function(){ togglePanel("contactPanel"); });
+    /* Contact form: opens the mail app with the message addressed to MDCAT Prime. */
+    $("contactForm").addEventListener("submit", function(ev){
+      ev.preventDefault();
+      var name = $("ctName").value.trim(), email = $("ctEmail").value.trim().toLowerCase(), msg = $("ctMsg").value.trim();
+      if (!name) { $("ctErr").textContent = "Please enter your full name."; return; }
+      if (!validEmail(email)) { $("ctErr").textContent = "Please enter a valid email address."; return; }
+      if (!msg) { $("ctErr").textContent = "Please write your message."; return; }
+      $("ctErr").textContent = "";
+      var subject = encodeURIComponent("MDCAT Prime — Message from " + name);
+      var body = encodeURIComponent(msg + "\n\nFrom: " + name + " (" + email + ")");
+      window.location.href = "mailto:mdcatprime@gmail.com?subject=" + subject + "&body=" + body;
+      $("ctOk").textContent = "Opening your email app to send the message.";
+    });
 
     /* ==================== SETTINGS ==================== */
     var SETTINGS_KEY = "studyhub_settings_v1";
