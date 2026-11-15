@@ -92,7 +92,7 @@
         min-height:100vh;overflow-x:hidden;
         -webkit-font-smoothing:antialiased;
       }
-      button{font-family:inherit;cursor:pointer}
+      button{font-family:inherit;cursor:pointer;color:inherit}
       input,select{font-family:inherit}
       button,[role="button"],input:not([type="checkbox"],[type="radio"]){min-height:2.25rem}
       :focus-visible{outline:2px solid var(--blue);outline-offset:2px}
@@ -169,7 +169,7 @@
       .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:26px 0 14px}
       .sec-head h3{font-size:18px;font-weight:800;margin:0}
       .subj-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:13px}
-      .subj-card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);
+      .subj-card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);color:var(--ink);
         padding:18px 10px 15px;display:flex;flex-direction:column;align-items:center;gap:10px;width:100%}
       .subj-card .scirc{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;color:#fff}
       .subj-card .slbl{font-weight:800;font-size:14.5px}
@@ -1692,11 +1692,11 @@
     $("cancelSubmit").addEventListener("click", function(){ $("submitOverlay").classList.remove("on"); });
     $("confirmSubmit").addEventListener("click", function(){ $("submitOverlay").classList.remove("on"); stopExamTimer(); finishExam(); });
 
-    /* Score exactly like the real StudyHub app and save the attempt to Firestore. */
-    var submitting = false;
+    /* Score exactly like the real StudyHub app. The result shows at once;
+       the attempt is saved to Firestore in the background. */
     async function finishExam(){
-      if (!exam || submitting) return;
-      submitting = true;
+      if (!exam || exam._submitted) return;
+      exam._submitted = true;
       var qs = exam.test.qs, correct = 0, incorrect = 0, answered = 0, earned = 0, per = {};
       var answersById = {};
       for (var i=0;i<qs.length;i++){
@@ -1720,29 +1720,30 @@
         incorrectCount: incorrect, unansweredCount: unanswered, timeTakenSeconds: secs,
         startedAt: new Date(exam.startedAt).toISOString(), submittedAt: new Date().toISOString(),
         status: "submitted", perSubject: per, createdAt: serverTimestamp() };
+      var rec = { title: exam.test.title, total: qs.length, correct: correct, answered: answered,
+        secs: secs, when: fmtWhen(attempt.submittedAt), perSubject: per, pct: pct, id: null };
+      results.push(rec);
+      exam.lastResult = rec;
+      $("resultPct").textContent = pct + "%";
+      $("resultRing").style.strokeDashoffset = (402.1 * (1 - pct/100)).toFixed(1);
+      $("resultTitle").textContent = exam.test.title;
+      $("resultMsg").textContent = pct >= 80 ? "Excellent work — keep this pace and you are on track for a top score."
+        : pct >= 50 ? "Good attempt. Review the explanations below and retry the weak spots."
+        : "Every attempt builds your base. Review each explanation carefully, then try again.";
+      $("rCorrect").textContent = correct;
+      $("rWrong").textContent = incorrect;
+      $("rSkip").textContent = unanswered;
+      $("rTime").textContent = fmtDur(secs);
+      $("reviewList").classList.add("hidden");
+      renderAll();
+      showView("result");
       try {
         var ref = await addDoc(collection(db, "attempts"), attempt);
-        var rec = { title: exam.test.title, total: qs.length, correct: correct, answered: answered,
-          secs: secs, when: fmtWhen(attempt.submittedAt), perSubject: per, pct: pct, id: ref.id };
-        results.push(rec);
-        exam.lastResult = rec;
-        $("resultPct").textContent = pct + "%";
-        $("resultRing").style.strokeDashoffset = (402.1 * (1 - pct/100)).toFixed(1);
-        $("resultTitle").textContent = exam.test.title;
-        $("resultMsg").textContent = pct >= 80 ? "Excellent work — keep this pace and you are on track for a top score."
-          : pct >= 50 ? "Good attempt. Review the explanations below and retry the weak spots."
-          : "Every attempt builds your base. Review each explanation carefully, then try again.";
-        $("rCorrect").textContent = correct;
-        $("rWrong").textContent = incorrect;
-        $("rSkip").textContent = unanswered;
-        $("rTime").textContent = fmtDur(secs);
-        $("reviewList").classList.add("hidden");
-        renderAll();
-        showView("result");
+        rec.id = ref.id;
       } catch (err) {
         console.warn("Attempt save failed:", err);
-        toast("Could not save your result. Check your connection and try again.");
-      } finally { submitting = false; }
+        toast("Result shown, but it could not be saved. Check your connection and try again.");
+      }
     }
     $("reviewBtn").addEventListener("click", function(){
       if (!exam) return;
