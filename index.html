@@ -91,7 +91,7 @@
       .panel-box.open-full .panel-back{display:inline-flex}
       /* ---------- ShopFlow-style page headers + cards ---------- */
       .prof-menu .panel-box.open-full > .sf-topbar{margin:-18px -16px 0;max-width:none}
-      .sf-topbar{background:linear-gradient(135deg,#0a2724 0%,#0c3a35 55%,#0f766e 135%);color:#fff;padding:20px 18px 18px;display:flex;align-items:center;gap:12px;border-radius:0 0 26px 26px;box-shadow:0 14px 30px -14px rgba(12,43,40,.55)}
+      .sf-topbar{background:linear-gradient(135deg,#3B82F6 0%,#135BFA 55%,#0B3D91 135%);color:#fff;padding:20px 18px 18px;display:flex;align-items:center;gap:12px;border-radius:0 0 26px 26px;box-shadow:0 14px 30px -14px rgba(19,91,250,.45)}
       .sf-back{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);color:#fff;width:40px;height:40px;border-radius:999px;font-size:19px;flex:none;display:grid;place-items:center;cursor:pointer}
       .sf-grow{flex:1;min-width:0}
       .sf-grow h1{font-size:20px;margin:0;font-weight:800;line-height:1.2;letter-spacing:-.01em;color:#fff}
@@ -766,7 +766,6 @@
               <div class="sf-topbar">
                 <button class="sf-back" type="button" data-close-panel aria-label="Back">‹</button>
                 <div class="sf-grow"><h1>Edit Profile</h1><div class="sf-sub">Your account details</div></div>
-                <button class="sf-bell" type="button" aria-label="Notifications">🔔</button>
               </div>
               <div class="set-card pad">
               <div class="field">
@@ -808,7 +807,6 @@
               <div class="sf-topbar">
                 <button class="sf-back" type="button" data-close-panel aria-label="Back">‹</button>
                 <div class="sf-grow"><h1>Settings</h1><div class="sf-sub">App preferences</div></div>
-                <button class="sf-bell" type="button" aria-label="Notifications">🔔</button>
               </div>
               <div class="set-card">
                 <div class="set-row">
@@ -849,7 +847,6 @@
               <div class="sf-topbar">
                 <button class="sf-back" type="button" data-close-panel aria-label="Back">‹</button>
                 <div class="sf-grow"><h1>FAQs</h1><div class="sf-sub">Common questions</div></div>
-                <button class="sf-bell" type="button" aria-label="Notifications">🔔</button>
               </div>
               <div class="set-card">
               <div class="faq-item"><b>How do I start a test?</b><p>Open Tests, pick any chapter, subject, smart or mock test, and tap Start Test.</p></div>
@@ -867,7 +864,6 @@
               <div class="sf-topbar">
                 <button class="sf-back" type="button" data-close-panel aria-label="Back">‹</button>
                 <div class="sf-grow"><h1>About App</h1><div class="sf-sub">About StudyHub</div></div>
-                <button class="sf-bell" type="button" aria-label="Notifications">🔔</button>
               </div>
               <div class="set-card pad">
                 <p>StudyHub — MDCAT Preparation. Subject-wise MCQs, Smart Test Mode and progress tracking to help you practice smarter, learn better and track your progress.</p>
@@ -1269,8 +1265,6 @@
         toast(unread ? "You have " + unread + " unread notification" + (unread === 1 ? "" : "s") + "." : "No new notifications yet.");
       } catch (e) { toast("No new notifications yet."); }
     });
-    var sfBells = document.querySelectorAll(".sf-bell");
-    for (var sb=0; sb<sfBells.length; sb++){ sfBells[sb].addEventListener("click", function(){ $("bellBtn").click(); }); }
     $("quickTests").addEventListener("click", function(){ showView("tests"); });
     $("quickNotes").addEventListener("click", function(){ showView("notes"); });
     $("quickProgress").addEventListener("click", function(){ showView("dashboard"); });
