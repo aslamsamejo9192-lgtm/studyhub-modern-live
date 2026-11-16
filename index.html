@@ -1997,7 +1997,7 @@
     }
 
     /* ==================== EXAM ENGINE ==================== */
-    var exam = null, examTimer = null;
+    var exam = null, examTimer = null, qCache = {};
     /* Load this test's questions from Firestore; fall back to the preview's
        original same-subject MCQs (clearly marked as samples) only when the
        test has no questions saved yet. */
@@ -2020,20 +2020,45 @@
     }
     async function startExam(test, preQs){
       if (!test) return;
+      /* Open the exam screen at once (title + full timer + loading state),
+         then load the questions in the background. Previously the screen
+         only opened after the Firestore fetch finished, so on a slow
+         connection the tap felt dead for seconds. The timer starts only
+         once the first question renders, so loading time never eats it. */
+      var mins0 = Math.round(((test.durationSeconds || 0) / 60) || (test.questionCount || 50));
+      var total0 = test.durationSeconds || (test.questionCount || 50) * 60;
+      exam = null;
+      stopExamTimer();
+      $("examTitle").textContent = test.title;
+      $("examSub").textContent = (test.questionCount || "?") + " Questions · " + mins0 + " Minutes · " + (test.totalMarks || "?") + " Marks";
+      $("examTimer").textContent = fmtClock(total0);
+      $("timerChip").classList.remove("low");
+      var badge0 = $("sampleBadge");
+      if (badge0) badge0.classList.add("hidden");
+      $("qNum").textContent = "LOADING...";
+      $("qSubject").textContent = "";
+      $("qText").textContent = "Loading questions, please wait…";
+      $("qOpts").innerHTML = "";
+      $("palGrid").innerHTML = "";
+      showView("exam");
       var qs = [];
       var usedFallback = false;
       if (preQs && preQs.length) {
         qs = preQs;
         test._customQs = preQs;
+      } else if (test.id && qCache[test.id]) {
+        /* Already loaded once this session — open instantly, no re-download. */
+        qs = qCache[test.id];
       } else {
         try {
           var snap = await getDocs(collection(db, "tests", test.id, "questions"));
           snap.forEach(function(d){ var data = d.data(); data.id = d.id; qs.push(data); });
           qs.sort(function(a,b){ return (a.order || 0) - (b.order || 0); });
+          if (qs.length && test.id) qCache[test.id] = qs;
         } catch (e) { console.warn("Questions load failed:", e); }
       }
       if (!qs.length) { qs = fallbackQuestionsFor(test); usedFallback = true; }
-      if (!qs.length) { toast("This test has no questions attached yet. Please try another test."); return; }
+      if (!qs.length) { toast("This test has no questions attached yet. Please try another test."); showView("tests"); return; }
       var norm = [];
       for (var i=0;i<qs.length;i++){
         var q = qs[i];
