@@ -795,14 +795,22 @@
           <div class="chips" id="typeChips" style="margin-top:10px">
             <button class="fchip active" type="button">All</button>
             <button class="fchip" type="button">Flashcards</button>
-            <button class="fchip" type="button">Notes</button>
-            <button class="fchip" type="button">PDF</button>
+            <button class="fchip" type="button">PDF Notes</button>
+            <button class="fchip" type="button">PDF MCQs</button>
+            <button class="fchip" type="button">Past Papers</button>
           </div>
           <div class="list-head">
             <h3>Study Material</h3>
             <span class="cnt" id="noteCount">0 items</span>
           </div>
           <div id="resList"></div>
+          <div class="empty-card hidden" id="resEmpty">
+            <div class="eic">
+              <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4.5A2.5 2.5 0 0 1 4.5 2H11v20H4.5A2.5 2.5 0 0 0 2 24.5z" opacity="0"/><path d="M12 6c-1.5-1.6-3.8-2-6-2H3v14h3c2.2 0 4.5.4 6 2 1.5-1.6 3.8-2 6-2h3V4h-3c-2.2 0-4.5.4-6 2z"/><path d="M12 6v14"/></svg>
+            </div>
+            <h3 id="resEmptyTitle">No PDF Notes Available Yet</h3>
+            <p id="resEmptySub">Check back later for new study materials.</p>
+          </div>
         </div>
 
         <!-- ======== FLASHCARDS (STUDY) ======== -->
@@ -2271,9 +2279,23 @@
         }, function(err){ console.warn("Notes load failed:", err); notesReady = true; renderResources(); });
       } catch (e) { console.warn("Notes listener failed:", e); notesReady = true; renderResources(); }
     }
+    /* What kind of material is a note: PDF Notes, PDF MCQs or Past Papers.
+       A note's own type field decides when set; otherwise the title decides
+       (a title with "MCQ" is an MCQ set, a title with "Past Paper" is a
+       past paper, anything else is a note). */
+    function noteKind(n){
+      var t = String(n.type || n.kind || n.category || "").toLowerCase();
+      if (t === "pastpaper" || t === "past-paper" || t === "past paper") return "pastpaper";
+      if (t === "mcqs" || t === "mcq") return "mcqs";
+      if (t === "notes" || t === "note") return "notes";
+      var title = String(n.title || "").toLowerCase();
+      if (title.indexOf("past paper") !== -1) return "pastpaper";
+      if (title.indexOf("mcq") !== -1) return "mcqs";
+      return "notes";
+    }
     var shownRes = [];
     function renderResources(){
-      var listEl = $("resList"), countEl = $("noteCount");
+      var listEl = $("resList"), countEl = $("noteCount"), emptyEl = $("resEmpty");
       if (!listEl) return;
       shownRes = [];
       var q = noteQuery;
@@ -2287,15 +2309,31 @@
           shownRes.push({ kind: "flashcard", key: keys[i], num: i + 1, title: d.title, sub: d.label + " · " + d.cards.length + " flashcards" });
         }
       }
-      /* Notes (Firestore) — notes are PDFs, so they also appear under the PDF filter. */
-      if (notesReady && (resType === "All" || resType === "Notes" || resType === "PDF")){
+      /* Notes (Firestore) — split into PDF Notes / PDF MCQs / Past Papers by kind. */
+      if (notesReady && (resType === "All" || resType === "PDF Notes" || resType === "PDF MCQs" || resType === "Past Papers")){
         for (var n=0;n<liveNotes.length;n++){
           var nt = liveNotes[n];
+          var k = noteKind(nt);
+          if (resType === "PDF Notes" && k !== "notes") continue;
+          if (resType === "PDF MCQs" && k !== "mcqs") continue;
+          if (resType === "Past Papers" && k !== "pastpaper") continue;
           if (!textOk(nt.title)) continue;
           shownRes.push({ kind: "note", note: nt });
         }
       }
       if (countEl) countEl.textContent = shownRes.length + (shownRes.length === 1 ? " item" : " items");
+      /* Nothing here yet — say so plainly. The message disappears on its own
+         as soon as material is uploaded, because the list renders live. */
+      if (!shownRes.length){
+        listEl.innerHTML = "";
+        if (emptyEl){
+          emptyEl.classList.remove("hidden");
+          $("resEmptyTitle").textContent = q ? "No Results Found" : (resType === "All" ? "No Study Material Available Yet" : "No " + resType + " Available Yet");
+          $("resEmptySub").textContent = q ? "Try a different search." : "Check back later for new study materials.";
+        }
+        return;
+      }
+      if (emptyEl) emptyEl.classList.add("hidden");
       var html = "";
       for (var j=0;j<shownRes.length;j++){
         var it = shownRes[j];
