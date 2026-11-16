@@ -1298,6 +1298,10 @@
       var keys = Object.keys(AUTH_IDS);
       for (var i=0;i<keys.length;i++){ var el = $(AUTH_IDS[keys[i]]); if (el) el.classList.toggle("hidden", keys[i] !== name); }
       $("loginErr").textContent=""; $("regErr").textContent=""; $("fpErr").textContent=""; $("fpOk").textContent="";
+      /* Reset the submit buttons: after a successful sign-in/register the
+         button stayed disabled with its spinner ("Signing in..."), so after
+         a sign-out the Sign In button was dead until a page reload. */
+      clearBusy($("registerForm")); clearBusy($("loginForm")); clearBusy($("forgotForm"));
       syncAuthThemeBtns();
       window.scrollTo(0,0);
     }
@@ -1537,6 +1541,11 @@
       cqShuffle(cand);
       var pool = [];
       for (var k=0;k<cand.length && pool.length < count;k++){
+        var cached = qCache[cand[k].id];
+        if (cached) {
+          for (var qi=0;qi<cached.length;qi++){ var cd = cached[qi]; if (!cd.subject) cd.subject = cand[k].subject; if (!cd.topic) cd.topic = cand[k].topic; pool.push(cd); }
+          continue;
+        }
         try {
           var snap = await getDocs(collection(db, "tests", cand[k].id, "questions"));
           snap.forEach(function(d){ var data = d.data(); data.id = d.id; if (!data.subject) data.subject = cand[k].subject; if (!data.topic) data.topic = cand[k].topic; pool.push(data); });
