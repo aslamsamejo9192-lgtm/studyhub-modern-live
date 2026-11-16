@@ -792,20 +792,11 @@
             <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
             <input id="noteSearch" type="text" placeholder="Search study notes..." />
           </div>
-          <div class="chips" id="noteChips">
-            <button class="fchip active" type="button">All</button>
-            <button class="fchip" type="button">Biology</button>
-            <button class="fchip" type="button">Chemistry</button>
-            <button class="fchip" type="button">Physics</button>
-            <button class="fchip" type="button">English</button>
-          </div>
           <div class="chips" id="typeChips" style="margin-top:10px">
             <button class="fchip active" type="button">All</button>
             <button class="fchip" type="button">Flashcards</button>
             <button class="fchip" type="button">Notes</button>
-            <button class="fchip" type="button">MCQs</button>
             <button class="fchip" type="button">PDF</button>
-            <button class="fchip" type="button">Past Papers</button>
           </div>
           <div class="list-head">
             <h3>Study Material</h3>
@@ -1623,15 +1614,7 @@
     $("perfViewAll").addEventListener("click", function(){ showView("dashboard"); });
     $("subjViewAll").addEventListener("click", function(){ setTestFilter("all"); showView("tests"); });
     $("startPractice").addEventListener("click", function(){ showView("tests"); });
-    var noteFilter = "All", noteQuery = "", resType = "All";
-    var noteChips = $("noteChips").querySelectorAll(".fchip");
-    for (var nc=0;nc<noteChips.length;nc++){
-      noteChips[nc].addEventListener("click", function(){
-        for (var x=0;x<noteChips.length;x++) noteChips[x].classList.toggle("active", noteChips[x]===this);
-        noteFilter = this.textContent.trim();
-        renderResources();
-      });
-    }
+    var noteQuery = "", resType = "All";
     var typeChips = $("typeChips").querySelectorAll(".fchip");
     for (var tc=0;tc<typeChips.length;tc++){
       typeChips[tc].addEventListener("click", function(){
@@ -2288,25 +2271,18 @@
         }, function(err){ console.warn("Notes load failed:", err); notesReady = true; renderResources(); });
       } catch (e) { console.warn("Notes listener failed:", e); notesReady = true; renderResources(); }
     }
-    /* Past papers bundled with the app — same file as the MDCAT Prime website's Resources page. */
-    var PAST_PAPERS = [
-      { title: "Sindh MDCAT Paper 2025 — Version A", subject: "Past Papers", meta: "Mdcat Prime · 47 pages · PDF", downloadUrl: "https://mdcatprep-seven.vercel.app/resources/sindh-mdcat-2025-paper-a.pdf" }
-    ];
     var shownRes = [];
     function renderResources(){
       var listEl = $("resList"), countEl = $("noteCount");
       if (!listEl) return;
       shownRes = [];
       var q = noteQuery;
-      function subjOk(subj){ return noteFilter === "All" || subj === noteFilter; }
       function textOk(t){ return !q || String(t || "").toLowerCase().indexOf(q) !== -1; }
       /* Flashcards */
       if (resType === "All" || resType === "Flashcards"){
         var keys = Object.keys(FC_DECKS);
         for (var i=0;i<keys.length;i++){
           var d = FC_DECKS[keys[i]];
-          var dsubj = d.label.split(" · ")[0];
-          if (!subjOk(dsubj)) continue;
           if (!textOk(d.title + " " + d.label)) continue;
           shownRes.push({ kind: "flashcard", key: keys[i], num: i + 1, title: d.title, sub: d.label + " · " + d.cards.length + " flashcards" });
         }
@@ -2315,26 +2291,8 @@
       if (notesReady && (resType === "All" || resType === "Notes" || resType === "PDF")){
         for (var n=0;n<liveNotes.length;n++){
           var nt = liveNotes[n];
-          if (!subjOk(nt.subject)) continue;
           if (!textOk(nt.title)) continue;
           shownRes.push({ kind: "note", note: nt });
-        }
-      }
-      /* Past papers */
-      if (resType === "All" || resType === "Past Papers" || resType === "PDF"){
-        for (var p=0;p<PAST_PAPERS.length;p++){
-          var pp = PAST_PAPERS[p];
-          if (!textOk(pp.title)) continue;
-          shownRes.push({ kind: "pastpaper", note: pp });
-        }
-      }
-      /* MCQs — the chapter-wise tests, same list as the Tests tab. */
-      if (testsReady && (resType === "All" || resType === "MCQs")){
-        for (var t=0;t<liveTests.length;t++){
-          var tt = liveTests[t];
-          if (!subjOk(tt.subject)) continue;
-          if (!textOk(tt.title)) continue;
-          shownRes.push({ kind: "test", test: tt });
         }
       }
       if (countEl) countEl.textContent = shownRes.length + (shownRes.length === 1 ? " item" : " items");
@@ -2343,20 +2301,10 @@
         var it = shownRes[j];
         if (it.kind === "flashcard"){
           html += '<button class="chap-row" type="button" data-idx="'+j+'"><span class="chap-num">'+("0"+it.num).slice(-2)+'</span><span class="ct">'+esc(it.title)+'<small>'+esc(it.sub)+'</small></span><span class="chev">'+CHEV+'</span></button>';
-        } else if (it.kind === "test"){
-          var st = testStyle(it.test.subject);
-          var mins = Math.round((it.test.durationSeconds || 0) / 60);
-          html += '<div class="test-card"><div class="top">'
-            + '<span class="spill" style="background:'+st.soft+';color:'+st.color+'">'+esc(it.test.subject).toUpperCase()+'</span></div>'
-            + '<h4>'+esc(it.test.title)+'</h4>'
-            + '<div class="meta"><span>'+CLOCK+' '+mins+' mins</span><span>'+HELP+' '+(it.test.questionCount || 0)+' MCQs</span><span>'+MEDAL+' '+(it.test.totalMarks || 0)+' Marks</span></div>'
-            + '<button class="btn-blue" type="button" data-idx="'+j+'">Attempt Test '+ARROW+'</button></div>';
         } else {
           var nn = it.note;
           var date = nn.uploadedAt ? new Date(nn.uploadedAt).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}) : "Recent";
-          var metaLine = it.kind === "pastpaper"
-            ? esc(nn.subject) + " · " + esc(nn.meta)
-            : esc(nn.subject) + (nn.fileSizeFormatted ? " · " + esc(nn.fileSizeFormatted) : "") + " · Updated: " + esc(date);
+          var metaLine = esc(nn.subject) + (nn.fileSizeFormatted ? " · " + esc(nn.fileSizeFormatted) : "") + " · Updated: " + esc(date);
           html += '<div class="test-card" style="display:flex;align-items:center;gap:12px">'
             + '<div style="flex:1;min-width:0"><h4 style="margin:0 0 4px">'+esc(nn.title)+'</h4>'
             + '<div class="chap">'+metaLine+'</div></div>'
@@ -2373,7 +2321,6 @@
       if (!it) return;
       var act = b.getAttribute("data-act");
       if (it.kind === "flashcard") openFlashcards(it.key);
-      else if (it.kind === "test") startExam(it.test);
       else if (act === "dl") downloadNote(it.note);
       else openNoteViewer(it.note);
     });
