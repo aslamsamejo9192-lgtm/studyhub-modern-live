@@ -257,6 +257,31 @@
       .chap-row .ct{flex:1;min-width:0;font-weight:800;font-size:15px}
       .chap-row .chev{color:var(--muted);flex:none;display:grid;place-items:center}
       [data-theme="dark"] .chap-num,[data-theme="dark"] .chap-pill{color:#38BDF8;border-color:#38BDF8}
+      .chap-row .ct small{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-top:2px}
+      /* Flashcards (same 9 decks as the MDCAT Prime website) */
+      .fc-deck-label{text-align:center;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);margin:2px 0 0}
+      .fc-counter{text-align:center;font-size:17px;font-weight:800;letter-spacing:-.01em;margin-top:8px}
+      .fc-scene{perspective:1400px;margin-top:20px;cursor:pointer;border-radius:24px}
+      .fc-scene:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+      .fc-inner{position:relative;width:100%;min-height:340px;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.22,1,.36,1)}
+      .fc-inner.flipped{transform:rotateY(180deg)}
+      @media (max-width:560px){.fc-inner{min-height:400px}}
+      .fc-face{position:absolute;inset:0;min-width:0;overflow-y:auto;display:flex;flex-direction:column;align-items:center;text-align:center;padding:24px 22px 20px;border-radius:24px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+      .fc-face.fc-back{transform:rotateY(180deg);background:var(--blue-soft)}
+      [data-theme="dark"] .fc-face{background:linear-gradient(180deg,#12233F,#0E1B33)}
+      [data-theme="dark"] .fc-face.fc-back{background:linear-gradient(180deg,rgba(59,130,246,.16),#0E1B33)}
+      .fc-side-label{flex:none;font-size:11.5px;font-weight:750;letter-spacing:.07em;text-transform:uppercase;color:#0369A1;background:rgba(56,189,248,.14);border:1px solid rgba(56,189,248,.35);padding:5px 12px;border-radius:999px}
+      [data-theme="dark"] .fc-side-label{color:#7DD3FC;background:rgba(56,189,248,.12)}
+      .fc-text{flex:0 1 auto;margin-top:auto;margin-bottom:auto;width:100%;min-width:0;padding:18px 2px;overflow-wrap:break-word}
+      .fc-front .fc-text{font-size:21px;font-weight:750;line-height:1.4;letter-spacing:-.015em}
+      .fc-back .fc-text{font-size:17px;font-weight:550;line-height:1.65}
+      @media (max-width:560px){.fc-front .fc-text{font-size:19.5px}.fc-back .fc-text{font-size:16.5px}}
+      .fc-text sub{font-size:.68em}
+      .fc-hint{flex:none;font-size:13px;font-weight:600;color:var(--muted2)}
+      .fc-nav{display:flex;gap:12px;margin-top:22px}
+      .fc-nav .btn-ghost,.fc-nav .btn-grad{flex:1 1 0;min-width:0;padding:13px 10px;white-space:nowrap}
+      .fc-nav button:disabled{opacity:.45;cursor:default}
+      @media (prefers-reduced-motion:reduce){.fc-inner{transition:none}}
       .gold-pill{background:rgba(246,162,2,.13);color:#F6A202;border:1px solid rgba(246,162,2,.5)}
 
       /* ---------- Dashboard / progress ---------- */
@@ -763,6 +788,11 @@
         <div class="view" id="view-notes">
           <h2 class="page-title">Resources</h2>
           <p class="page-sub" style="margin-bottom:14px">Access quality notes, MCQs, and study materials to make your MDCAT preparation easier and smarter.</p>
+          <div class="list-head" style="margin-top:4px">
+            <h3>Flashcards</h3>
+            <span class="cnt">9 decks · 225 cards</span>
+          </div>
+          <div id="fcDeckList" style="display:grid;gap:10px;margin-bottom:18px"></div>
           <div class="searchbar">
             <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
             <input id="noteSearch" type="text" placeholder="Search study notes..." />
@@ -788,6 +818,32 @@
             <button class="btn-grad" id="refreshNotes" type="button">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
               Refresh</button>
+          </div>
+        </div>
+
+        <!-- ======== FLASHCARDS (STUDY) ======== -->
+        <div class="view" id="view-flashcards">
+          <button class="chap-backlink" type="button" id="fcBackBtn">← Resources</button>
+          <h2 class="chap-title" id="fcDeckTitle">Flashcards</h2>
+          <p class="fc-deck-label" id="fcDeckLabel"></p>
+          <p class="fc-counter" id="fcCounter">Card 1 of 25</p>
+          <div class="fc-scene" id="fcScene" role="button" tabindex="0" aria-label="Flashcard — tap to flip">
+            <div class="fc-inner" id="fcInner">
+              <div class="fc-face fc-front">
+                <span class="fc-side-label">Question</span>
+                <div class="fc-text" id="fcFront"></div>
+                <span class="fc-hint">Tap the card to flip</span>
+              </div>
+              <div class="fc-face fc-back">
+                <span class="fc-side-label">Answer</span>
+                <div class="fc-text" id="fcBack"></div>
+                <span class="fc-hint">Tap the card to flip back</span>
+              </div>
+            </div>
+          </div>
+          <div class="fc-nav">
+            <button class="btn-ghost" type="button" id="fcPrevBtn">← Previous</button>
+            <button class="btn-grad" type="button" id="fcNextBtn">Next →</button>
           </div>
         </div>
 
@@ -1494,9 +1550,9 @@
     function showView(name){
       closePanels();
       if (name !== "exam" && name !== "result") stopExamTimer();
-      var views = ["home","tests","notes","dashboard","exam","result","profile","chapters","chaptertest"];
+      var views = ["home","tests","notes","dashboard","exam","result","profile","chapters","chaptertest","flashcards"];
       for (var i=0;i<views.length;i++) $("view-"+views[i]).classList.toggle("on", views[i]===name);
-      var navName = (name==="exam" || name==="result" || name==="chapters" || name==="chaptertest") ? "tests" : name;
+      var navName = (name==="exam" || name==="result" || name==="chapters" || name==="chaptertest") ? "tests" : (name==="flashcards" ? "notes" : name);
       var navs = document.querySelectorAll("[data-nav]");
       for (var j=0;j<navs.length;j++) navs[j].classList.toggle("active", navs[j].getAttribute("data-nav")===navName);
       if (name==="dashboard") renderProgress();
@@ -1815,6 +1871,305 @@
       }
     }
     $("chapBack").addEventListener("click", function(){ showView("tests"); });
+
+    /* ==================== FLASHCARDS (same 9 decks as the MDCAT Prime website) ==================== */
+          var FC_CARDS = [
+        { front: 'Alternating Current (AC)', back: 'An electric current whose magnitude changes continuously with time and whose direction reverses periodically.' },
+        { front: 'Formula for Root Mean Square (RMS) value of alternating current', back: 'I<sub>rms</sub> = I<sub>0</sub> / √2 ≈ 0.707 I<sub>0</sub>, where I<sub>0</sub> is the peak value of the current.' },
+        { front: 'Peak-to-Peak Value', back: 'The sum of the positive and negative peak values of an alternating quantity, equal to 2V<sub>0</sub> or 2I<sub>0</sub>.' },
+        { front: 'Phase relationship between voltage and current in a pure resistor', back: 'Voltage and current are in phase with each other (the phase difference φ = 0°).' },
+        { front: 'Phase relationship between voltage and current in a pure inductor', back: 'Alternating voltage leads the alternating current by a phase angle of 90° (or π/2 radians).' },
+        { front: 'Phase relationship between voltage and current in a pure capacitor', back: 'Alternating current leads the alternating voltage by a phase angle of 90° (or π/2 radians).' },
+        { front: 'Formula for Inductive Reactance (X<sub>L</sub>)', back: 'X<sub>L</sub> = ωL = 2πfL, where f is the frequency of AC and L is the inductance.' },
+        { front: 'Formula for Capacitive Reactance (X<sub>C</sub>)', back: 'X<sub>C</sub> = 1/(ωC) = 1/(2πfC), where f is the frequency of AC and C is the capacitance.' },
+        { front: 'Impedance (Z)', back: 'The combined opposition offered by resistance and reactance in an AC circuit, given by Z = √(R² + (X<sub>L</sub> − X<sub>C</sub>)²).' },
+        { front: 'Formula for Resonance Frequency (f<sub>r</sub>) in an RLC series circuit', back: 'f<sub>r</sub> = 1/(2π√(LC)), occurring when inductive reactance equals capacitive reactance (X<sub>L</sub> = X<sub>C</sub>).' },
+        { front: 'Power Factor in an AC circuit', back: 'The cosine of the phase angle (cos φ) between the alternating voltage and current, from the power formula P = V<sub>rms</sub> I<sub>rms</sub> cos φ.' },
+        { front: 'Choke Coil', back: 'An inductor with very high inductance and negligible resistance used to limit alternating current without significant power loss.' },
+        { front: 'Doping', back: 'The process of adding a controlled amount of trivalent or pentavalent impurity atoms to a pure (intrinsic) semiconductor to increase its conductivity.' },
+        { front: 'N-type Semiconductor', back: 'An extrinsic semiconductor formed by doping a pure semiconductor with pentavalent impurities (donor atoms), where free electrons are the majority carriers.' },
+        { front: 'P-type Semiconductor', back: 'An extrinsic semiconductor formed by doping a pure semiconductor with trivalent impurities (acceptor atoms), where holes are the majority carriers.' },
+        { front: 'Depletion Region', back: 'The charge-free region on either side of a p-n junction containing immobile positive and negative ions, depleted of mobile charge carriers.' },
+        { front: 'Potential Barrier values for Silicon and Germanium at room temperature', back: '0.7 V for Silicon (Si) and 0.3 V for Germanium (Ge).' },
+        { front: 'Forward Biasing of a p-n junction diode', back: 'Connecting the p-side to the positive terminal and the n-side to the negative terminal of a battery, which narrows the depletion region and allows current to flow.' },
+        { front: 'Reverse Biasing of a p-n junction diode', back: 'Connecting the p-side to the negative terminal and the n-side to the positive terminal of a battery, which widens the depletion region and blocks majority current flow.' },
+        { front: 'Rectification', back: 'The process of converting alternating current (AC) voltage into direct current (DC) voltage using semiconductor diodes.' },
+        { front: 'Zener Diode', back: 'A heavily doped p-n junction diode specially designed to operate continuously in the reverse breakdown region without being damaged, commonly used as a voltage regulator.' },
+        { front: 'Fundamental current equation for a Bipolar Junction Transistor (BJT)', back: 'I<sub>E</sub> = I<sub>B</sub> + I<sub>C</sub>, where I<sub>E</sub> is emitter current, I<sub>B</sub> is base current, and I<sub>C</sub> is collector current.' },
+        { front: 'Formula for Current Gain (β) in Common-Emitter configuration', back: 'β = I<sub>C</sub> / I<sub>B</sub>, the ratio of collector current (I<sub>C</sub>) to base current (I<sub>B</sub>).' },
+        { front: 'Formula for Current Gain (α) in Common-Base configuration', back: 'α = I<sub>C</sub> / I<sub>E</sub>, the ratio of collector current (I<sub>C</sub>) to emitter current (I<sub>E</sub>).' },
+        { front: 'Universal Logic Gates', back: 'NAND and NOR gates, because any basic logic gate (AND, OR, NOT) or boolean function can be constructed using only NAND or only NOR gates.' }
+      ];
+      /* ---------- Flashcards — Biology: Bioenergetics (25 cards) ---------- */
+      var FC_CARDS_BIOENERGETICS = [
+        { front: 'Bioenergetics', back: 'The study of energy relationships and energy transformations (conversions) in living organisms.' },
+        { front: 'ATP structure', back: 'A nucleotide composed of the nitrogenous base adenine, a ribose sugar, and a chain of three phosphate groups.' },
+        { front: 'Mechanism of ATP energy release', back: 'Hydrolysis of the terminal high-energy phosphate bond of ATP yields ADP, an inorganic phosphate, and approximately 7.3 kcal/mol of free energy.' },
+        { front: 'Oxidation-reduction (redox) reactions', back: 'Coupled chemical reactions where oxidation involves the loss of electrons (or hydrogen atoms) and reduction involves the gain of electrons.' },
+        { front: 'Overall equation of photosynthesis', back: '6CO<sub>2</sub> + 12H<sub>2</sub>O → (Light &amp; Chlorophyll) C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6O<sub>2</sub> + 6H<sub>2</sub>O' },
+        { front: 'Primary photosynthetic pigments', back: 'Chlorophyll a is the primary pigment, while accessory pigments include chlorophyll b, carotenoids, and xanthophylls.' },
+        { front: 'Action spectrum vs. absorption spectrum', back: 'An absorption spectrum shows light absorption at various wavelengths by a pigment, whereas an action spectrum measures the rate of photosynthesis driven by different wavelengths.' },
+        { front: 'Location of light-dependent reactions', back: 'The thylakoid membranes (grana) of the chloroplast.' },
+        { front: 'Products of light-dependent reactions', back: 'ATP, NADPH, and oxygen gas (O<sub>2</sub>) derived from photolysis.' },
+        { front: 'Photolysis of water', back: 'The enzymatic splitting of water molecules in Photosystem II using light energy, producing protons, electrons, and oxygen.' },
+        { front: 'Non-cyclic photophosphorylation', back: 'A light-driven electron flow involving both Photosystem II and Photosystem I that produces both ATP and NADPH.' },
+        { front: 'Cyclic photophosphorylation', back: 'An electron pathway involving only Photosystem I where excited electrons cycle back to the reaction center to produce ATP without forming NADPH.' },
+        { front: 'Chemiosmosis', back: 'The process by which ATP is synthesized as protons (H<sup>+</sup>) flow down their electrochemical gradient through ATP synthase complexes across the thylakoid or inner mitochondrial membrane.' },
+        { front: 'Location of light-independent reactions (Calvin cycle)', back: 'The stroma of the chloroplast.' },
+        { front: 'First step of the Calvin cycle', back: 'Carbon fixation, where carbon dioxide is attached to ribulose bisphosphate (RuBP) by the enzyme RuBisCO.' },
+        { front: 'Limiting factors of photosynthesis', back: 'Light intensity, carbon dioxide concentration, temperature, and water availability.' },
+        { front: 'Overall equation of cellular respiration', back: 'C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6O<sub>2</sub> → 6CO<sub>2</sub> + 6H<sub>2</sub>O + Energy (ATP + Heat)' },
+        { front: 'Glycolysis location and oxygen requirement', back: 'Occurs in the cytoplasm (cytosol) and does not require oxygen (anaerobic process).' },
+        { front: 'Net yield of glycolysis per glucose molecule', back: '2 ATP (net) and 2 NADH molecules.' },
+        { front: 'Krebs cycle (Citric Acid Cycle) location', back: 'The mitochondrial matrix.' },
+        { front: 'Link reaction bridging glycolysis and Krebs cycle', back: 'Pyruvate is decarboxylated and oxidized, combining with coenzyme A to form Acetyl-CoA, releasing CO<sub>2</sub> and forming NADH.' },
+        { front: 'Products per turn of the Krebs cycle', back: '3 NADH, 1 FADH<sub>2</sub>, 1 ATP (or GTP), and 2 CO<sub>2</sub> released.' },
+        { front: 'Electron Transport Chain (ETC) location', back: 'The inner mitochondrial membrane (cristae).' },
+        { front: 'Final electron acceptor in aerobic respiration', back: 'Molecular oxygen (O<sub>2</sub>), which combines with protons to form water.' },
+        { front: 'Anaerobic respiration / Fermentation', back: 'A pathway that produces ATP without oxygen, leading to lactic acid fermentation in animals or alcoholic fermentation in plants and yeast.' }
+      ];
+      /* ---------- Flashcards — Biology: Biological Molecules (25 cards) ---------- */
+      var FC_CARDS_BIOMOLECULES = [
+        { front: 'Biological molecules', back: 'Organic and inorganic compounds that constitute living matter and participate in cellular structure and metabolic processes.' },
+        { front: 'Heat capacity of water', back: 'Water has a high specific heat capacity due to extensive hydrogen bonding, allowing it to act as a thermal buffer in living organisms.' },
+        { front: 'Heat of vaporization of water', back: 'Water absorbs a large amount of heat when changing from liquid to gas (ΔH<sub>vap</sub>), providing a significant cooling effect through perspiration or transpiration.' },
+        { front: 'Monosaccharides', back: 'Simple sugars with the general formula C<sub>n</sub>H<sub>2n</sub>O<sub>n</sub>, which cannot be hydrolyzed into simpler carbohydrates.' },
+        { front: 'Oligosaccharides', back: 'Carbohydrates yielding 2 to 10 monosaccharide units upon hydrolysis, linked together by glycosidic bonds.' },
+        { front: 'Glycosidic bond', back: 'A covalent bond formed between two monosaccharides through a condensation (dehydration synthesis) reaction.' },
+        { front: 'Starch', back: 'A storage polysaccharide in plants composed of amylose (linear α-1,4 linkages) and amylopectin (branched α-1,4 and α-1,6 linkages).' },
+        { front: 'Glycogen', back: 'A highly branched storage polysaccharide made of α-glucose units, stored primarily in the liver and skeletal muscles of animals.' },
+        { front: 'Cellulose', back: 'A structural polysaccharide composed of unbranched β-glucose chains linked by β-1,4 glycosidic bonds, forming rigid microfibrils in plant cell walls.' },
+        { front: 'Amino acid structure', back: 'Consists of a central alpha-carbon bonded to a hydrogen atom, an amino group (−NH<sub>2</sub>), a carboxyl group (−COOH), and a variable side chain (−R).' },
+        { front: 'Peptide bond', back: 'An amide-type covalent bond formed between the carboxyl group of one amino acid and the amino group of another with the release of water.' },
+        { front: 'Primary structure of proteins', back: 'The linear sequence of amino acids linked together by peptide bonds in a polypeptide chain.' },
+        { front: 'Secondary structure of proteins', back: 'The coiling or folding of the polypeptide backbone stabilized by hydrogen bonds, forming α-helices or β-pleated sheets.' },
+        { front: 'Tertiary structure of proteins', back: 'The overall three-dimensional conformation of a polypeptide chain resulting from interactions among R-groups (e.g., disulfide bridges, ionic bonds, hydrophobic interactions).' },
+        { front: 'Quaternary structure of proteins', back: 'The association of two or more polypeptide subunits into a single functional protein complex.' },
+        { front: 'Acylglycerols (Fats and oils)', back: 'Esters formed by the condensation of glycerol with one, two, or three fatty acid molecules (mono-, di-, or triglycerides).' },
+        { front: 'Phospholipids', back: 'Lipids containing a glycerol backbone, two fatty acid chains, a phosphate group, and a polar organic head group.' },
+        { front: 'Terpenes', back: 'A diverse class of lipids synthesized from five-carbon isoprenoid units, including important pigments like carotenoids and chlorophyll tails.' },
+        { front: 'Waxes', back: 'Esters of long-chain fatty acids with long-chain monohydric alcohols, providing hydrophobic protective coatings on leaves, fruits, and integuments.' },
+        { front: 'Nucleic acids', back: 'Macromolecules composed of nucleotide monomers that store and transmit genetic information (DNA and RNA).' },
+        { front: 'Nucleotide structure', back: 'Comprises a pentose sugar (ribose or deoxyribose), a nitrogenous base (purine or pyrimidine), and one to three phosphate groups.' },
+        { front: 'DNA double helix structure', back: 'Proposed by Watson and Crick, consisting of two antiparallel polynucleotide strands twisted around a common axis, held together by complementary base pairing (A-T, G-C).' },
+        { front: 'Types of RNA', back: 'Messenger RNA (mRNA), transfer RNA (tRNA), and ribosomal RNA (rRNA), all of which play key roles in protein synthesis.' },
+        { front: 'ATP as energy currency', back: 'Adenosine triphosphate acts as the primary immediate energy carrier coupling exergonic catabolic reactions to endergonic cellular processes.' },
+        { front: 'Conjugated molecules', back: 'Biomolecules formed by the covalent or non-covalent combination of two different classes of molecules, such as glycoproteins or lipoproteins.' }
+      ];
+      /* ---------- Flashcards — Biology: Chemical Coordination (25 cards) ---------- */
+      var FC_CARDS_COORDINATION = [
+        { front: 'Chemical coordination', back: 'A regulatory mechanism in multicellular organisms mediated by chemical messengers called hormones, which are secreted directly into the bloodstream to target specific organs.' },
+        { front: 'Hormone', back: 'An organic chemical messenger produced by an endocrine gland that travels via the blood to regulate physiological processes in target cells.' },
+        { front: 'Endocrine gland', back: 'A ductless gland that secretes hormones directly into the interstitial fluid or bloodstream.' },
+        { front: 'Master gland of the endocrine system', back: 'The pituitary gland, because its secretions control many other endocrine glands in the body.' },
+        { front: 'Hypothalamus-pituitary axis', back: 'The functional unit where the hypothalamus secretes releasing and inhibiting hormones that control the anterior pituitary gland.' },
+        { front: 'Somatotrophin (Growth Hormone)', back: 'An anterior pituitary hormone that stimulates general body growth, protein synthesis, and bone elongation.' },
+        { front: 'Thyroid-stimulating hormone (TSH)', back: 'A tropic hormone produced by the anterior pituitary that stimulates the thyroid gland to synthesize and release thyroid hormones.' },
+        { front: 'Oxytocin', back: 'A posterior pituitary hormone that stimulates uterine smooth muscle contractions during childbirth and milk ejection during lactation.' },
+        { front: 'Antidiuretic hormone (ADH) / Vasopressin', back: 'A posterior pituitary hormone that promotes water reabsorption in the kidney collecting ducts, reducing urine volume.' },
+        { front: 'Thyroxine (T<sub>4</sub>) and Triiodothyronine (T<sub>3</sub>)', back: 'Hormones produced by the thyroid gland containing iodine that regulate basal metabolic rate, oxygen consumption, and cellular growth.' },
+        { front: 'Calcitonin', back: 'A peptide hormone secreted by the thyroid gland\'s parafollicular cells that lowers blood calcium levels by inhibiting osteoclast activity.' },
+        { front: 'Parathyroid hormone (PTH)', back: 'A hormone secreted by the parathyroid glands that increases blood calcium levels by stimulating bone resorption, calcium reabsorption in kidneys, and vitamin D activation.' },
+        { front: 'Insulin', back: 'An anabolic peptide hormone produced by the β-cells of the Islets of Langerhans in the pancreas that lowers blood glucose levels.' },
+        { front: 'Glucagon', back: 'A peptide hormone produced by the α-cells of the pancreatic islets that raises blood glucose levels by promoting glycogenolysis and gluconeogenesis.' },
+        { front: 'Adrenal cortex hormones', back: 'Steroid hormones including mineralocorticoids (e.g., aldosterone), glucocorticoids (e.g., cortisol), and sex corticoids produced by the outer adrenal gland.' },
+        { front: 'Adrenal medulla hormones', back: "Epinephrine (adrenaline) and norepinephrine (noradrenaline), which mediate the rapid 'fight or flight' response to acute stress." },
+        { front: 'Negative feedback mechanism', back: 'A regulatory loop where the output of a pathway inhibits or reverses the initial stimulus, maintaining homeostasis.' },
+        { front: 'Positive feedback mechanism', back: 'A regulatory loop where the output amplifies or accelerates the original stimulus until a specific endpoint is reached.' },
+        { front: 'Mechanism of steroid hormone action', back: 'Lipid-soluble steroid hormones diffuse directly across the target cell membrane, bind to intracellular receptors, and alter gene transcription.' },
+        { front: 'Mechanism of protein hormone action', back: 'Water-soluble peptide hormones bind to specific receptors on the outer cell membrane, activating intracellular second messenger systems like cyclic AMP (cAMP).' },
+        { front: 'Diabetes mellitus', back: 'A metabolic disorder characterized by chronic hyperglycemia caused by insulin deficiency (Type 1) or cellular resistance to insulin (Type 2).' },
+        { front: 'Goiter', back: 'An abnormal enlargement of the thyroid gland resulting from iodine deficiency or hormonal imbalance.' },
+        { front: 'Nervous vs. endocrine coordination: Speed', back: 'Nervous coordination is extremely rapid via electrical impulses, whereas endocrine coordination is slower via circulating hormones.' },
+        { front: 'Nervous vs. endocrine coordination: Duration of effect', back: 'Nervous responses are short-lived, whereas endocrine responses are typically prolonged and sustained.' },
+        { front: 'Nervous vs. endocrine coordination: Pathway', back: 'Nervous impulses travel along specific neuronal pathways to precise targets, whereas hormones are distributed widely via the bloodstream to any cell with matching receptors.' }
+      ];
+      /* ---------- Flashcards — Chemistry: Hydrocarbons (25 cards) ---------- */
+      var FC_CARDS_HYDROCARBONS = [
+        { front: 'Hydrocarbons', back: 'Organic compounds containing only carbon and hydrogen atoms.' },
+        { front: 'Saturated Hydrocarbons', back: 'Hydrocarbons containing only single covalent bonds between carbon atoms, also known as alkanes with general formula C<sub>n</sub>H<sub>2n+2</sub>.' },
+        { front: 'Unsaturated Hydrocarbons', back: 'Hydrocarbons containing one or more double or triple bonds between carbon atoms, including alkenes and alkynes.' },
+        { front: 'General formula for Alkenes', back: 'C<sub>n</sub>H<sub>2n</sub>, where n is the number of carbon atoms.' },
+        { front: 'General formula for Alkynes', back: 'C<sub>n</sub>H<sub>2n−2</sub>, where n is the number of carbon atoms.' },
+        { front: 'Wurtz Reaction', back: 'A method for preparing higher alkanes by reacting alkyl halides with sodium metal in dry ether.' },
+        { front: 'Sabatier-Senderens Reduction', back: 'The catalytic hydrogenation of alkenes or alkynes using finely divided nickel, platinum, or palladium at elevated temperatures to form alkanes.' },
+        { front: 'Markovnikov\'s Rule', back: 'During the addition of an unsymmetrical reagent to an unsymmetrical alkene or alkyne, the negative part of the reagent adds to the carbon atom carrying the lesser number of hydrogen atoms.' },
+        { front: 'Peroxide Effect (Kharash Effect)', back: 'The addition of hydrogen bromide to unsymmetrical alkenes in the presence of organic peroxides yields an anti-Markovnikov product due to a free-radical mechanism.' },
+        { front: 'Preparation of Alkynes from Vicinal Dihalides', back: 'Dehydrohalogenation of vicinal dihalides using alcoholic potassium hydroxide followed by treatment with sodium amide (NaNH<sub>2</sub>).' },
+        { front: 'Acidity of Alkynes', back: 'Terminal alkynes are weakly acidic because the sp hybridized carbon atom has high s-character (50%), holding the bonding electrons more tightly and allowing the proton to be released.' },
+        { front: 'Aromaticity and Huckel\'s Rule', back: 'A rule stating that a planar, cyclic, completely conjugated ring system is aromatic if it contains (4n+2) π-electrons, where n is an integer (0, 1, 2, …).' },
+        { front: 'Kekule Structure of Benzene', back: 'A cyclic hexagonal structure of benzene featuring alternating single and double carbon-carbon bonds that rapidly oscillate between two equivalent positions.' },
+        { front: 'Resonance Energy of Benzene', back: 'The stabilization energy (approximately 150 kJ/mol) gained by benzene due to the delocalization of π-electrons over the entire ring, making it more stable than a hypothetical cyclohexatriene.' },
+        { front: 'Electrophilic Substitution Reactions', back: 'Characteristic chemical reactions of aromatic compounds where an electrophile replaces a hydrogen atom on the benzene ring.' },
+        { front: 'Nitration of Benzene', back: 'The introduction of a nitro group (−NO<sub>2</sub>) into the benzene ring by reacting benzene with a mixture of concentrated nitric acid and concentrated sulfuric acid at 50−60°C.' },
+        { front: 'Halogenation of Benzene', back: 'The introduction of a halogen atom into the benzene ring by reacting benzene with a halogen (like Cl<sub>2</sub> or Br<sub>2</sub>) in the presence of a Lewis acid catalyst such as FeCl<sub>3</sub> or AlCl<sub>3</sub>.' },
+        { front: 'Sulfonation of Benzene', back: 'The reaction of benzene with fuming sulfuric acid (oleum, H<sub>2</sub>S<sub>2</sub>O<sub>7</sub>) or concentrated H<sub>2</sub>SO<sub>4</sub> to form benzenesulfonic acid.' },
+        { front: 'Friedel-Crafts Alkylation', back: 'The introduction of an alkyl group into the benzene ring by reacting benzene with an alkyl halide in the presence of an anhydrous aluminum chloride catalyst.' },
+        { front: 'Friedel-Crafts Acylation', back: 'The introduction of an acyl group (R−CO−) into the benzene ring by reacting benzene with an acyl chloride or acid anhydride in the presence of anhydrous AlCl<sub>3</sub>.' },
+        { front: 'Directive Influence of Groups (Ortho-Para Directing)', back: 'Substituents like alkyl groups, −OH, −NH<sub>2</sub>, and halogens that activate or direct incoming electrophiles primarily to the ortho and para positions of a benzene ring.' },
+        { front: 'Directive Influence of Groups (Meta Directing)', back: 'Deactivating substituents like −NO<sub>2</sub>, −CN, −COOH, and −CHO that direct incoming electrophiles primarily to the meta position of a benzene ring.' },
+        { front: 'Pyrolysis (Cracking)', back: 'The thermal decomposition of higher hydrocarbons into smaller, more volatile alkanes, alkenes, and hydrogen at high temperatures in the absence of oxygen.' },
+        { front: 'Ozonolysis of Alkenes', back: 'The addition of ozone across a carbon-carbon double bond to form an ozonide, which upon reductive cleavage with zinc and water yields aldehydes or ketones.' },
+        { front: 'Baeyer\'s Test', back: 'A chemical test for unsaturation where cold, dilute, alkaline potassium permanganate (KMnO<sub>4</sub>) solution is added to an alkene or alkyne, causing the purple color to discharge and form a brown manganese dioxide precipitate.' }
+      ];
+      /* ---------- Flashcards — Chemistry: Chemical Bond (25 cards) ---------- */
+      var FC_CARDS_CHEMBOND = [
+        { front: 'Chemical Bond', back: 'The attractive force that holds atoms, ions, or molecules together in a chemical compound to achieve a stable electronic configuration.' },
+        { front: 'Octet Rule', back: 'Atoms tend to gain, lose, or share electrons until they have attained eight valence electrons, achieving the stable configuration of a noble gas.' },
+        { front: 'Ionic Bond (Electrovalent Bond)', back: 'A chemical bond formed by the complete transfer of one or more valence electrons from a metal to a non-metal, resulting in electrostatic attraction between oppositely charged ions.' },
+        { front: 'Characteristics of Ionic Compounds', back: 'High melting and boiling points, crystalline solids at room temperature, good electrical conductivity in molten or aqueous state, and solubility in polar solvents like water.' },
+        { front: 'Covalent Bond', back: 'A chemical bond formed by the mutual sharing of one or more pairs of electrons between two non-metal atoms.' },
+        { front: 'Coordinate Covalent Bond (Dative Bond)', back: 'A covalent bond in which both shared electrons are contributed by only one of the participating atoms (the donor), while the other atom acts as an acceptor.' },
+        { front: 'Valence Shell Electron Pair Repulsion (VSEPR) Theory', back: 'A model used to predict molecular geometry based on the minimization of electrostatic repulsion between valence electron pairs around a central atom.' },
+        { front: 'Geometry of CH<sub>4</sub> molecule according to VSEPR theory', back: 'Tetrahedral geometry with a bond angle of 109.5° due to four bond pairs and zero lone pairs.' },
+        { front: 'Geometry and Bond Angle of NH<sub>3</sub>', back: 'Trigonal pyramidal geometry with a bond angle of 107.5° due to three bond pairs and one lone pair.' },
+        { front: 'Geometry and Bond Angle of H<sub>2</sub>O', back: 'Bent or V-shaped geometry with a bond angle of 104.5° due to two bond pairs and two lone pairs.' },
+        { front: 'Valence Bond Theory (VBT)', back: 'A theory stating that a covalent bond forms through the overlap of half-filled atomic orbitals containing electrons with opposite spins.' },
+        { front: 'Sigma (σ) Bond', back: 'A strong covalent bond formed by the end-to-end (axial or linear) overlap of atomic orbitals, allowing free rotation around the internuclear axis.' },
+        { front: 'Pi (π) Bond', back: 'A weaker covalent bond formed by the lateral (sideways) overlap of parallel unhybridized p-orbitals, restricting free rotation around the bond axis.' },
+        { front: 'Hybridization', back: 'The mixing of atomic orbitals of different energies and shapes on the same atom to produce a set of new equivalent hybrid orbitals with identical properties.' },
+        { front: 'sp<sup>3</sup> Hybridization', back: 'Mixing of one s and three p orbitals to yield four equivalent hybrid orbitals arranged in a tetrahedral geometry with 109.5° angles.' },
+        { front: 'sp<sup>2</sup> Hybridization', back: 'Mixing of one s and two p orbitals to form three equivalent hybrid orbitals in a trigonal planar geometry with 120° angles, leaving one unhybridized p orbital.' },
+        { front: 'sp Hybridization', back: 'Mixing of one s and one p orbital to form two equivalent hybrid orbitals in a linear geometry with a 180° angle, leaving two unhybridized p orbitals.' },
+        { front: 'Molecular Orbital Theory (MOT)', back: 'A theory proposing that atomic orbitals combine through linear combination of atomic orbitals (LCAO) to form new delocalized molecular orbitals belonging to the whole molecule.' },
+        { front: 'Bonding Molecular Orbital (BMO)', back: 'A molecular orbital formed by constructive interference (in-phase addition) of atomic orbitals, possessing lower energy and higher stability than the parent atomic orbitals.' },
+        { front: 'Antibonding Molecular Orbital (ABMO)', back: 'A molecular orbital formed by destructive interference (out-of-phase addition) of atomic orbitals, possessing higher energy, a nodal plane between nuclei, and lower stability.' },
+        { front: 'Bond Order Formula in MOT', back: 'Bond Order = (N<sub>b</sub> − N<sub>a</sub>)/2, where N<sub>b</sub> is electrons in bonding orbitals and N<sub>a</sub> is electrons in antibonding orbitals.' },
+        { front: 'Dipole Moment', back: 'The product of the magnitude of the partial charge and the distance between centers of positive and negative charge, measured in Debye units to express molecular polarity.' },
+        { front: 'Why is CO<sub>2</sub> non-polar despite having polar bonds?', back: 'Because it has a linear geometry where individual bond dipole moments are equal in magnitude and point in opposite directions, canceling each other out completely.' },
+        { front: 'Hydrogen Bonding', back: 'A strong type of dipole-dipole attraction occurring when a hydrogen atom covalently bonded to a highly electronegative atom (N, O, or F) experiences electrostatic attraction to a lone pair on another electronegative atom.' },
+        { front: 'Intermolecular Forces (Van der Waals Forces)', back: 'Weak electrostatic forces of attraction acting between discrete molecules, including dipole-dipole forces, dipole-induced dipole forces, and London dispersion forces.' }
+      ];
+      /* ---------- Flashcards — Chemistry: Chemical Equilibrium (25 cards) ---------- */
+      var FC_CARDS_EQUILIBRIUM = [
+        { front: 'Reversible Reaction', back: 'A chemical reaction in which the products can react to reform the original reactants under the same conditions.' },
+        { front: 'Irreversible Reaction', back: 'A chemical reaction that proceeds in only one direction and goes to completion, where products cannot easily convert back to reactants.' },
+        { front: 'Chemical Equilibrium', back: 'A state in a reversible reaction where the rate of the forward reaction equals the rate of the backward reaction, and macroscopic properties remain constant.' },
+        { front: 'Law of Mass Action', back: 'A law stating that the rate of a chemical reaction is directly proportional to the product of the active masses (molar concentrations) of the reactants.' },
+        { front: 'Equilibrium Constant (K<sub>c</sub>)', back: 'The ratio of the product of molar concentrations of products to reactants at equilibrium, with each concentration raised to the power of its stoichiometric coefficient.' },
+        { front: 'Partial Pressure Equilibrium Constant (K<sub>p</sub>)', back: 'An equilibrium constant calculated using the partial pressures of gaseous reactants and products instead of molar concentrations.' },
+        { front: 'Relationship between K<sub>p</sub> and K<sub>c</sub>', back: 'K<sub>p</sub> = K<sub>c</sub>(RT)<sup>Δn</sup>, where Δn is the change in the number of moles of gas.' },
+        { front: 'Significance of the Magnitude of Equilibrium Constant (K<sub>c</sub>)', back: 'A very large K<sub>c</sub> indicates the reaction goes mostly to completion (favors products), while a very small K<sub>c</sub> indicates very little product is formed (favors reactants).' },
+        { front: 'Le Chatelier\'s Principle', back: 'If a stress (change in concentration, temperature, or pressure) is applied to a system at equilibrium, the system shifts in a direction that relieves or counteracts that stress.' },
+        { front: 'Effect of Concentration on Equilibrium', back: 'Adding a reactant shifts the equilibrium to the right (forward), while removing a product or adding a product shifts it to the left (backward).' },
+        { front: 'Effect of Pressure on Equilibrium', back: 'Increasing pressure shifts the equilibrium toward the side with fewer moles of gas, while decreasing pressure shifts it toward the side with more moles of gas.' },
+        { front: 'Effect of Temperature on Equilibrium', back: 'Increasing temperature favors the endothermic reaction, whereas decreasing temperature favors the exothermic reaction.' },
+        { front: 'Effect of Catalyst on Equilibrium', back: 'A catalyst speeds up the forward and reverse reactions equally, meaning it has no effect on the position of equilibrium or the value of K<sub>c</sub>.' },
+        { front: 'Industrial Application: Haber Process', back: 'The industrial synthesis of ammonia (N<sub>2</sub> + 3H<sub>2</sub> ⇌ 2NH<sub>3</sub>) which utilizes high pressure and moderate temperature to maximize yield based on Le Chatelier\'s principle.' },
+        { front: 'Industrial Application: Contact Process', back: 'The industrial manufacturing method for sulfuric acid where sulfur dioxide is oxidized to sulfur trioxide, favored by moderate temperatures and high pressures.' },
+        { front: 'Common Ion Effect', back: 'The suppression of the degree of dissociation of a weak electrolyte by the addition of a strong electrolyte containing a common ion.' },
+        { front: 'Buffer Solution', back: 'A solution that resists changes in pH when small amounts of strong acid or strong base are added.' },
+        { front: 'Acidic Buffer Solution', back: 'A buffer solution made from a weak acid and its salt with a strong base, maintaining a pH below 7.' },
+        { front: 'Basic Buffer Solution', back: 'A buffer solution made from a weak base and its salt with a strong acid, maintaining a pH above 7.' },
+        { front: 'Solubility Product (K<sub>sp</sub>)', back: 'The product of the molar concentrations of the constituent ions of a sparingly soluble salt in a saturated solution, each raised to the power of its stoichiometric coefficient.' },
+        { front: 'Ionic Product (Q) vs. Solubility Product (K<sub>sp</sub>)', back: 'If ionic product exceeds K<sub>sp</sub>, precipitation occurs; if it is less, the solution is unsaturated; if equal, the solution is saturated at equilibrium.' },
+        { front: 'pH Scale Definition', back: 'The negative logarithm of the hydrogen ion concentration in moles per liter, represented mathematically as pH = −log[H<sup>+</sup>].' },
+        { front: 'Ionic Product of Water (K<sub>w</sub>)', back: 'The product of the molar concentrations of hydrogen ions and hydroxide ions in water, equal to 1.0 × 10<sup>−14</sup> at 25°C.' },
+        { front: 'Relationship between pH and pOH', back: 'At 25°C, the sum of pH and pOH is always equal to 14 (pH + pOH = 14).' },
+        { front: 'Reaction Quotient (Q<sub>c</sub>)', back: 'An expression identical to the equilibrium constant expression, but calculated using concentrations at any given moment rather than strictly at equilibrium.' }
+      ];
+      /* ---------- Flashcards — Physics: Work Power and Energy (25 cards) ---------- */
+      var FC_CARDS_WORKENERGY = [
+        { front: 'Work Done by a Constant Force', back: 'The scalar product of force and displacement vectors, represented by W = Fd cosθ, where θ is the angle between the force and displacement vectors.' },
+        { front: 'SI Unit and Dimensions of Work', back: 'The SI unit is the Joule (J) or N·m, and its dimensional formula is [ML<sup>2</sup>T<sup>−2</sup>].' },
+        { front: 'Conditions for Zero Work Done', back: 'Work is zero when the force is zero, displacement is zero, or the force is perpendicular to the displacement (θ = 90°).' },
+        { front: 'Work Done by a Variable Force', back: 'Calculated by finding the area under the force-displacement (F-d) graph or by evaluating the definite integral W = ∫ from x<sub>1</sub> to x<sub>2</sub> of F(x) dx.' },
+        { front: 'Energy', back: 'The capacity of a body to do work, possessing the same units and dimensions as work.' },
+        { front: 'Kinetic Energy', back: 'The energy possessed by a body due to its motion, given by the formula K.E. = ½mv<sup>2</sup>.' },
+        { front: 'Work-Energy Principle', back: 'States that the total work done on a body is equal to the change in its kinetic energy (W = ΔK.E.).' },
+        { front: 'Gravitational Potential Energy', back: 'The energy possessed by a body due to its position in a gravitational field, expressed as P.E. = mgh.' },
+        { front: 'Elastic Potential Energy', back: 'The potential energy stored in an elastic body (like a spring) when deformed, given by P.E. = ½kx<sup>2</sup>, where k is the spring constant and x is displacement.' },
+        { front: 'Conservative Force', back: 'A force for which the work done in moving an object between two points is independent of the path taken, and total work done in a closed path is zero.' },
+        { front: 'Non-Conservative Force', back: 'A force for which the work done depends on the path taken and mechanical energy is typically dissipated into thermal or other forms of energy (e.g., friction).' },
+        { front: 'Law of Conservation of Total Mechanical Energy', back: 'States that the total mechanical energy (kinetic plus potential) of a system remains constant if only conservative forces act on it (E<sub>k</sub> + E<sub>p</sub> = constant).' },
+        { front: 'Power', back: 'The time rate at which work is done or energy is transferred, defined as P = W/t or P = Fv.' },
+        { front: 'SI Unit and Dimensions of Power', back: 'The SI unit is the Watt (W) or J/s, and its dimensional formula is [ML<sup>2</sup>T<sup>−3</sup>].' },
+        { front: 'Kilowatt-hour (kWh)', back: 'A practical unit of electrical energy equal to the energy expended by a 1-kilowatt power source operating for one hour (1 kWh = 3.6 × 10<sup>6</sup> Joules).' },
+        { front: 'Efficiency of a System', back: 'The ratio of useful output work or energy to the total input work or energy, expressed as a percentage: η = (Output Energy / Input Energy) × 100%.' },
+        { front: 'Escape Velocity', back: 'The minimum velocity required for an object to break free from the gravitational pull of a planet, given by v<sub>e</sub> = √(2gR) or √(2GM/R).' },
+        { front: 'Work Done against Gravity along an Inclined Plane', back: 'Equal to mgh, which is independent of the slope angle or length of the incline, depending solely on the vertical height gained.' },
+        { front: 'Absolute Potential Energy', back: 'The work done in bringing a body from infinity to a point in a gravitational field, given by U = −GmM/r.' },
+        { front: 'Instantaneous Power', back: 'The power delivered at a specific instant in time, calculated as the dot product of instantaneous force and velocity vectors (P = F⃗ · v⃗).' },
+        { front: 'Average Power', back: 'The total work done divided by the total time taken to complete that work (P<sub>avg</sub> = ΔW/Δt).' },
+        { front: 'Conservative Nature of Electrostatic Force', back: 'Like gravity, electrostatic force is conservative because the work done moving a charge in an electric field depends only on initial and final positions, not the path.' },
+        { front: 'Relation between Momentum and Kinetic Energy', back: 'Expressed as K.E. = p<sup>2</sup>/2m, where p is linear momentum and m is mass.' },
+        { front: 'Non-conservative forces and Mechanical Energy', back: 'When non-conservative forces like friction are present, total mechanical energy is not conserved; instead, it decreases as it transforms into internal thermal energy.' },
+        { front: 'Power in terms of Force and Velocity', back: 'Derived as P = W/t = F·d/t = F·(d/t) = Fv.' }
+      ];
+      /* ---------- Flashcards — Physics: Electrostatics (25 cards) ---------- */
+      var FC_CARDS_ELECTROSTATICS = [
+        { front: 'Electrostatics', back: 'The branch of physics that deals with electric charges at rest under the action of electric forces.' },
+        { front: 'Coulomb\'s Law', back: 'States that the electrostatic force between two point charges is directly proportional to the product of their magnitudes and inversely proportional to the square of the distance between them: F = 1/(4πε<sub>0</sub>) × q<sub>1</sub>q<sub>2</sub>/r<sup>2</sup>.' },
+        { front: 'Permittivity of Free Space (ε<sub>0</sub>)', back: 'A fundamental physical constant measuring the ability of a vacuum to permit electric field lines, with a value of approximately 8.85 × 10<sup>−12</sup> C<sup>2</sup> N<sup>−1</sup> m<sup>−2</sup>.' },
+        { front: 'Electric Field', back: 'A region of space surrounding an electric charge where another charge experiences an electrostatic force.' },
+        { front: 'Electric Field Intensity (E)', back: 'The electrostatic force experienced per unit positive test charge placed at that point, defined as E⃗ = F⃗/q<sub>0</sub>.' },
+        { front: 'SI Unit and Dimensions of Electric Field Intensity', back: 'Expressed in Newtons per Coulomb (N/C) or Volts per meter (V/m), with dimensional formula [MLT<sup>−3</sup>A<sup>−1</sup>].' },
+        { front: 'Electric Lines of Force', back: 'Imaginary continuous lines drawn in an electric field such that the tangent at any point gives the direction of the electric field vector at that point.' },
+        { front: 'Electric Potential (V)', back: 'The work done in bringing a unit positive test charge from infinity to a specific point against the electric field, given by V = W/q<sub>0</sub>.' },
+        { front: 'Electric Potential Difference', back: 'The work done per unit positive test charge in moving it from one point to another in an electric field, measured in Volts.' },
+        { front: 'Electron Volt (eV)', back: 'The amount of kinetic energy gained or lost by a single electron accelerating through an electric potential difference of one volt (1 eV = 1.6 × 10<sup>−19</sup> J).' },
+        { front: 'Equipotential Surface', back: 'Any surface over which the electric potential is constant everywhere, meaning no work is required to move a charge across it.' },
+        { front: 'Electric Flux (Φ<sub>e</sub>)', back: 'The total number of electric field lines passing through a given surface area, calculated as the dot product of electric field and area vector: Φ<sub>e</sub> = E⃗·A⃗ = EA cos θ.' },
+        { front: 'Gauss\'s Law', back: 'States that the total electric flux through any closed surface (Gaussian surface) is equal to 1/ε<sub>0</sub> times the total net charge enclosed by that surface: Φ<sub>e</sub> = ∮ E⃗·dA⃗ = q/ε<sub>0</sub>.' },
+        { front: 'Capacitor', back: 'An electronic device composed of two conductors separated by an insulator used to store electrical charge and electrical energy.' },
+        { front: 'Capacitance (C)', back: 'The ability of a capacitor to store electric charge per unit potential difference, defined by the formula C = q/V.' },
+        { front: 'Capacitance of a Parallel Plate Capacitor', back: 'Given by the formula C = ε<sub>0</sub>A/d, where A is the area of the plates and d is the distance of separation between them.' },
+        { front: 'Effect of Dielectric on Capacitance', back: 'Inserting a dielectric material between the capacitor plates increases its capacitance by a factor equal to the dielectric constant (ε<sub>r</sub>), such that C′ = ε<sub>r</sub>C.' },
+        { front: 'Energy Stored in a Capacitor', back: 'Stored as electrostatic potential energy in the electric field between plates, expressed as U = 1/2 CV<sup>2</sup> = 1/2 qV = q<sup>2</sup>/2C.' },
+        { front: 'Charging and Discharging of a Capacitor', back: 'Processes governed by an exponential time constant (RC), describing how charge accumulates on or drains from a capacitor through a resistor over time.' },
+        { front: 'Dielectric Polarization', back: 'The alignment or inducement of molecular dipole moments within an insulating material when placed in an external electric field, creating an opposing internal field.' },
+        { front: 'Millikan\'s Oil Drop Experiment', back: 'A classical physics experiment performed to determine the elementary charge of a single electron by balancing gravitational and electric forces on charged oil droplets.' },
+        { front: 'Electric Field Intensity inside a Hollow Charged Sphere', back: 'Zero, because no net electric charge is enclosed inside a hollow conductor according to Gauss\'s Law (electrostatic shielding).' },
+        { front: 'Combination of Capacitors in Series', back: 'The reciprocal of the equivalent capacitance equals the sum of reciprocals of individual capacitances: 1/C<sub>eq</sub> = 1/C<sub>1</sub> + 1/C<sub>2</sub> + ….' },
+        { front: 'Combination of Capacitors in Parallel', back: 'The equivalent capacitance is equal to the direct algebraic sum of the individual capacitances: C<sub>eq</sub> = C<sub>1</sub> + C<sub>2</sub> + C<sub>3</sub> + ….' },
+        { front: 'Electrostatic Induction', back: 'A redistribution of electrical charge in an object caused by the influence of a nearby charged body, without direct physical contact.' }
+      ];
+      var FC_DECKS = {
+        ac: { title: 'AC and Electronics — Flashcards', label: 'Physics · AC and Electronics', cards: FC_CARDS },
+        bioenergetics: { title: 'Bioenergetics — Flashcards', label: 'Biology · Bioenergetics', cards: FC_CARDS_BIOENERGETICS },
+        biomolecules: { title: 'Biological Molecules — Flashcards', label: 'Biology · Biological Molecules', cards: FC_CARDS_BIOMOLECULES },
+        coordination: { title: 'Chemical Coordination — Flashcards', label: 'Biology · Chemical Coordination', cards: FC_CARDS_COORDINATION },
+        hydrocarbons: { title: 'Hydrocarbons — Flashcards', label: 'Chemistry · Hydrocarbons', cards: FC_CARDS_HYDROCARBONS },
+        chemicalbond: { title: 'Chemical Bond — Flashcards', label: 'Chemistry · Chemical Bond', cards: FC_CARDS_CHEMBOND },
+        equilibrium: { title: 'Chemical Equilibrium — Flashcards', label: 'Chemistry · Chemical Equilibrium', cards: FC_CARDS_EQUILIBRIUM },
+        workenergy: { title: 'Work Power and Energy — Flashcards', label: 'Physics · Work Power and Energy', cards: FC_CARDS_WORKENERGY },
+        electrostatics: { title: 'Electrostatics — Flashcards', label: 'Physics · Electrostatics', cards: FC_CARDS_ELECTROSTATICS }
+      };
+    var fcDeckKey = "ac", fcIndex = 0, fcFlipped = false;
+    function renderFcDecks(){
+      var keys = Object.keys(FC_DECKS), html = "";
+      for (var i=0;i<keys.length;i++){
+        var d = FC_DECKS[keys[i]];
+        html += '<button class="chap-row" type="button" data-fcdeck="'+keys[i]+'"><span class="chap-num">'+("0"+(i+1)).slice(-2)+'</span><span class="ct">'+esc(d.title)+'<small>'+esc(d.label)+' · '+d.cards.length+' flashcards</small></span><span class="chev">'+CHEV+'</span></button>';
+      }
+      $("fcDeckList").innerHTML = html;
+    }
+    function renderFlashcard(){
+      var deck = FC_DECKS[fcDeckKey], card = deck.cards[fcIndex];
+      /* Card text keeps the website's own <sub>/<sup> markup, so innerHTML like the website. */
+      $("fcFront").innerHTML = card.front;
+      $("fcBack").innerHTML = card.back;
+      $("fcCounter").textContent = "Card " + (fcIndex + 1) + " of " + deck.cards.length;
+      $("fcInner").classList.toggle("flipped", fcFlipped);
+      $("fcPrevBtn").disabled = fcIndex === 0;
+      $("fcNextBtn").disabled = fcIndex === deck.cards.length - 1;
+    }
+    function openFlashcards(key){
+      fcDeckKey = FC_DECKS[key] ? key : "ac";
+      var deck = FC_DECKS[fcDeckKey];
+      $("fcDeckTitle").textContent = deck.title;
+      $("fcDeckLabel").textContent = deck.label;
+      fcIndex = 0; fcFlipped = false;
+      renderFlashcard();
+      showView("flashcards");
+    }
+    $("fcDeckList").addEventListener("click", function(e){ var b = e.target.closest("[data-fcdeck]"); if (b) openFlashcards(b.getAttribute("data-fcdeck")); });
+    $("fcBackBtn").addEventListener("click", function(){ showView("notes"); });
+    $("fcScene").addEventListener("click", function(){ fcFlipped = !fcFlipped; $("fcInner").classList.toggle("flipped", fcFlipped); });
+    $("fcScene").addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); fcFlipped = !fcFlipped; $("fcInner").classList.toggle("flipped", fcFlipped); } });
+    $("fcPrevBtn").addEventListener("click", function(){ if (fcIndex > 0){ fcIndex--; fcFlipped = false; renderFlashcard(); } });
+    $("fcNextBtn").addEventListener("click", function(){ var n = FC_DECKS[fcDeckKey].cards.length; if (fcIndex < n - 1){ fcIndex++; fcFlipped = false; renderFlashcard(); } });
+    renderFcDecks();
     $("ctestBack").addEventListener("click", function(){ showView("chapters"); });
     $("chapSearch").addEventListener("input", function(){ chapQuery = this.value.trim().toLowerCase(); renderChapters(); });
     function subjectAccuracy(sid){
