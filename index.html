@@ -244,6 +244,22 @@
       .test-card .meta span{display:inline-flex;align-items:center;gap:7px;font-weight:700;font-size:13.5px;color:var(--ink2)}
       .test-card .btn-blue{margin-top:15px}
 
+      /* ---------- Chapters (Prime website flow) ---------- */
+      .chap-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 16px}
+      .chap-backlink{background:none;border:0;color:var(--ink);font-weight:800;font-size:15px;display:inline-flex;align-items:center;gap:6px;padding:6px 0}
+      .chap-back{background:none;border:1.5px solid var(--line);border-radius:999px;color:var(--ink);font-weight:800;font-size:14.5px;padding:9px 16px;display:inline-flex;align-items:center;gap:8px}
+      .chap-pill{font-weight:800;font-size:13.5px;color:var(--blue);border:1.5px solid var(--blue);border-radius:999px;padding:8px 16px;white-space:nowrap}
+      .chap-title{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1.1;margin:0 0 6px}
+      .chap-sub{color:var(--muted);font-weight:600;font-size:15px;margin:0 0 16px}
+      .chap-list{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+      .chap-row{display:flex;align-items:center;gap:15px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:15px 16px;text-align:left;color:var(--ink)}
+      .chap-num{flex:none;width:52px;height:52px;border-radius:16px;border:1.5px solid var(--blue);color:var(--blue);display:grid;place-items:center;font-weight:800;font-size:17px}
+      .chap-row .ct{flex:1;min-width:0;font-weight:800;font-size:16.5px}
+      .chap-row .chev{color:var(--muted);flex:none;display:grid;place-items:center}
+      [data-theme="dark"] .chap-num,[data-theme="dark"] .chap-pill{color:#38BDF8;border-color:#38BDF8}
+      .gold-pill{background:rgba(246,162,2,.13);color:#F6A202;border:1px solid rgba(246,162,2,.5)}
+      .test-card .btn-attempt{width:auto;min-width:180px;margin-top:15px;padding:12px 22px}
+
       /* ---------- Dashboard / progress ---------- */
       .tabs{display:grid;grid-template-columns:1fr 1fr;background:#EFF6FF;border-radius:16px;padding:5px;gap:5px;margin:18px 0}
       .tabs button{border:0;background:transparent;color:var(--ink2);font-weight:800;font-size:14px;border-radius:12px;padding:11px;min-height:42px}
@@ -718,6 +734,30 @@
             <span class="cnt" id="testCount"></span>
           </div>
           <div class="test-list" id="testList"></div>
+        </div>
+
+        <!-- ======== CHAPTERS (Prime website flow) ======== -->
+        <div class="view" id="view-chapters">
+          <div class="chap-head">
+            <button class="chap-backlink" type="button" id="chapBack">← All Subjects</button>
+            <span class="chap-pill" id="chapPill"></span>
+          </div>
+          <h2 class="chap-title">Chapters</h2>
+          <p class="chap-sub">Select a unit to start your practice session.</p>
+          <div class="searchbar">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
+            <input id="chapSearch" type="text" placeholder="Search chapters..." />
+          </div>
+          <div class="chap-list" id="chapList"></div>
+        </div>
+
+        <!-- ======== CHAPTER TESTS ======== -->
+        <div class="view" id="view-chaptertest">
+          <div class="chap-head">
+            <button class="chap-back" type="button" id="ctestBack">← Back</button>
+          </div>
+          <h2 class="chap-title">Currently Available Tests</h2>
+          <div class="test-list" id="ctestList" style="margin-top:16px"></div>
         </div>
 
         <!-- ======== NOTES ======== -->
@@ -1451,9 +1491,9 @@
     function showView(name){
       closePanels();
       if (name !== "exam" && name !== "result") stopExamTimer();
-      var views = ["home","tests","notes","dashboard","exam","result","profile"];
+      var views = ["home","tests","notes","dashboard","exam","result","profile","chapters","chaptertest"];
       for (var i=0;i<views.length;i++) $("view-"+views[i]).classList.toggle("on", views[i]===name);
-      var navName = (name==="exam" || name==="result") ? "tests" : name;
+      var navName = (name==="exam" || name==="result" || name==="chapters" || name==="chaptertest") ? "tests" : name;
       var navs = document.querySelectorAll("[data-nav]");
       for (var j=0;j<navs.length;j++) navs[j].classList.toggle("active", navs[j].getAttribute("data-nav")===navName);
       if (name==="dashboard") renderProgress();
@@ -1611,7 +1651,7 @@
       $("subjRow").innerHTML = html;
       var cards = $("subjRow").querySelectorAll("[data-subj]");
       for (var i=0;i<cards.length;i++){
-        cards[i].addEventListener("click", function(){ setTestFilter(this.getAttribute("data-subj")); showView("tests"); });
+        cards[i].addEventListener("click", function(){ openChapters(this.getAttribute("data-subj")); });
       }
     }
     var testFilter = "all", testQuery = "";
@@ -1690,6 +1730,85 @@
         btns[b].addEventListener("click", function(){ startExam(liveTests[parseInt(this.getAttribute("data-testidx"),10)]); });
       }
     }
+    /* ==================== CHAPTERS (Prime website flow) ==================== */
+    var chapSubject = null, chapQuery = "", chapTests = null;
+    var CHEV = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>';
+    var ARROW = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
+    function subjectById(id){ for (var i=0;i<SUBJECTS.length;i++) if (SUBJECTS[i].id===id) return SUBJECTS[i]; return null; }
+    /* Distinct chapter titles for one subject, in the order the tests were published (oldest first = syllabus order, same as MDCAT Prime). */
+    function chaptersFor(subjId){
+      var order = [], map = {};
+      var sorted = liveTests.slice().sort(function(a,b){ return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime(); });
+      for (var i=0;i<sorted.length;i++){
+        var t = sorted[i];
+        if (subjIdOf(t.subject) !== subjId) continue;
+        if (!map[t.title]){ map[t.title] = { title:t.title, subject:t.subject, tests:[] }; order.push(map[t.title]); }
+        map[t.title].tests.push(t);
+      }
+      return order;
+    }
+    function openChapters(subjId){
+      chapSubject = subjId;
+      chapQuery = "";
+      $("chapSearch").value = "";
+      renderChapters();
+      showView("chapters");
+    }
+    function renderChapters(){
+      var subj = subjectById(chapSubject);
+      var list = chaptersFor(chapSubject);
+      $("chapPill").textContent = (subj ? subj.name : "") + " • " + list.length + (list.length === 1 ? " Unit" : " Units");
+      var html = "";
+      if (!testsReady){
+        html = '<div class="empty-note">Loading chapters...</div>';
+      } else if (!list.length){
+        html = '<div class="empty-note">No tests available for this subject yet.</div>';
+      } else {
+        var shown = 0;
+        for (var i=0;i<list.length;i++){
+          if (chapQuery && list[i].title.toLowerCase().indexOf(chapQuery) === -1) continue;
+          shown++;
+          var num = ("0" + (i + 1)).slice(-2);
+          html += '<button class="chap-row" type="button" data-chapidx="'+i+'"><span class="chap-num">'+num+'</span><span class="ct">'+esc(list[i].title)+'</span><span class="chev">'+CHEV+'</span></button>';
+        }
+        if (!shown) html = '<div class="empty-note">No chapters match your search.</div>';
+      }
+      $("chapList").innerHTML = html;
+      var rows = $("chapList").querySelectorAll("[data-chapidx]");
+      for (var r=0;r<rows.length;r++){
+        rows[r].addEventListener("click", function(){ openChapterTests(parseInt(this.getAttribute("data-chapidx"), 10)); });
+      }
+    }
+    function openChapterTests(idx){
+      var list = chaptersFor(chapSubject);
+      chapTests = list[idx];
+      if (!chapTests) return;
+      renderChapterTests();
+      showView("chaptertest");
+    }
+    function renderChapterTests(){
+      var html = "";
+      for (var i=0;i<chapTests.tests.length;i++){
+        var t = chapTests.tests[i];
+        var st = testStyle(t.subject);
+        var mins = Math.round((t.durationSeconds || 0) / 60);
+        var mcqs = t.questionCount || 0;
+        html += '<div class="test-card"><div class="top">'
+          + '<span class="spill" style="background:'+st.soft+';color:'+st.color+'">'+esc(t.subject).toUpperCase()+'</span>'
+          + '<span class="spill gold-pill">CHAPTER TEST</span></div>'
+          + '<h4>'+esc(t.title)+'</h4>'
+          + '<div class="meta"><span>'+HELP+' '+mcqs+' Questions</span><span>'+CLOCK+' '+mins+' Minutes</span><span>'+MEDAL+' '+(t.totalMarks || 0)+' Marks</span></div>'
+          + '<button class="btn-blue btn-attempt" type="button" data-ctestidx="'+i+'">Attempt Test '+ARROW+'</button></div>';
+      }
+      $("ctestList").innerHTML = html;
+      var btns = $("ctestList").querySelectorAll("[data-ctestidx]");
+      for (var b=0;b<btns.length;b++){
+        btns[b].addEventListener("click", function(){ startExam(chapTests.tests[parseInt(this.getAttribute("data-ctestidx"), 10)]); });
+      }
+    }
+    $("chapBack").addEventListener("click", function(){ showView("tests"); });
+    $("ctestBack").addEventListener("click", function(){ showView("chapters"); });
+    $("chapSearch").addEventListener("input", function(){ chapQuery = this.value.trim().toLowerCase(); renderChapters(); });
     function subjectAccuracy(sid){
       var att = 0, cor = 0;
       for (var i=0;i<results.length;i++){
@@ -1756,7 +1875,9 @@
           snap.forEach(function(d){ var data = d.data(); data.id = d.id; list.push(data); });
           list.sort(function(a,b){ return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime(); });
           liveTests = list; testsReady = true; renderTests();
-        }, function(err){ console.warn("Tests load failed:", err); testsReady = true; renderTests(); }));
+          if ($("view-chapters").classList.contains("on")) renderChapters();
+        }, function(err){ console.warn("Tests load failed:", err); testsReady = true; renderTests();
+          if ($("view-chapters").classList.contains("on")) renderChapters(); }));
       } catch (e) { console.warn("Tests listener failed:", e); }
       /* This user's attempts. */
       try {
