@@ -1873,7 +1873,7 @@
           var list = [];
           snap.forEach(function(d){ var data = d.data(); data.id = d.id; list.push(data); });
           list.sort(function(a,b){ return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime(); });
-          liveTests = list; testsReady = true; renderTests();
+          liveTests = list; testsReady = true; renderTests(); preloadQuestions();
           if ($("view-chapters").classList.contains("on")) renderChapters();
         }, function(err){ console.warn("Tests load failed:", err); testsReady = true; renderTests();
           if ($("view-chapters").classList.contains("on")) renderChapters(); }));
@@ -2018,13 +2018,44 @@
       }
       return out;
     }
+    /* Preload every published test's questions in the background (4 at a
+       time, silent), so tapping Start/Attempt Test finds them already in
+       memory and the first question renders at once. Skips tests already
+       cached or already being fetched. */
+    var qPreloading = {}, qPreloadQueue = [], qPreloadRunning = 0;
+    function preloadQuestions(){
+      for (var i=0;i<liveTests.length;i++){
+        var t = liveTests[i];
+        if (!t.id || qCache[t.id] || qPreloading[t.id]) continue;
+        qPreloading[t.id] = true;
+        qPreloadQueue.push(t);
+      }
+      pumpPreload();
+    }
+    function pumpPreload(){
+      while (qPreloadRunning < 4 && qPreloadQueue.length){
+        var t = qPreloadQueue.shift();
+        qPreloadRunning++;
+        (function(tt){
+          function done(){ delete qPreloading[tt.id]; qPreloadRunning--; pumpPreload(); }
+          getDocs(collection(db, "tests", tt.id, "questions")).then(function(snap){
+            var qs = [];
+            snap.forEach(function(d){ var data = d.data(); data.id = d.id; qs.push(data); });
+            qs.sort(function(a,b){ return (a.order || 0) - (b.order || 0); });
+            if (qs.length) qCache[tt.id] = qs;
+            done();
+          }, function(e){ done(); });
+        })(t);
+      }
+    }
     async function startExam(test, preQs){
       if (!test) return;
-      /* Open the exam screen at once (title + full timer + loading state),
-         then load the questions in the background. Previously the screen
-         only opened after the Firestore fetch finished, so on a slow
-         connection the tap felt dead for seconds. The timer starts only
-         once the first question renders, so loading time never eats it. */
+      /* Open the exam screen at once (title + full timer), then show the
+         questions. The questions are preloaded in the background as soon
+         as the tests list loads (see preloadQuestions), so a tap normally
+         finds them already in memory and the first question renders at
+         once — no loading screen. The timer starts only once the first
+         question renders, so waiting never eats test time. */
       var mins0 = Math.round(((test.durationSeconds || 0) / 60) || (test.questionCount || 50));
       var total0 = test.durationSeconds || (test.questionCount || 50) * 60;
       exam = null;
@@ -2035,9 +2066,9 @@
       $("timerChip").classList.remove("low");
       var badge0 = $("sampleBadge");
       if (badge0) badge0.classList.add("hidden");
-      $("qNum").textContent = "LOADING...";
+      $("qNum").textContent = "";
       $("qSubject").textContent = "";
-      $("qText").textContent = "Loading questions, please wait…";
+      $("qText").textContent = "";
       $("qOpts").innerHTML = "";
       $("palGrid").innerHTML = "";
       showView("exam");
