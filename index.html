@@ -788,11 +788,6 @@
         <div class="view" id="view-notes">
           <h2 class="page-title">Resources</h2>
           <p class="page-sub" style="margin-bottom:14px">Access quality notes, MCQs, and study materials to make your MDCAT preparation easier and smarter.</p>
-          <div class="list-head" style="margin-top:4px">
-            <h3>Flashcards</h3>
-            <span class="cnt">9 decks · 225 cards</span>
-          </div>
-          <div id="fcDeckList" style="display:grid;gap:10px;margin-bottom:18px"></div>
           <div class="searchbar">
             <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
             <input id="noteSearch" type="text" placeholder="Search study notes..." />
@@ -804,21 +799,19 @@
             <button class="fchip" type="button">Physics</button>
             <button class="fchip" type="button">English</button>
           </div>
+          <div class="chips" id="typeChips" style="margin-top:10px">
+            <button class="fchip active" type="button">All</button>
+            <button class="fchip" type="button">Flashcards</button>
+            <button class="fchip" type="button">Notes</button>
+            <button class="fchip" type="button">MCQs</button>
+            <button class="fchip" type="button">PDF</button>
+            <button class="fchip" type="button">Past Papers</button>
+          </div>
           <div class="list-head">
-            <h3>MDCAT Revision Notes</h3>
-            <span class="cnt" id="noteCount">0 files</span>
+            <h3>Study Material</h3>
+            <span class="cnt" id="noteCount">0 items</span>
           </div>
-          <div id="noteList"></div>
-          <div class="empty-card" id="notesEmpty">
-            <div class="eic">
-              <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4.5A2.5 2.5 0 0 1 4.5 2H11v20H4.5A2.5 2.5 0 0 0 2 24.5z" opacity="0"/><path d="M12 6c-1.5-1.6-3.8-2-6-2H3v14h3c2.2 0 4.5.4 6 2 1.5-1.6 3.8-2 6-2h3V4h-3c-2.2 0-4.5.4-6 2z"/><path d="M12 6v14"/></svg>
-            </div>
-            <h3>No Notes Available Yet</h3>
-            <p>Check back later for new study materials.</p>
-            <button class="btn-grad" id="refreshNotes" type="button">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
-              Refresh</button>
-          </div>
+          <div id="resList"></div>
         </div>
 
         <!-- ======== FLASHCARDS (STUDY) ======== -->
@@ -1630,17 +1623,24 @@
     $("perfViewAll").addEventListener("click", function(){ showView("dashboard"); });
     $("subjViewAll").addEventListener("click", function(){ setTestFilter("all"); showView("tests"); });
     $("startPractice").addEventListener("click", function(){ showView("tests"); });
-    $("refreshNotes").addEventListener("click", function(){ fetchNotes(); toast("Notes refreshed."); });
-    var noteFilter = "All", noteQuery = "";
+    var noteFilter = "All", noteQuery = "", resType = "All";
     var noteChips = $("noteChips").querySelectorAll(".fchip");
     for (var nc=0;nc<noteChips.length;nc++){
       noteChips[nc].addEventListener("click", function(){
         for (var x=0;x<noteChips.length;x++) noteChips[x].classList.toggle("active", noteChips[x]===this);
         noteFilter = this.textContent.trim();
-        renderNotes();
+        renderResources();
       });
     }
-    $("noteSearch").addEventListener("input", function(){ noteQuery = this.value.trim().toLowerCase(); renderNotes(); });
+    var typeChips = $("typeChips").querySelectorAll(".fchip");
+    for (var tc=0;tc<typeChips.length;tc++){
+      typeChips[tc].addEventListener("click", function(){
+        for (var x=0;x<typeChips.length;x++) typeChips[x].classList.toggle("active", typeChips[x]===this);
+        resType = this.textContent.trim();
+        renderResources();
+      });
+    }
+    $("noteSearch").addEventListener("input", function(){ noteQuery = this.value.trim().toLowerCase(); renderResources(); });
 
     /* ==================== TEST BUILDERS ==================== */
     function tagQ(s, ch, q){ return { subject:s.name, subjectId:s.id, color:s.color, chapter:ch.name, q:q.q, o:q.o, a:q.a, e:q.e }; }
@@ -2136,14 +2136,6 @@
         electrostatics: { title: 'Electrostatics — Flashcards', label: 'Physics · Electrostatics', cards: FC_CARDS_ELECTROSTATICS }
       };
     var fcDeckKey = "ac", fcIndex = 0, fcFlipped = false;
-    function renderFcDecks(){
-      var keys = Object.keys(FC_DECKS), html = "";
-      for (var i=0;i<keys.length;i++){
-        var d = FC_DECKS[keys[i]];
-        html += '<button class="chap-row" type="button" data-fcdeck="'+keys[i]+'"><span class="chap-num">'+("0"+(i+1)).slice(-2)+'</span><span class="ct">'+esc(d.title)+'<small>'+esc(d.label)+' · '+d.cards.length+' flashcards</small></span><span class="chev">'+CHEV+'</span></button>';
-      }
-      $("fcDeckList").innerHTML = html;
-    }
     function renderFlashcard(){
       var deck = FC_DECKS[fcDeckKey], card = deck.cards[fcIndex];
       /* Card text keeps the website's own <sub>/<sup> markup, so innerHTML like the website. */
@@ -2163,13 +2155,11 @@
       renderFlashcard();
       showView("flashcards");
     }
-    $("fcDeckList").addEventListener("click", function(e){ var b = e.target.closest("[data-fcdeck]"); if (b) openFlashcards(b.getAttribute("data-fcdeck")); });
     $("fcBackBtn").addEventListener("click", function(){ showView("notes"); });
     $("fcScene").addEventListener("click", function(){ fcFlipped = !fcFlipped; $("fcInner").classList.toggle("flipped", fcFlipped); });
     $("fcScene").addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); fcFlipped = !fcFlipped; $("fcInner").classList.toggle("flipped", fcFlipped); } });
     $("fcPrevBtn").addEventListener("click", function(){ if (fcIndex > 0){ fcIndex--; fcFlipped = false; renderFlashcard(); } });
     $("fcNextBtn").addEventListener("click", function(){ var n = FC_DECKS[fcDeckKey].cards.length; if (fcIndex < n - 1){ fcIndex++; fcFlipped = false; renderFlashcard(); } });
-    renderFcDecks();
     $("ctestBack").addEventListener("click", function(){ showView("chapters"); });
     $("chapSearch").addEventListener("input", function(){ chapQuery = this.value.trim().toLowerCase(); renderChapters(); });
     function subjectAccuracy(sid){
@@ -2225,7 +2215,7 @@
       h += '</div>';
       $("dashOverview").innerHTML = h;
     }
-    function renderAll(){ renderHomeStats(); renderSubjects(); renderTests(); }
+    function renderAll(){ renderHomeStats(); renderSubjects(); renderTests(); renderResources(); }
     /* ==================== LIVE DATA (Firestore) ==================== */
     function unsubscribeAll(){ for (var i=0;i<unsubs.length;i++){ try { unsubs[i](); } catch (e) {} } unsubs = []; if (notesUnsub) { try { notesUnsub(); } catch (e) {} notesUnsub = null; } }
     function subscribeAll(){
@@ -2237,7 +2227,7 @@
           var list = [];
           snap.forEach(function(d){ var data = d.data(); data.id = d.id; list.push(data); });
           list.sort(function(a,b){ return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime(); });
-          liveTests = list; testsReady = true; renderTests(); preloadQuestions();
+          liveTests = list; testsReady = true; renderTests(); preloadQuestions(); renderResources();
           if ($("view-chapters").classList.contains("on")) renderChapters();
         }, function(err){ console.warn("Tests load failed:", err); testsReady = true; renderTests();
           if ($("view-chapters").classList.contains("on")) renderChapters(); }));
@@ -2288,48 +2278,105 @@
     var notesUnsub = null;
     function fetchNotes(){
       if (notesUnsub) { try { notesUnsub(); } catch (e) {} notesUnsub = null; }
-      notesReady = false; renderNotes();
+      notesReady = false; renderResources();
       try {
         notesUnsub = onSnapshot(query(collection(db, "notes"), where("published", "==", true)), function(snap){
           var list = [];
           snap.forEach(function(d){ var data = d.data(); data.id = d.id; list.push(data); });
           list.sort(function(a,b){ return new Date(b.uploadedAt || 0).getTime() - new Date(a.uploadedAt || 0).getTime(); });
-          liveNotes = list; notesReady = true; renderNotes();
-        }, function(err){ console.warn("Notes load failed:", err); notesReady = true; renderNotes(); });
-      } catch (e) { console.warn("Notes listener failed:", e); notesReady = true; renderNotes(); }
+          liveNotes = list; notesReady = true; renderResources();
+        }, function(err){ console.warn("Notes load failed:", err); notesReady = true; renderResources(); });
+      } catch (e) { console.warn("Notes listener failed:", e); notesReady = true; renderResources(); }
     }
-    function renderNotes(){
-      var countEl = $("noteCount"), listEl = $("noteList"), emptyEl = $("notesEmpty");
-      if (!listEl || !emptyEl) return;
-      var shown = [];
-      if (notesReady) {
-        for (var i=0;i<liveNotes.length;i++){
-          var n = liveNotes[i];
-          if (noteFilter !== "All" && n.subject !== noteFilter) continue;
-          if (noteQuery && String(n.title || "").toLowerCase().indexOf(noteQuery) === -1) continue;
-          shown.push(n);
+    /* Past papers bundled with the app — same file as the MDCAT Prime website's Resources page. */
+    var PAST_PAPERS = [
+      { title: "Sindh MDCAT Paper 2025 — Version A", subject: "Past Papers", meta: "Mdcat Prime · 47 pages · PDF", downloadUrl: "https://mdcatprep-seven.vercel.app/resources/sindh-mdcat-2025-paper-a.pdf" }
+    ];
+    var shownRes = [];
+    function renderResources(){
+      var listEl = $("resList"), countEl = $("noteCount");
+      if (!listEl) return;
+      shownRes = [];
+      var q = noteQuery;
+      function subjOk(subj){ return noteFilter === "All" || subj === noteFilter; }
+      function textOk(t){ return !q || String(t || "").toLowerCase().indexOf(q) !== -1; }
+      /* Flashcards */
+      if (resType === "All" || resType === "Flashcards"){
+        var keys = Object.keys(FC_DECKS);
+        for (var i=0;i<keys.length;i++){
+          var d = FC_DECKS[keys[i]];
+          var dsubj = d.label.split(" · ")[0];
+          if (!subjOk(dsubj)) continue;
+          if (!textOk(d.title + " " + d.label)) continue;
+          shownRes.push({ kind: "flashcard", key: keys[i], num: i + 1, title: d.title, sub: d.label + " · " + d.cards.length + " flashcards" });
         }
       }
-      if (countEl) countEl.textContent = shown.length + (shown.length === 1 ? " file" : " files");
-      if (!notesReady) { listEl.innerHTML = '<div class="empty-note">Loading verified notes...</div>'; emptyEl.classList.add("hidden"); return; }
-      if (!shown.length) { listEl.innerHTML = ""; emptyEl.classList.remove("hidden"); return; }
-      emptyEl.classList.add("hidden");
+      /* Notes (Firestore) — notes are PDFs, so they also appear under the PDF filter. */
+      if (notesReady && (resType === "All" || resType === "Notes" || resType === "PDF")){
+        for (var n=0;n<liveNotes.length;n++){
+          var nt = liveNotes[n];
+          if (!subjOk(nt.subject)) continue;
+          if (!textOk(nt.title)) continue;
+          shownRes.push({ kind: "note", note: nt });
+        }
+      }
+      /* Past papers */
+      if (resType === "All" || resType === "Past Papers" || resType === "PDF"){
+        for (var p=0;p<PAST_PAPERS.length;p++){
+          var pp = PAST_PAPERS[p];
+          if (!textOk(pp.title)) continue;
+          shownRes.push({ kind: "pastpaper", note: pp });
+        }
+      }
+      /* MCQs — the chapter-wise tests, same list as the Tests tab. */
+      if (testsReady && (resType === "All" || resType === "MCQs")){
+        for (var t=0;t<liveTests.length;t++){
+          var tt = liveTests[t];
+          if (!subjOk(tt.subject)) continue;
+          if (!textOk(tt.title)) continue;
+          shownRes.push({ kind: "test", test: tt });
+        }
+      }
+      if (countEl) countEl.textContent = shownRes.length + (shownRes.length === 1 ? " item" : " items");
       var html = "";
-      for (var j=0;j<shown.length;j++){
-        var nt = shown[j];
-        var date = nt.uploadedAt ? new Date(nt.uploadedAt).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}) : "Recent";
-        html += '<div class="test-card" style="display:flex;align-items:center;gap:12px">'
-          + '<div style="flex:1;min-width:0"><h4 style="margin:0 0 4px">'+esc(nt.title)+'</h4>'
-          + '<div class="chap">'+esc(nt.subject)+(nt.fileSizeFormatted ? " · " + esc(nt.fileSizeFormatted) : "") + ' · Updated: ' + esc(date) + '</div></div>'
-          + '<button class="btn-blue" type="button" style="width:auto;flex:none" data-note-view="'+j+'">View</button>'
-          + '<button class="btn-ghost" type="button" style="width:auto;flex:none" data-note-dl="'+j+'">Download</button></div>';
+      for (var j=0;j<shownRes.length;j++){
+        var it = shownRes[j];
+        if (it.kind === "flashcard"){
+          html += '<button class="chap-row" type="button" data-idx="'+j+'"><span class="chap-num">'+("0"+it.num).slice(-2)+'</span><span class="ct">'+esc(it.title)+'<small>'+esc(it.sub)+'</small></span><span class="chev">'+CHEV+'</span></button>';
+        } else if (it.kind === "test"){
+          var st = testStyle(it.test.subject);
+          var mins = Math.round((it.test.durationSeconds || 0) / 60);
+          html += '<div class="test-card"><div class="top">'
+            + '<span class="spill" style="background:'+st.soft+';color:'+st.color+'">'+esc(it.test.subject).toUpperCase()+'</span></div>'
+            + '<h4>'+esc(it.test.title)+'</h4>'
+            + '<div class="meta"><span>'+CLOCK+' '+mins+' mins</span><span>'+HELP+' '+(it.test.questionCount || 0)+' MCQs</span><span>'+MEDAL+' '+(it.test.totalMarks || 0)+' Marks</span></div>'
+            + '<button class="btn-blue" type="button" data-idx="'+j+'">Attempt Test '+ARROW+'</button></div>';
+        } else {
+          var nn = it.note;
+          var date = nn.uploadedAt ? new Date(nn.uploadedAt).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}) : "Recent";
+          var metaLine = it.kind === "pastpaper"
+            ? esc(nn.subject) + " · " + esc(nn.meta)
+            : esc(nn.subject) + (nn.fileSizeFormatted ? " · " + esc(nn.fileSizeFormatted) : "") + " · Updated: " + esc(date);
+          html += '<div class="test-card" style="display:flex;align-items:center;gap:12px">'
+            + '<div style="flex:1;min-width:0"><h4 style="margin:0 0 4px">'+esc(nn.title)+'</h4>'
+            + '<div class="chap">'+metaLine+'</div></div>'
+            + '<button class="btn-blue" type="button" style="width:auto;flex:none" data-idx="'+j+'" data-act="view">View</button>'
+            + '<button class="btn-ghost" type="button" style="width:auto;flex:none" data-idx="'+j+'" data-act="dl">Download</button></div>';
+        }
       }
       listEl.innerHTML = html;
-      var vb = listEl.querySelectorAll("[data-note-view]");
-      for (var v=0;v<vb.length;v++) vb[v].addEventListener("click", function(){ openNoteViewer(shown[parseInt(this.getAttribute("data-note-view"),10)]); });
-      var dbtns = listEl.querySelectorAll("[data-note-dl]");
-      for (var d2=0;d2<dbtns.length;d2++) dbtns[d2].addEventListener("click", function(){ downloadNote(shown[parseInt(this.getAttribute("data-note-dl"),10)]); });
     }
+    $("resList").addEventListener("click", function(e){
+      var b = e.target.closest("[data-idx]");
+      if (!b) return;
+      var it = shownRes[parseInt(b.getAttribute("data-idx"), 10)];
+      if (!it) return;
+      var act = b.getAttribute("data-act");
+      if (it.kind === "flashcard") openFlashcards(it.key);
+      else if (it.kind === "test") startExam(it.test);
+      else if (act === "dl") downloadNote(it.note);
+      else openNoteViewer(it.note);
+    });
     function downloadNote(note){
       if (!note || !note.downloadUrl) { toast("Document URL is not available."); return; }
       var a = document.createElement("a");
