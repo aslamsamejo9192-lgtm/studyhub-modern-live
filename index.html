@@ -79,11 +79,7 @@
       .hist-score.ok{color:#15803D}
       .hist-score.bad{color:#DC2626}
       /* ---------- Boot & Welcome ---------- */
-      .boot-screen{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px}
-      .boot-name{font-size:30px;font-weight:800;color:#3B82F6}
-      .boot-name span{color:#F59E0B}
-      .boot-sub{color:var(--blue);font-weight:700;font-size:15px}
-      .boot-spin{width:34px;height:34px;border-radius:50%;border:3.5px solid #DBEAFE;border-top-color:var(--blue);animation:bootspin .8s linear infinite;margin-top:12px}
+      .boot-screen{position:fixed;inset:0;z-index:100;background:var(--bg)}
       @keyframes bootspin{to{transform:rotate(360deg)}}
       .btn-spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:bootspin .7s linear infinite;flex:none}
       .btn-grad:disabled{opacity:.8;cursor:wait}
@@ -497,13 +493,8 @@
   </head>
   <body>
 
-    <!-- ================= BOOT SCREEN ================= -->
-    <div class="boot-screen" id="bootScreen">
-      <img src="/icons/logo.jpg" width="64" height="64" alt="MDCAT Prime" />
-      <div class="boot-name">MDCAT <span>Prime</span></div>
-      <div class="boot-sub">MDCAT Prep</div>
-      <div class="boot-spin" aria-hidden="true"></div>
-    </div>
+    <!-- Plain dark cover while sign-in is checked — no loading screen. -->
+    <div class="boot-screen" id="bootScreen"></div>
 
     <!-- ================= WELCOME BACK ================= -->
     <section class="welcome-screen hidden" id="welcomeScreen">
