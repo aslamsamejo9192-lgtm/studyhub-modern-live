@@ -2343,11 +2343,11 @@
           var nn = it.note;
           var date = nn.uploadedAt ? new Date(nn.uploadedAt).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}) : "Recent";
           var metaLine = esc(nn.subject) + (nn.fileSizeFormatted ? " · " + esc(nn.fileSizeFormatted) : "") + " · Updated: " + esc(date);
-          html += '<div class="test-card" style="display:flex;align-items:center;gap:12px">'
-            + '<div style="flex:1;min-width:0"><h4 style="margin:0 0 4px">'+esc(nn.title)+'</h4>'
+          html += '<div class="test-card" style="display:flex;flex-direction:column;gap:10px">'
+            + '<div><h4 style="margin:0 0 4px">'+esc(nn.title)+'</h4>'
             + '<div class="chap">'+metaLine+'</div></div>'
-            + '<button class="btn-blue" type="button" style="width:auto;flex:none" data-idx="'+j+'" data-act="view">View</button>'
-            + '<button class="btn-ghost" type="button" style="width:auto;flex:none" data-idx="'+j+'" data-act="dl">Download</button></div>';
+            + '<div style="display:flex;gap:10px"><button class="btn-blue" type="button" style="flex:1;width:auto;margin-top:0" data-idx="'+j+'" data-act="view">View</button>'
+            + '<button class="btn-ghost" type="button" style="flex:1;width:auto" data-idx="'+j+'" data-act="dl">Download</button></div></div>';
         }
       }
       listEl.innerHTML = html;
