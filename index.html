@@ -492,22 +492,64 @@
       .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
       @media (prefers-reduced-motion:reduce){ *{transition:none !important;animation:none !important} }
-      /* ---------- Resources: subject rows + dropdowns ---------- */
+      /* ---------- Resources: colourful category pages (Flash Cards / Notes PDF) ----------
+         Screenshot design: lavender header, white dropdowns, pastel icon tiles,
+         purple pill buttons, soft colour wash on the right of each row.
+         Scoped to #resCatView.res-color, so MCQS / Past Papers / Books keep the app theme. */
+      #resCatView .res-cat-head{display:flex;align-items:center;gap:14px;margin:4px 0 14px}
+      #resCatView .res-cat-ico{flex:none;width:64px;height:64px;border-radius:20px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#8B5CF6,#6D28D9);box-shadow:0 10px 22px rgba(109,40,217,.35)}
+      #resCatView .res-cat-txt{flex:1;min-width:0}
+      #resCatView .res-cat-txt h3{font-size:26px;font-weight:800;margin:0;letter-spacing:-.01em;color:#1E1B4B}
+      #resCatView .res-cat-txt p{margin:3px 0 0;color:#6B7280;font-weight:600;font-size:13.5px}
+      /* Dark theme: the Flash Cards header sits on the dark page background,
+         so its title/subtitle go light (the Notes band stays light, so its
+         dark text is unchanged). */
+      [data-theme="dark"] #resCatView:not(.res-nt) .res-cat-txt h3{color:#F1F5FF}
+      [data-theme="dark"] #resCatView:not(.res-nt) .res-cat-txt p{color:#CBD5E1}
+      #resCatView .res-cat-deco{display:none}
+      /* Notes header band: soft lavender gradient + books motif on the right. */
+      #resCatView.res-nt .res-cat-head{background:linear-gradient(120deg,#F5F3FF 0%,#EDE9FE 55%,#FCE7F3 100%);border-radius:22px;padding:16px;position:relative;overflow:hidden}
+      #resCatView.res-nt .res-cat-ico{background:linear-gradient(135deg,#A78BFA,#7C3AED)}
+      #resCatView.res-nt .res-cat-txt{padding-right:74px}
+      #resCatView.res-nt .res-cat-deco{display:block;position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#C4B5FD;opacity:.55;pointer-events:none}
+      #resNtSearchWrap{margin:0 0 2px}
       .res-filters{display:flex;flex-direction:column;gap:10px;margin:14px 0 2px}
       .res-filters select{width:100%;min-width:0;background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:14px;padding:11px 10px;font-weight:700;font-size:14px}
       [data-theme="dark"] .res-filters select{background:#12233F;color:var(--ink)}
-      #resList .subj-row{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:13px 14px;margin-top:10px}
+      #resCatView.res-color .res-filters{flex-direction:row;gap:10px}
+      #resCatView.res-color .res-filter{position:relative;flex:1;min-width:0;display:flex;align-items:center;gap:7px;background:#fff;border:1.5px solid #E5E7EB;border-radius:16px;padding:10px 11px;cursor:pointer;box-shadow:0 4px 12px rgba(124,58,237,.07)}
+      #resCatView.res-color .res-filter:focus-within{outline:2px solid #7C3AED;outline-offset:2px}
+      #resCatView.res-color .res-filter select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;margin:0;padding:0;border:0}
+      #resCatView.res-color .res-filter-ico{flex:none;width:28px;height:28px;border-radius:10px;display:grid;place-items:center;background:#EDE9FE;color:#7C3AED}
+      #resCatView.res-color .res-filter-txt{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25}
+      #resCatView.res-color .res-filter-txt small{font-size:11px;font-weight:700;color:#6B7280}
+      #resCatView.res-color .res-filter-val{font-size:13px;font-weight:800;color:#1E1B4B;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:break-word}
+      #resCatView.res-color .res-filter-chev{flex:none;color:#6B7280}
+      /* Colourful subject rows: pastel tile, title + count, purple pill on the right,
+         soft colour wash on the right side — screenshot layout, mobile-sized. */
+      #resList .subj-row{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,#ffffff 55%,var(--rowwash,#F5F3FF) 100%);border:1px solid #EDE9FE;border-radius:20px;box-shadow:0 6px 18px rgba(124,58,237,.08);padding:13px 14px;margin-top:10px}
       .subj-ico{flex:none;width:52px;height:52px;border-radius:16px;display:grid;place-items:center}
       .subj-txt{flex:1;min-width:0}
-      .subj-txt b{display:block;font-size:15.5px;font-weight:800}
-      .subj-txt small{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-top:2px}
-      .subj-act{flex:none;width:auto;margin-top:0;padding:11px 14px;white-space:nowrap}
-      .subj-act:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
-      /* Resources rows: title + meta on top, action button below, full width —
-         same column pattern as the note cards, so long titles never truncate. */
-      #resList .subj-row{flex-direction:column;align-items:stretch;gap:10px}
-      #resList .subj-top{display:flex;align-items:center;gap:12px;min-width:0}
-      #resList .subj-act{flex:none;width:100%;margin-top:0;padding:12px 14px;white-space:nowrap}
+      .subj-txt b{display:block;font-size:15.5px;font-weight:800;line-height:1.25;color:#1E1B4B}
+      .subj-txt small{display:block;font-size:12.5px;font-weight:600;color:#6B7280;margin-top:2px}
+      .btn-purple{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:#7C3AED;color:#fff;border:0;font-weight:700;font-size:13.5px;border-radius:999px;padding:11px 14px;min-height:44px;box-shadow:0 8px 18px rgba(124,58,237,.35);white-space:nowrap}
+      .btn-purple:active{transform:scale(.97)}
+      .btn-purple:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+      #resList .subj-act{flex:none;width:auto;margin-top:0}
+      @media (max-width:380px){
+        #resList .subj-row{gap:9px;padding:12px}
+        #resList .subj-ico{width:46px;height:46px;border-radius:14px}
+        #resList .subj-txt b{font-size:14.5px}
+        #resList .subj-act{font-size:12.5px;padding:10px 11px}
+        #resCatView.res-color .res-filter{padding:9px 10px;gap:6px}
+        #resCatView.res-color .res-filter-ico{width:24px;height:24px;border-radius:9px}
+        #resCatView.res-color .res-filter-val{font-size:12px}
+        #resCatView.res-color .res-filter-chev{width:14px;height:14px}
+        #resCatView.res-nt .res-cat-deco svg{width:56px;height:56px}
+        #resCatView .res-cat-ico{width:56px;height:56px;border-radius:18px}
+        #resCatView .res-cat-txt h3{font-size:23px}
+        #resCatView.res-nt .res-cat-txt{padding-right:64px}
+      }
     </style>
   </head>
   <body>
@@ -835,14 +877,35 @@
           </div>
           <div id="resCatView" class="hidden">
             <button class="chap-backlink" type="button" id="resBackBtn">← Resources</button>
-            <div class="list-head">
-              <h3 id="resCatTitle">Flash Cards</h3>
+            <div class="res-cat-head hidden" id="resCatHead">
+              <span class="res-cat-ico" id="resCatIco"></span>
+              <span class="res-cat-txt">
+                <h3 id="resCatTitle">Flash Cards</h3>
+                <p class="page-sub" id="resCatSub">Quick revision — flip the cards and test yourself.</p>
+              </span>
+              <span class="res-cat-deco" aria-hidden="true"><svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-1.5-1.6-3.8-2-6-2H3v14h3c2.2 0 4.5.4 6 2 1.5-1.6 3.8-2 6-2h3V4h-3c-2.2 0-4.5.4-6 2z"/><path d="M12 6v14"/></svg></span>
+            </div>
+            <div class="list-head" id="resListHead">
+              <h3 id="resListHeadTitle">Flash Cards</h3>
               <span class="cnt" id="noteCount">0 items</span>
             </div>
-            <p class="page-sub hidden" id="resCatSub" style="margin:-8px 0 0"></p>
+            <div class="searchbar hidden" id="resNtSearchWrap">
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
+              <input id="resNtSearch" type="search" placeholder="Search notes…" aria-label="Search notes">
+            </div>
             <div class="res-filters hidden" id="resFilters">
-              <select id="resSubjSel" aria-label="Subject"></select>
-              <select id="resChapSel" aria-label="Chapter"></select>
+              <label class="res-filter" for="resSubjSel">
+                <span class="res-filter-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
+                <span class="res-filter-txt"><small>Select Subject</small><span class="res-filter-val" id="resSubjVal">All Subjects</span></span>
+                <svg class="res-filter-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                <select id="resSubjSel" aria-label="Subject"></select>
+              </label>
+              <label class="res-filter" for="resChapSel">
+                <span class="res-filter-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-1.5-1.6-3.8-2-6-2H3v14h3c2.2 0 4.5.4 6 2 1.5-1.6 3.8-2 6-2h3V4h-3c-2.2 0-4.5.4-6 2z"/><path d="M12 6v14"/></svg></span>
+                <span class="res-filter-txt"><small>Select Chapter</small><span class="res-filter-val" id="resChapVal">All Chapters</span></span>
+                <svg class="res-filter-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                <select id="resChapSel" aria-label="Chapter"></select>
+              </label>
             </div>
           <div id="resList"></div>
           <div class="empty-card hidden" id="resEmpty">
@@ -1691,6 +1754,10 @@
       else if (resType === "PDF Notes") resNtChap = v;
       renderResources();
     });
+    $("resNtSearch").addEventListener("input", function(){
+      resNtSearch = this.value.trim().toLowerCase();
+      renderResources();
+    });
 
     /* ==================== TEST BUILDERS ==================== */
     function tagQ(s, ch, q){ return { subject:s.name, subjectId:s.id, color:s.color, chapter:ch.name, q:q.q, o:q.o, a:q.a, e:q.e }; }
@@ -2367,8 +2434,19 @@
        Flashcard decks are grouped by the subject in each deck's own label
        ("Biology · Bioenergetics"); counts come from the real deck arrays. */
     var RES_SUBJS = ["Biology", "Chemistry", "Physics", "English"];
-    var resFcSubj = null, resFcChap = null, resNtSubj = null, resNtChap = null, resNtList = null;
-    function resetResState(){ resFcSubj = null; resFcChap = null; resNtSubj = null; resNtChap = null; resNtList = null; }
+    var resFcSubj = null, resFcChap = null, resNtSubj = null, resNtChap = null, resNtList = null, resNtSearch = "";
+    function resetResState(){ resFcSubj = null; resFcChap = null; resNtSubj = null; resNtChap = null; resNtList = null; resNtSearch = ""; var si = $("resNtSearch"); if (si) si.value = ""; }
+    /* Screenshot colours for the colourful category pages (NOT the app's test colours):
+       Physics purple, Chemistry pink, Biology green, English blue. */
+    var RES_STYLE = {
+      "Biology": { color:"#16A34A", soft:"#DCFCE7" },
+      "Chemistry": { color:"#DB2777", soft:"#FCE7F3" },
+      "Physics": { color:"#7C3AED", soft:"#EDE9FE" },
+      "English": { color:"#2563EB", soft:"#DBEAFE" }
+    };
+    function resStyle(subject){ return RES_STYLE[subject] || { color:"#7C3AED", soft:"#EDE9FE" }; }
+    var RES_FC_ICO = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>';
+    var RES_NT_ICO = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>';
     function fcGroups(){
       var g = { Biology: [], Chemistry: [], Physics: [], English: [] };
       var keys = Object.keys(FC_DECKS);
@@ -2439,6 +2517,9 @@
       var co = [{ v:"", t:"All Chapters" }];
       for (var j=0;j<chaps.length;j++) co.push({ v:chaps[j], t:chaps[j] });
       fillSel(chapSel, co, chapVal || "");
+      var sv = $("resSubjVal"), cv = $("resChapVal");
+      if (sv) sv.textContent = (subjSel.selectedIndex >= 0 && subjSel.options[subjSel.selectedIndex]) ? subjSel.options[subjSel.selectedIndex].text : "All Subjects";
+      if (cv) cv.textContent = (chapSel.selectedIndex >= 0 && chapSel.options[chapSel.selectedIndex]) ? chapSel.options[chapSel.selectedIndex].text : "All Chapters";
     }
     function subjIconOf(name){
       for (var i=0;i<SUBJECTS.length;i++) if (SUBJECTS[i].name === name) return SUBJECTS[i].icon;
@@ -2466,6 +2547,7 @@
       var subjs = resNtSubj ? [resNtSubj] : RES_SUBJS.slice();
       for (var s=0;s<subjs.length;s++){
         var subj = subjs[s], mine = [];
+        if (resNtSearch && subj.toLowerCase().indexOf(resNtSearch) === -1) continue;
         for (var i=0;i<notes.length;i++){
           if (noteSubjOf(notes[i]) !== subj) continue;
           if (resNtChap && noteChapOf(notes[i]) !== resNtChap) continue;
@@ -2482,6 +2564,7 @@
       for (var i=0;i<notes.length;i++){
         if (noteSubjOf(notes[i]) !== resNtList) continue;
         if (resNtChap && noteChapOf(notes[i]) !== resNtChap) continue;
+        if (resNtSearch && String(notes[i].title || "").toLowerCase().indexOf(resNtSearch) === -1) continue;
         shownRes.push({ kind:"note", note:notes[i] });
       }
     }
@@ -2505,7 +2588,20 @@
       if (hdT) hdT.classList.add("hidden");
       if (hdS) hdS.classList.add("hidden");
       var isFc = resType === "Flashcards", isNt = resType === "PDF Notes";
-      $("resCatTitle").textContent = isFc ? "Flash Cards" : isNt ? "Notes PDF" : resType === "PDF MCQs" ? "MCQS PDF" : resType;
+      var catTitle = isFc ? "Flash Cards" : isNt ? "Notes PDF" : resType === "PDF MCQs" ? "MCQS PDF" : resType;
+      $("resCatTitle").textContent = catTitle;
+      var listHeadTitle = $("resListHeadTitle");
+      if (listHeadTitle) listHeadTitle.textContent = catTitle;
+      var catHead = $("resCatHead"), listHead = $("resListHead"), searchWrap = $("resNtSearchWrap");
+      if (catHead) catHead.classList.toggle("hidden", !(isFc || isNt));
+      if (listHead) listHead.classList.toggle("hidden", isFc || isNt);
+      if (searchWrap) searchWrap.classList.toggle("hidden", !isNt);
+      if (catEl){
+        catEl.classList.toggle("res-color", isFc || isNt);
+        catEl.classList.toggle("res-nt", isNt);
+      }
+      var catIco = $("resCatIco");
+      if (catIco && (isFc || isNt)) catIco.innerHTML = isFc ? RES_FC_ICO : RES_NT_ICO;
       if (subEl){
         if (isFc){ subEl.textContent = "Quick revision — flip the cards and test yourself."; subEl.classList.remove("hidden"); }
         else if (isNt){ subEl.textContent = "Your subject notes — view or download as PDF."; subEl.classList.remove("hidden"); }
@@ -2536,8 +2632,8 @@
         listEl.innerHTML = "";
         if (emptyEl){
           emptyEl.classList.remove("hidden");
-          $("resEmptyTitle").textContent = "No " + resType + " Available Yet";
-          $("resEmptySub").textContent = "Check back later for new study materials.";
+          if (isNt && resNtSearch){ $("resEmptyTitle").textContent = "No notes found"; $("resEmptySub").textContent = "Try a different search."; }
+          else { $("resEmptyTitle").textContent = "No " + resType + " Available Yet"; $("resEmptySub").textContent = "Check back later for new study materials."; }
         }
         return;
       }
@@ -2546,15 +2642,15 @@
       for (var j=0;j<shownRes.length;j++){
         var it = shownRes[j];
         if (it.kind === "fcsubj" || it.kind === "fcdeck"){
-          var st = testStyle(it.subj);
-          html += '<div class="subj-row"><div class="subj-top"><span class="subj-ico" style="background:'+st.soft+';color:'+st.color+'">'+iconSvg(it.icon,26)+'</span>'
-            + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span></div>'
-            + '<button class="btn-blue subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>'+PLAY+' Start Practice</button></div>';
+          var st = resStyle(it.subj);
+          html += '<div class="subj-row" style="--rowwash:'+st.soft+'"><span class="subj-ico" style="background:'+st.soft+';color:'+st.color+'">'+iconSvg(it.icon,26)+'</span>'
+            + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span>'
+            + '<button class="btn-purple subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>Start Practice →</button></div>';
         } else if (it.kind === "ntsubj"){
-          var st2 = testStyle(it.subj);
-          html += '<div class="subj-row"><div class="subj-top"><span class="subj-ico" style="background:'+st2.soft+';color:'+st2.color+'">'+iconSvg(it.icon,26)+'</span>'
-            + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span></div>'
-            + '<button class="btn-blue subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>View Notes</button></div>';
+          var st2 = resStyle(it.subj);
+          html += '<div class="subj-row" style="--rowwash:'+st2.soft+'"><span class="subj-ico" style="background:'+st2.soft+';color:'+st2.color+'">'+iconSvg(it.icon,26)+'</span>'
+            + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span>'
+            + '<button class="btn-purple subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>View Notes →</button></div>';
         } else {
           var nn = it.note;
           var date = nn.uploadedAt ? new Date(nn.uploadedAt).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}) : "Recent";
