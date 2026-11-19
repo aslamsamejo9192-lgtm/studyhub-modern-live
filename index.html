@@ -1843,21 +1843,26 @@
     $("subjViewAll").addEventListener("click", function(){ setTestFilter("all"); showView("tests"); });
     $("startPractice").addEventListener("click", function(){ showView("tests"); });
     var resType = null; /* open resource category ("Flashcards" | "PDF Notes" | "PDF MCQs" | "Past Papers" | "Books") or null = the 5-box grid */
+    var resGridScroll = 0, resRowsScroll = 0; /* window scroll to restore on Back (grid / subject rows) */
     var resCatBtns = $("resCats").querySelectorAll("[data-rescat]");
     for (var rc=0;rc<resCatBtns.length;rc++){
       resCatBtns[rc].addEventListener("click", function(){
         resType = this.getAttribute("data-rescat");
         resetResState();
+        /* The detail/list renders in place on the same window scroll: save
+           the grid scroll for Back, then open at the top. */
+        resGridScroll = window.scrollY || 0;
         renderResources();
+        window.scrollTo(0,0);
       });
     }
     $("resBackBtn").addEventListener("click", function(){
-      if (resType === "PDF Notes" && resNtList){ resNtList = null; renderResources(); return; }
-      resType = null; resetResState(); renderResources();
+      if (resType === "PDF Notes" && resNtList){ resNtList = null; renderResources(); window.scrollTo(0, resRowsScroll); return; }
+      resType = null; resetResState(); renderResources(); window.scrollTo(0, resGridScroll);
     });
     /* Subject-notes list view: band back arrow returns to the subject rows,
        home icon goes Home, chapter pills filter the list. */
-    $("resNtBandBack").addEventListener("click", function(){ resNtList = null; renderResources(); });
+    $("resNtBandBack").addEventListener("click", function(){ resNtList = null; renderResources(); window.scrollTo(0, resRowsScroll); });
     $("resNtBandHome").addEventListener("click", function(){ showView("home"); });
     $("resNtPills").addEventListener("click", function(e){
       var p = e.target.closest("[data-chapi]");
@@ -2851,7 +2856,7 @@
       var act = b.getAttribute("data-act");
       if (it.kind === "fcsubj") openFlashcardSet(fcSubjectDeck(it.subj));
       else if (it.kind === "fcdeck") openFlashcards(it.key);
-      else if (it.kind === "ntsubj"){ resNtList = it.subj; resNtSearch = ""; var si2 = $("resNtSearch"); if (si2) si2.value = ""; renderResources(); }
+      else if (it.kind === "ntsubj"){ resNtList = it.subj; resNtSearch = ""; var si2 = $("resNtSearch"); if (si2) si2.value = ""; resRowsScroll = window.scrollY || 0; renderResources(); window.scrollTo(0,0); }
       else if (act === "dl") downloadNote(it.note);
       else if (it.kind === "note") openNoteViewer(it.note);
     });
