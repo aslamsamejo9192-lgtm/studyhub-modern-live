@@ -787,21 +787,42 @@
         <div class="view" id="view-notes">
           <h2 class="page-title">Resources</h2>
           <p class="page-sub" style="margin-bottom:14px">Access quality notes, MCQs, and study materials to make your MDCAT preparation easier and smarter.</p>
-          <div class="searchbar">
-            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
-            <input id="noteSearch" type="text" placeholder="Search study notes..." />
+          <div id="resCats">
+            <div class="sec-head"><h3>Actions Hub</h3></div>
+            <div class="quick-row">
+              <button class="quick" type="button" data-rescat="Flashcards">
+                <span class="qtile" style="background:linear-gradient(135deg,#3B82F6,#2563EB)">
+                  <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                </span><span class="qlbl">Flash Cards</span>
+              </button>
+              <button class="quick" type="button" data-rescat="PDF Notes">
+                <span class="qtile" style="background:linear-gradient(135deg,#fbbf24,#d97706)">
+                  <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
+                </span><span class="qlbl">Notes PDF</span>
+              </button>
+              <button class="quick" type="button" data-rescat="PDF MCQs">
+                <span class="qtile" style="background:linear-gradient(135deg,#4ADE80,#16A34A)">
+                  <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5V3h6v1.5"/><path d="m9 13 2 2 4-4"/></svg>
+                </span><span class="qlbl">MCQS PDF</span>
+              </button>
+              <button class="quick" type="button" data-rescat="Past Papers">
+                <span class="qtile" style="background:linear-gradient(135deg,#A78BFA,#7C3AED)">
+                  <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+                </span><span class="qlbl">Past Papers</span>
+              </button>
+              <button class="quick" type="button" data-rescat="Books">
+                <span class="qtile" style="background:linear-gradient(135deg,#2DD4BF,#0D9488)">
+                  <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-1.5-1.6-3.8-2-6-2H3v14h3c2.2 0 4.5.4 6 2 1.5-1.6 3.8-2 6-2h3V4h-3c-2.2 0-4.5.4-6 2z"/><path d="M12 6v14"/></svg>
+                </span><span class="qlbl">Books</span>
+              </button>
+            </div>
           </div>
-          <div class="chips" id="typeChips" style="margin-top:10px">
-            <button class="fchip active" type="button">All</button>
-            <button class="fchip" type="button">Flashcards</button>
-            <button class="fchip" type="button">PDF Notes</button>
-            <button class="fchip" type="button">PDF MCQs</button>
-            <button class="fchip" type="button">Past Papers</button>
-          </div>
-          <div class="list-head">
-            <h3>Study Material</h3>
-            <span class="cnt" id="noteCount">0 items</span>
-          </div>
+          <div id="resCatView" class="hidden">
+            <button class="chap-backlink" type="button" id="resBackBtn">← Resources</button>
+            <div class="list-head">
+              <h3 id="resCatTitle">Flash Cards</h3>
+              <span class="cnt" id="noteCount">0 items</span>
+            </div>
           <div id="resList"></div>
           <div class="empty-card hidden" id="resEmpty">
             <div class="eic">
@@ -809,6 +830,7 @@
             </div>
             <h3 id="resEmptyTitle">No PDF Notes Available Yet</h3>
             <p id="resEmptySub">Check back later for new study materials.</p>
+          </div>
           </div>
         </div>
 
@@ -1547,6 +1569,7 @@
       var navName = (name==="exam" || name==="result" || name==="chapters" || name==="chaptertest") ? "tests" : (name==="flashcards" ? "notes" : name);
       var navs = document.querySelectorAll("[data-nav]");
       for (var j=0;j<navs.length;j++) navs[j].classList.toggle("active", navs[j].getAttribute("data-nav")===navName);
+      if (name==="notes"){ resType = null; renderResources(); }
       if (name==="dashboard") renderProgress();
       window.scrollTo(0,0);
     }
@@ -1622,16 +1645,15 @@
     $("perfViewAll").addEventListener("click", function(){ showView("dashboard"); });
     $("subjViewAll").addEventListener("click", function(){ setTestFilter("all"); showView("tests"); });
     $("startPractice").addEventListener("click", function(){ showView("tests"); });
-    var noteQuery = "", resType = "All";
-    var typeChips = $("typeChips").querySelectorAll(".fchip");
-    for (var tc=0;tc<typeChips.length;tc++){
-      typeChips[tc].addEventListener("click", function(){
-        for (var x=0;x<typeChips.length;x++) typeChips[x].classList.toggle("active", typeChips[x]===this);
-        resType = this.textContent.trim();
+    var resType = null; /* open resource category ("Flashcards" | "PDF Notes" | "PDF MCQs" | "Past Papers" | "Books") or null = the 5-box grid */
+    var resCatBtns = $("resCats").querySelectorAll("[data-rescat]");
+    for (var rc=0;rc<resCatBtns.length;rc++){
+      resCatBtns[rc].addEventListener("click", function(){
+        resType = this.getAttribute("data-rescat");
         renderResources();
       });
     }
-    $("noteSearch").addEventListener("input", function(){ noteQuery = this.value.trim().toLowerCase(); renderResources(); });
+    $("resBackBtn").addEventListener("click", function(){ resType = null; renderResources(); });
 
     /* ==================== TEST BUILDERS ==================== */
     function tagQ(s, ch, q){ return { subject:s.name, subjectId:s.id, color:s.color, chapter:ch.name, q:q.q, o:q.o, a:q.a, e:q.e }; }
@@ -2297,30 +2319,37 @@
     function renderResources(){
       var listEl = $("resList"), countEl = $("noteCount"), emptyEl = $("resEmpty");
       if (!listEl) return;
+      var gridEl = $("resCats"), catEl = $("resCatView");
+      /* No category open — show the 5-box grid. */
+      if (!resType){
+        if (gridEl) gridEl.classList.remove("hidden");
+        if (catEl) catEl.classList.add("hidden");
+        return;
+      }
+      if (gridEl) gridEl.classList.add("hidden");
+      if (catEl) catEl.classList.remove("hidden");
+      $("resCatTitle").textContent = resType === "Flashcards" ? "Flash Cards" : resType === "PDF Notes" ? "Notes PDF" : resType === "PDF MCQs" ? "MCQS PDF" : resType;
       shownRes = [];
-      var q = noteQuery;
-      function textOk(t){ return !q || String(t || "").toLowerCase().indexOf(q) !== -1; }
       /* Flashcards */
-      if (resType === "All" || resType === "Flashcards"){
+      if (resType === "Flashcards"){
         var keys = Object.keys(FC_DECKS);
         for (var i=0;i<keys.length;i++){
           var d = FC_DECKS[keys[i]];
-          if (!textOk(d.title + " " + d.label)) continue;
           shownRes.push({ kind: "flashcard", key: keys[i], num: i + 1, title: d.title, sub: d.label + " · " + d.cards.length + " flashcards" });
         }
       }
       /* Notes (Firestore) — split into PDF Notes / PDF MCQs / Past Papers by kind. */
-      if (notesReady && (resType === "All" || resType === "PDF Notes" || resType === "PDF MCQs" || resType === "Past Papers")){
+      if (notesReady && (resType === "PDF Notes" || resType === "PDF MCQs" || resType === "Past Papers")){
         for (var n=0;n<liveNotes.length;n++){
           var nt = liveNotes[n];
           var k = noteKind(nt);
           if (resType === "PDF Notes" && k !== "notes") continue;
           if (resType === "PDF MCQs" && k !== "mcqs") continue;
           if (resType === "Past Papers" && k !== "pastpaper") continue;
-          if (!textOk(nt.title)) continue;
           shownRes.push({ kind: "note", note: nt });
         }
       }
+      /* "Books" has no source yet — the empty card below says so plainly. */
       if (countEl) countEl.textContent = shownRes.length + (shownRes.length === 1 ? " item" : " items");
       /* Nothing here yet — say so plainly. The message disappears on its own
          as soon as material is uploaded, because the list renders live. */
@@ -2328,8 +2357,8 @@
         listEl.innerHTML = "";
         if (emptyEl){
           emptyEl.classList.remove("hidden");
-          $("resEmptyTitle").textContent = q ? "No Results Found" : (resType === "All" ? "No Study Material Available Yet" : "No " + resType + " Available Yet");
-          $("resEmptySub").textContent = q ? "Try a different search." : "Check back later for new study materials.";
+          $("resEmptyTitle").textContent = "No " + resType + " Available Yet";
+          $("resEmptySub").textContent = "Check back later for new study materials.";
         }
         return;
       }
