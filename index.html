@@ -493,8 +493,8 @@
 
       @media (prefers-reduced-motion:reduce){ *{transition:none !important;animation:none !important} }
       /* ---------- Resources: subject rows + dropdowns ---------- */
-      .res-filters{display:flex;gap:10px;margin:14px 0 2px}
-      .res-filters select{flex:1;min-width:0;background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:14px;padding:11px 10px;font-weight:700;font-size:14px}
+      .res-filters{display:flex;flex-direction:column;gap:10px;margin:14px 0 2px}
+      .res-filters select{width:100%;min-width:0;background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:14px;padding:11px 10px;font-weight:700;font-size:14px}
       [data-theme="dark"] .res-filters select{background:#12233F;color:var(--ink)}
       .subj-row{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:13px 14px;margin-top:10px}
       .subj-ico{flex:none;width:52px;height:52px;border-radius:16px;display:grid;place-items:center}
@@ -503,6 +503,11 @@
       .subj-txt small{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-top:2px}
       .subj-act{flex:none;width:auto;margin-top:0;padding:11px 14px;white-space:nowrap}
       .subj-act:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+      /* Resources rows: title + meta on top, action button below, full width —
+         same column pattern as the note cards, so long titles never truncate. */
+      #resList .subj-row{flex-direction:column;align-items:stretch;gap:10px}
+      #resList .subj-top{display:flex;align-items:center;gap:12px;min-width:0}
+      #resList .subj-act{flex:none;width:100%;margin-top:0;padding:12px 14px;white-space:nowrap}
     </style>
   </head>
   <body>
@@ -796,8 +801,8 @@
 
         <!-- ======== NOTES ======== -->
         <div class="view" id="view-notes">
-          <h2 class="page-title">Resources</h2>
-          <p class="page-sub" style="margin-bottom:14px">Access quality notes, MCQs, and study materials to make your MDCAT preparation easier and smarter.</p>
+          <h2 class="page-title" id="resPageTitle">Resources</h2>
+          <p class="page-sub" id="resPageSub" style="margin-bottom:14px">Access quality notes, MCQs, and study materials to make your MDCAT preparation easier and smarter.</p>
           <div id="resCats">
             <div class="sec-head"><h3>Actions Hub</h3></div>
             <div class="quick-row">
@@ -2485,15 +2490,20 @@
       if (!listEl) return;
       var gridEl = $("resCats"), catEl = $("resCatView");
       var subEl = $("resCatSub"), filtEl = $("resFilters");
+      var hdT = $("resPageTitle"), hdS = $("resPageSub");
       /* No category open — show the 5-box grid. */
       if (!resType){
         if (gridEl) gridEl.classList.remove("hidden");
         if (catEl) catEl.classList.add("hidden");
+        if (hdT) hdT.classList.remove("hidden");
+        if (hdS) hdS.classList.remove("hidden");
         resetResState();
         return;
       }
       if (gridEl) gridEl.classList.add("hidden");
       if (catEl) catEl.classList.remove("hidden");
+      if (hdT) hdT.classList.add("hidden");
+      if (hdS) hdS.classList.add("hidden");
       var isFc = resType === "Flashcards", isNt = resType === "PDF Notes";
       $("resCatTitle").textContent = isFc ? "Flash Cards" : isNt ? "Notes PDF" : resType === "PDF MCQs" ? "MCQS PDF" : resType;
       if (subEl){
@@ -2537,13 +2547,13 @@
         var it = shownRes[j];
         if (it.kind === "fcsubj" || it.kind === "fcdeck"){
           var st = testStyle(it.subj);
-          html += '<div class="subj-row"><span class="subj-ico" style="background:'+st.soft+';color:'+st.color+'">'+iconSvg(it.icon,26)+'</span>'
-            + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span>'
+          html += '<div class="subj-row"><div class="subj-top"><span class="subj-ico" style="background:'+st.soft+';color:'+st.color+'">'+iconSvg(it.icon,26)+'</span>'
+            + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span></div>'
             + '<button class="btn-blue subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>'+PLAY+' Start Practice</button></div>';
         } else if (it.kind === "ntsubj"){
           var st2 = testStyle(it.subj);
-          html += '<div class="subj-row"><span class="subj-ico" style="background:'+st2.soft+';color:'+st2.color+'">'+iconSvg(it.icon,26)+'</span>'
-            + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span>'
+          html += '<div class="subj-row"><div class="subj-top"><span class="subj-ico" style="background:'+st2.soft+';color:'+st2.color+'">'+iconSvg(it.icon,26)+'</span>'
+            + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span></div>'
             + '<button class="btn-blue subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>View Notes</button></div>';
         } else {
           var nn = it.note;
