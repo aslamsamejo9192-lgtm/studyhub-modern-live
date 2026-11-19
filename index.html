@@ -492,6 +492,17 @@
       .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
       @media (prefers-reduced-motion:reduce){ *{transition:none !important;animation:none !important} }
+      /* ---------- Resources: subject rows + dropdowns ---------- */
+      .res-filters{display:flex;gap:10px;margin:14px 0 2px}
+      .res-filters select{flex:1;min-width:0;background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:14px;padding:11px 10px;font-weight:700;font-size:14px}
+      [data-theme="dark"] .res-filters select{background:#12233F;color:var(--ink)}
+      .subj-row{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:13px 14px;margin-top:10px}
+      .subj-ico{flex:none;width:52px;height:52px;border-radius:16px;display:grid;place-items:center}
+      .subj-txt{flex:1;min-width:0}
+      .subj-txt b{display:block;font-size:15.5px;font-weight:800}
+      .subj-txt small{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-top:2px}
+      .subj-act{flex:none;width:auto;margin-top:0;padding:11px 14px;white-space:nowrap}
+      .subj-act:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
     </style>
   </head>
   <body>
@@ -822,6 +833,11 @@
             <div class="list-head">
               <h3 id="resCatTitle">Flash Cards</h3>
               <span class="cnt" id="noteCount">0 items</span>
+            </div>
+            <p class="page-sub hidden" id="resCatSub" style="margin:-8px 0 0"></p>
+            <div class="res-filters hidden" id="resFilters">
+              <select id="resSubjSel" aria-label="Subject"></select>
+              <select id="resChapSel" aria-label="Chapter"></select>
             </div>
           <div id="resList"></div>
           <div class="empty-card hidden" id="resEmpty">
@@ -1569,7 +1585,7 @@
       var navName = (name==="exam" || name==="result" || name==="chapters" || name==="chaptertest") ? "tests" : (name==="flashcards" ? "notes" : name);
       var navs = document.querySelectorAll("[data-nav]");
       for (var j=0;j<navs.length;j++) navs[j].classList.toggle("active", navs[j].getAttribute("data-nav")===navName);
-      if (name==="notes"){ resType = null; renderResources(); }
+      if (name==="notes"){ resType = null; resetResState(); renderResources(); }
       if (name==="dashboard") renderProgress();
       window.scrollTo(0,0);
     }
@@ -1650,10 +1666,26 @@
     for (var rc=0;rc<resCatBtns.length;rc++){
       resCatBtns[rc].addEventListener("click", function(){
         resType = this.getAttribute("data-rescat");
+        resetResState();
         renderResources();
       });
     }
-    $("resBackBtn").addEventListener("click", function(){ resType = null; renderResources(); });
+    $("resBackBtn").addEventListener("click", function(){
+      if (resType === "PDF Notes" && resNtList){ resNtList = null; renderResources(); return; }
+      resType = null; resetResState(); renderResources();
+    });
+    $("resSubjSel").addEventListener("change", function(){
+      var v = this.value || null;
+      if (resType === "Flashcards"){ resFcSubj = v; resFcChap = null; }
+      else if (resType === "PDF Notes"){ resNtSubj = v; resNtChap = null; resNtList = null; }
+      renderResources();
+    });
+    $("resChapSel").addEventListener("change", function(){
+      var v = this.value || null;
+      if (resType === "Flashcards") resFcChap = v;
+      else if (resType === "PDF Notes") resNtChap = v;
+      renderResources();
+    });
 
     /* ==================== TEST BUILDERS ==================== */
     function tagQ(s, ch, q){ return { subject:s.name, subjectId:s.id, color:s.color, chapter:ch.name, q:q.q, o:q.o, a:q.a, e:q.e }; }
@@ -2148,9 +2180,9 @@
         workenergy: { title: 'Work Power and Energy — Flashcards', label: 'Physics · Work Power and Energy', cards: FC_CARDS_WORKENERGY },
         electrostatics: { title: 'Electrostatics — Flashcards', label: 'Physics · Electrostatics', cards: FC_CARDS_ELECTROSTATICS }
       };
-    var fcDeckKey = "ac", fcIndex = 0, fcFlipped = false;
+    var fcDeckKey = "ac", fcDeck = null, fcIndex = 0, fcFlipped = false;
     function renderFlashcard(){
-      var deck = FC_DECKS[fcDeckKey], card = deck.cards[fcIndex];
+      var deck = fcDeck || FC_DECKS[fcDeckKey], card = deck.cards[fcIndex];
       /* Card text keeps the website's own <sub>/<sup> markup, so innerHTML like the website. */
       $("fcFront").innerHTML = card.front;
       $("fcBack").innerHTML = card.back;
@@ -2161,7 +2193,17 @@
     }
     function openFlashcards(key){
       fcDeckKey = FC_DECKS[key] ? key : "ac";
-      var deck = FC_DECKS[fcDeckKey];
+      fcDeck = FC_DECKS[fcDeckKey];
+      var deck = fcDeck;
+      $("fcDeckTitle").textContent = deck.title;
+      $("fcDeckLabel").textContent = deck.label;
+      fcIndex = 0; fcFlipped = false;
+      renderFlashcard();
+      showView("flashcards");
+    }
+    /* Practice across a subject's decks as one combined set. */
+    function openFlashcardSet(deck){
+      fcDeck = deck; fcDeckKey = "custom";
       $("fcDeckTitle").textContent = deck.title;
       $("fcDeckLabel").textContent = deck.label;
       fcIndex = 0; fcFlipped = false;
@@ -2172,7 +2214,7 @@
     $("fcScene").addEventListener("click", function(){ fcFlipped = !fcFlipped; $("fcInner").classList.toggle("flipped", fcFlipped); });
     $("fcScene").addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); fcFlipped = !fcFlipped; $("fcInner").classList.toggle("flipped", fcFlipped); } });
     $("fcPrevBtn").addEventListener("click", function(){ if (fcIndex > 0){ fcIndex--; fcFlipped = false; renderFlashcard(); } });
-    $("fcNextBtn").addEventListener("click", function(){ var n = FC_DECKS[fcDeckKey].cards.length; if (fcIndex < n - 1){ fcIndex++; fcFlipped = false; renderFlashcard(); } });
+    $("fcNextBtn").addEventListener("click", function(){ var n = (fcDeck || FC_DECKS[fcDeckKey]).cards.length; if (fcIndex < n - 1){ fcIndex++; fcFlipped = false; renderFlashcard(); } });
     $("ctestBack").addEventListener("click", function(){ showView("chapters"); });
     $("chapSearch").addEventListener("input", function(){ chapQuery = this.value.trim().toLowerCase(); renderChapters(); });
     function subjectAccuracy(sid){
@@ -2316,34 +2358,161 @@
       return "notes";
     }
     var shownRes = [];
+    /* Resources category pages: the 4 subjects (no Logical Reasoning).
+       Flashcard decks are grouped by the subject in each deck's own label
+       ("Biology · Bioenergetics"); counts come from the real deck arrays. */
+    var RES_SUBJS = ["Biology", "Chemistry", "Physics", "English"];
+    var resFcSubj = null, resFcChap = null, resNtSubj = null, resNtChap = null, resNtList = null;
+    function resetResState(){ resFcSubj = null; resFcChap = null; resNtSubj = null; resNtChap = null; resNtList = null; }
+    function fcGroups(){
+      var g = { Biology: [], Chemistry: [], Physics: [], English: [] };
+      var keys = Object.keys(FC_DECKS);
+      for (var i=0;i<keys.length;i++){
+        var d = FC_DECKS[keys[i]];
+        var parts = String(d.label || "").split(" · ");
+        var subj = (parts[0] || "").trim();
+        var chap = (parts[1] || d.title || "").trim();
+        if (!g[subj]) continue;
+        g[subj].push({ key: keys[i], deck: d, chapter: chap });
+      }
+      return g;
+    }
+    function fcSubjectDeck(subj){
+      var decks = fcGroups()[subj] || [], cards = [];
+      for (var i=0;i<decks.length;i++) cards = cards.concat(decks[i].deck.cards);
+      return { title: subj + " — Flashcards", label: subj + " · " + cards.length + " Flashcards", cards: cards };
+    }
+    function fcChapters(subj){
+      var g = fcGroups(), out = [], seen = {};
+      for (var s=0;s<RES_SUBJS.length;s++){
+        if (subj && RES_SUBJS[s] !== subj) continue;
+        var decks = g[RES_SUBJS[s]] || [];
+        for (var i=0;i<decks.length;i++){ if (!seen[decks[i].chapter]){ seen[decks[i].chapter]=1; out.push(decks[i].chapter); } }
+      }
+      return out;
+    }
+    /* A note belongs to a subject when its own subject field names it. */
+    function noteSubjOf(n){
+      var s = String(n.subject || "").toLowerCase();
+      if (s.indexOf("biology") !== -1) return "Biology";
+      if (s.indexOf("chemistry") !== -1) return "Chemistry";
+      if (s.indexOf("physics") !== -1) return "Physics";
+      if (s.indexOf("english") !== -1) return "English";
+      return null;
+    }
+    /* A note's chapter is its own chapter field when set, else its title. */
+    function noteChapOf(n){ return String(n.chapter || n.title || ""); }
+    function notesOfKind(kind){
+      var out = [];
+      for (var i=0;i<liveNotes.length;i++){ if (noteKind(liveNotes[i]) === kind) out.push(liveNotes[i]); }
+      return out;
+    }
+    function ntChapters(subj){
+      var notes = notesOfKind("notes"), out = [], seen = {};
+      for (var i=0;i<notes.length;i++){
+        if (subj && noteSubjOf(notes[i]) !== subj) continue;
+        var c = noteChapOf(notes[i]);
+        if (c && !seen[c]){ seen[c]=1; out.push(c); }
+      }
+      return out;
+    }
+    function fillSel(sel, opts, val){
+      var h = "";
+      for (var i=0;i<opts.length;i++) h += '<option value="'+esc(opts[i].v)+'">'+esc(opts[i].t)+'</option>';
+      sel.innerHTML = h;
+      sel.value = val;
+    }
+    function fillResFilters(which){
+      var subjSel = $("resSubjSel"), chapSel = $("resChapSel");
+      if (!subjSel || !chapSel) return;
+      var subjVal = which === "fc" ? resFcSubj : resNtSubj;
+      var chapVal = which === "fc" ? resFcChap : resNtChap;
+      var so = [{ v:"", t:"All Subjects" }];
+      for (var i=0;i<RES_SUBJS.length;i++) so.push({ v:RES_SUBJS[i], t:RES_SUBJS[i] });
+      fillSel(subjSel, so, subjVal || "");
+      var chaps = which === "fc" ? fcChapters(subjVal) : ntChapters(subjVal);
+      var co = [{ v:"", t:"All Chapters" }];
+      for (var j=0;j<chaps.length;j++) co.push({ v:chaps[j], t:chaps[j] });
+      fillSel(chapSel, co, chapVal || "");
+    }
+    function subjIconOf(name){
+      for (var i=0;i<SUBJECTS.length;i++) if (SUBJECTS[i].name === name) return SUBJECTS[i].icon;
+      return "";
+    }
+    function buildFcRows(){
+      var g = fcGroups();
+      var subjs = resFcSubj ? [resFcSubj] : RES_SUBJS.slice();
+      for (var s=0;s<subjs.length;s++){
+        var subj = subjs[s], decks = g[subj] || [];
+        if (resFcChap){
+          for (var d=0;d<decks.length;d++){
+            if (decks[d].chapter !== resFcChap) continue;
+            shownRes.push({ kind:"fcdeck", subj:subj, key:decks[d].key, title:decks[d].deck.title.replace(" — Flashcards",""), sub:decks[d].deck.cards.length + " Flashcards", icon:subjIconOf(subj) });
+          }
+        } else {
+          var total = 0;
+          for (var d2=0;d2<decks.length;d2++) total += decks[d2].deck.cards.length;
+          shownRes.push({ kind:"fcsubj", subj:subj, title:subj, sub:total + " Flashcards", disabled: total === 0, icon:subjIconOf(subj) });
+        }
+      }
+    }
+    function buildNtRows(){
+      var notes = notesOfKind("notes");
+      var subjs = resNtSubj ? [resNtSubj] : RES_SUBJS.slice();
+      for (var s=0;s<subjs.length;s++){
+        var subj = subjs[s], mine = [];
+        for (var i=0;i<notes.length;i++){
+          if (noteSubjOf(notes[i]) !== subj) continue;
+          if (resNtChap && noteChapOf(notes[i]) !== resNtChap) continue;
+          mine.push(notes[i]);
+        }
+        if (resNtChap && !mine.length) continue;
+        var chaps = {}, cn = 0;
+        for (var j=0;j<mine.length;j++){ var c = noteChapOf(mine[j]); if (!chaps[c]){ chaps[c]=1; cn++; } }
+        shownRes.push({ kind:"ntsubj", subj:subj, title:subj, sub:mine.length + (mine.length===1 ? " Note" : " Notes") + " • " + cn + (cn===1 ? " Chapter" : " Chapters"), disabled: mine.length===0, icon:subjIconOf(subj) });
+      }
+    }
+    function buildNtList(){
+      var notes = notesOfKind("notes");
+      for (var i=0;i<notes.length;i++){
+        if (noteSubjOf(notes[i]) !== resNtList) continue;
+        if (resNtChap && noteChapOf(notes[i]) !== resNtChap) continue;
+        shownRes.push({ kind:"note", note:notes[i] });
+      }
+    }
     function renderResources(){
       var listEl = $("resList"), countEl = $("noteCount"), emptyEl = $("resEmpty");
       if (!listEl) return;
       var gridEl = $("resCats"), catEl = $("resCatView");
+      var subEl = $("resCatSub"), filtEl = $("resFilters");
       /* No category open — show the 5-box grid. */
       if (!resType){
         if (gridEl) gridEl.classList.remove("hidden");
         if (catEl) catEl.classList.add("hidden");
+        resetResState();
         return;
       }
       if (gridEl) gridEl.classList.add("hidden");
       if (catEl) catEl.classList.remove("hidden");
-      $("resCatTitle").textContent = resType === "Flashcards" ? "Flash Cards" : resType === "PDF Notes" ? "Notes PDF" : resType === "PDF MCQs" ? "MCQS PDF" : resType;
-      shownRes = [];
-      /* Flashcards */
-      if (resType === "Flashcards"){
-        var keys = Object.keys(FC_DECKS);
-        for (var i=0;i<keys.length;i++){
-          var d = FC_DECKS[keys[i]];
-          shownRes.push({ kind: "flashcard", key: keys[i], num: i + 1, title: d.title, sub: d.label + " · " + d.cards.length + " flashcards" });
-        }
+      var isFc = resType === "Flashcards", isNt = resType === "PDF Notes";
+      $("resCatTitle").textContent = isFc ? "Flash Cards" : isNt ? "Notes PDF" : resType === "PDF MCQs" ? "MCQS PDF" : resType;
+      if (subEl){
+        if (isFc){ subEl.textContent = "Quick revision — flip the cards and test yourself."; subEl.classList.remove("hidden"); }
+        else if (isNt){ subEl.textContent = "Your subject notes — view or download as PDF."; subEl.classList.remove("hidden"); }
+        else subEl.classList.add("hidden");
       }
-      /* Notes (Firestore) — split into PDF Notes / PDF MCQs / Past Papers by kind. */
-      if (notesReady && (resType === "PDF Notes" || resType === "PDF MCQs" || resType === "Past Papers")){
+      var backBtn = $("resBackBtn");
+      if (backBtn) backBtn.textContent = (isNt && resNtList) ? "← Notes PDF" : "← Resources";
+      if (filtEl) filtEl.classList.toggle("hidden", !(isFc || isNt));
+      if (isFc) fillResFilters("fc");
+      if (isNt) fillResFilters("nt");
+      shownRes = [];
+      if (isFc) buildFcRows();
+      else if (isNt){ if (resNtList) buildNtList(); else buildNtRows(); }
+      else if (notesReady && (resType === "PDF MCQs" || resType === "Past Papers")){
         for (var n=0;n<liveNotes.length;n++){
           var nt = liveNotes[n];
           var k = noteKind(nt);
-          if (resType === "PDF Notes" && k !== "notes") continue;
           if (resType === "PDF MCQs" && k !== "mcqs") continue;
           if (resType === "Past Papers" && k !== "pastpaper") continue;
           shownRes.push({ kind: "note", note: nt });
@@ -2366,8 +2535,16 @@
       var html = "";
       for (var j=0;j<shownRes.length;j++){
         var it = shownRes[j];
-        if (it.kind === "flashcard"){
-          html += '<button class="chap-row" type="button" data-idx="'+j+'"><span class="chap-num">'+("0"+it.num).slice(-2)+'</span><span class="ct">'+esc(it.title)+'<small>'+esc(it.sub)+'</small></span><span class="chev">'+CHEV+'</span></button>';
+        if (it.kind === "fcsubj" || it.kind === "fcdeck"){
+          var st = testStyle(it.subj);
+          html += '<div class="subj-row"><span class="subj-ico" style="background:'+st.soft+';color:'+st.color+'">'+iconSvg(it.icon,26)+'</span>'
+            + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span>'
+            + '<button class="btn-blue subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>'+PLAY+' Start Practice</button></div>';
+        } else if (it.kind === "ntsubj"){
+          var st2 = testStyle(it.subj);
+          html += '<div class="subj-row"><span class="subj-ico" style="background:'+st2.soft+';color:'+st2.color+'">'+iconSvg(it.icon,26)+'</span>'
+            + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span>'
+            + '<button class="btn-blue subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>View Notes</button></div>';
         } else {
           var nn = it.note;
           var date = nn.uploadedAt ? new Date(nn.uploadedAt).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}) : "Recent";
@@ -2385,11 +2562,13 @@
       var b = e.target.closest("[data-idx]");
       if (!b) return;
       var it = shownRes[parseInt(b.getAttribute("data-idx"), 10)];
-      if (!it) return;
+      if (!it || it.disabled) return;
       var act = b.getAttribute("data-act");
-      if (it.kind === "flashcard") openFlashcards(it.key);
+      if (it.kind === "fcsubj") openFlashcardSet(fcSubjectDeck(it.subj));
+      else if (it.kind === "fcdeck") openFlashcards(it.key);
+      else if (it.kind === "ntsubj"){ resNtList = it.subj; renderResources(); }
       else if (act === "dl") downloadNote(it.note);
-      else openNoteViewer(it.note);
+      else if (it.kind === "note") openNoteViewer(it.note);
     });
     function downloadNote(note){
       if (!note || !note.downloadUrl) { toast("Document URL is not available."); return; }
