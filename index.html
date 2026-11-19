@@ -245,6 +245,8 @@
       /* ---------- Chapters (Prime website flow) ---------- */
       .chap-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:2px 0 12px}
       .chap-backlink{background:none;border:0;color:var(--ink);font-weight:800;font-size:15px;display:inline-flex;align-items:center;gap:6px;padding:6px 0}
+      .res-back-pill{background:#0E1B33;border:1.5px solid #2E4066;border-radius:999px;color:#fff;font-weight:800;font-size:15px;padding:10px 18px;display:inline-flex;align-items:center;gap:8px}
+      .res-back-pill:active{opacity:.85}
       .chap-back{background:none;border:1.5px solid var(--line);border-radius:999px;color:var(--ink);font-weight:800;font-size:14.5px;padding:9px 16px;display:inline-flex;align-items:center;gap:8px}
       .chap-pill{font-weight:800;font-size:13.5px;color:var(--blue);border:1.5px solid var(--blue);border-radius:999px;padding:8px 16px;white-space:nowrap}
       .chap-title{font-size:22px;font-weight:800;letter-spacing:-.01em;line-height:1.2;margin:0 0 6px}
@@ -979,7 +981,7 @@
             </div>
           </div>
           <div id="resCatView" class="hidden">
-            <button class="chap-backlink" type="button" id="resBackBtn">← Resources</button>
+            <button class="res-back-pill" type="button" id="resBackBtn">← Back</button>
             <div class="res-nt-band hidden" id="resNtBand">
               <button class="res-nt-band-btn" type="button" id="resNtBandBack" aria-label="Back to Notes"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
               <h3 id="resNtBandTitle">Biology Notes</h3>
@@ -2739,7 +2741,7 @@
         else subEl.classList.add("hidden");
       }
       var backBtn = $("resBackBtn");
-      if (backBtn){ backBtn.classList.toggle("hidden", isNtList); backBtn.textContent = "← Resources"; }
+      if (backBtn){ backBtn.classList.toggle("hidden", isNtList); backBtn.textContent = "← Back"; }
       if (filtEl) filtEl.classList.toggle("hidden", !(isFc || (isNt && !isNtList)));
       if (isFc) fillResFilters("fc");
       if (isNt) fillResFilters("nt");
