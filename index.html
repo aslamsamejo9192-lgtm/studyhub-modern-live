@@ -588,6 +588,58 @@
       #resCatView .res-nt-info-txt b{display:block;font-size:15px;font-weight:800;color:#1E1B4B}
       #resCatView .res-nt-info-txt p{margin:2px 0 0;font-size:13px;font-weight:600;color:#6B7280;line-height:1.4}
       #resCatView .res-nt-info-deco{flex:none;color:#A78BFA}
+      /* ---------- Resources: DARK MODE rows pages ----------
+         The two dark reference screenshots: dark navy header cards, dark
+         dropdowns, dark row cards with saturated icon tiles, purple gradient
+         pills (no arrow), dark Study Smart card. Every rule here is scoped
+         to [data-theme="dark"] — light mode is untouched. */
+      [data-theme="dark"] #resCatView.res-nt .res-cat-head{background:linear-gradient(120deg,#0E1B33 0%,#131B3D 55%,rgba(124,58,237,.32) 100%);border:1px solid rgba(148,180,255,.14);box-shadow:0 10px 24px rgba(0,0,0,.30)}
+      [data-theme="dark"] #resCatView.res-nt .res-cat-txt h3{color:#F1F5FF}
+      [data-theme="dark"] #resCatView.res-nt .res-cat-txt p{color:#A9B8D4}
+      [data-theme="dark"] #resCatView.res-nt .res-cat-deco{color:#A78BFA;opacity:.7}
+      [data-theme="dark"] #resCatView:not(.res-nt) .res-cat-head{background:linear-gradient(120deg,#0E1B33 0%,#131B3D 55%,rgba(124,58,237,.32) 100%);border:1px solid rgba(148,180,255,.14);border-radius:22px;padding:16px;position:relative;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.30)}
+      [data-theme="dark"] #resCatView:not(.res-nt) .res-cat-txt{padding-right:74px}
+      [data-theme="dark"] #resCatView:not(.res-nt) .res-cat-deco{display:block;position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#8B5CF6;opacity:.65;pointer-events:none}
+      /* Header icon: layers in light, fanned cards + star in dark (reference). */
+      #resCatView .res-ico-dark{display:none}
+      [data-theme="dark"] #resCatView .res-ico-light{display:none}
+      [data-theme="dark"] #resCatView .res-ico-dark{display:inline-block}
+      [data-theme="dark"] #resCatView.res-color .res-filter{background:#0E1B33;border-color:rgba(148,180,255,.16);box-shadow:0 4px 12px rgba(0,0,0,.25)}
+      [data-theme="dark"] #resCatView.res-color .res-filter-ico{background:rgba(124,58,237,.22);color:#A78BFA}
+      [data-theme="dark"] #resCatView.res-color .res-filter-txt small{color:#94A3B8}
+      [data-theme="dark"] #resCatView.res-color .res-filter-val{color:#F1F5FF}
+      [data-theme="dark"] #resCatView.res-color .res-filter-chev{color:#94A3B8}
+      /* Subject rows: dark navy cards, light text, saturated icon tiles. */
+      [data-theme="dark"] #resList .subj-row{background:linear-gradient(90deg,#0E1B33 55%,rgba(124,58,237,.14) 100%);border-color:rgba(148,180,255,.14);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+      [data-theme="dark"] #resList .subj-row[data-subj="Physics"]{background:linear-gradient(90deg,#0E1B33 55%,rgba(59,130,246,.16) 100%)}
+      [data-theme="dark"] #resList .subj-row[data-subj="Chemistry"]{background:linear-gradient(90deg,#0E1B33 55%,rgba(236,72,153,.16) 100%)}
+      [data-theme="dark"] #resList .subj-row[data-subj="Biology"]{background:linear-gradient(90deg,#0E1B33 55%,rgba(34,197,94,.14) 100%)}
+      [data-theme="dark"] #resList .subj-row[data-subj="English"]{background:linear-gradient(90deg,#0E1B33 55%,rgba(37,99,235,.16) 100%)}
+      [data-theme="dark"] #resList .subj-txt b{color:#F1F5FF}
+      [data-theme="dark"] #resList .subj-txt small{color:#A9B8D4}
+      [data-theme="dark"] #resList .subj-row[data-subj="Physics"] .subj-ico{background:#1D4ED8 !important;color:#7DD3FC !important}
+      [data-theme="dark"] #resList .subj-row[data-subj="Chemistry"] .subj-ico{background:#BE185D !important;color:#F9A8D4 !important}
+      [data-theme="dark"] #resList .subj-row[data-subj="Biology"] .subj-ico{background:#15803D !important;color:#86EFAC !important}
+      [data-theme="dark"] #resList .subj-row[data-subj="English"] .subj-ico{background:#2563EB !important;color:#DBEAFE !important}
+      [data-theme="dark"] #resList .btn-purple{background:linear-gradient(135deg,#8B5CF6,#6D28D9);box-shadow:0 8px 20px rgba(124,58,237,.45)}
+      [data-theme="dark"] #resList .btn-purple .btn-arr{display:none}
+      /* Study Smart card on the rows pages: dark only (light rows have none). */
+      #resCatView .res-rows-info{display:none}
+      [data-theme="dark"] #resCatView .res-rows-info{display:flex}
+      /* View Notes detail list in dark: dark cards, pills, download button. */
+      [data-theme="dark"] #resList .res-nt-card{background:#0E1B33;border-color:rgba(148,180,255,.14);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+      [data-theme="dark"] #resList .res-nt-txt b{color:#F1F5FF}
+      [data-theme="dark"] #resList .res-nt-txt small{color:#A9B8D4}
+      [data-theme="dark"] #resList .res-nt-dl{background:rgba(124,58,237,.20);color:#A78BFA}
+      [data-theme="dark"] #resCatView .res-nt-pill{background:#0E1B33;border-color:rgba(148,180,255,.20);color:#CBD5E1}
+      [data-theme="dark"] #resCatView .res-nt-info{background:linear-gradient(120deg,rgba(124,58,237,.22),rgba(124,58,237,.10) 55%,rgba(236,72,153,.12));border:1px solid rgba(148,180,255,.14)}
+      [data-theme="dark"] #resCatView .res-nt-info-txt b{color:#F1F5FF}
+      [data-theme="dark"] #resCatView .res-nt-info-txt p{color:#A9B8D4}
+      [data-theme="dark"] #resCatView .res-nt-info-deco{color:#8B5CF6}
+      [data-theme="dark"] #resCatView .res-nt-subj[data-subj="Physics"] .res-nt-subj-ico{background:#1D4ED8 !important;color:#7DD3FC !important}
+      [data-theme="dark"] #resCatView .res-nt-subj[data-subj="Chemistry"] .res-nt-subj-ico{background:#BE185D !important;color:#F9A8D4 !important}
+      [data-theme="dark"] #resCatView .res-nt-subj[data-subj="Biology"] .res-nt-subj-ico{background:#15803D !important;color:#86EFAC !important}
+      [data-theme="dark"] #resCatView .res-nt-subj[data-subj="English"] .res-nt-subj-ico{background:#2563EB !important;color:#DBEAFE !important}
       @media (max-width:380px){
         #resCatView .res-nt-band{padding:16px 12px 22px;margin:-20px -16px 14px}
         #resCatView .res-nt-band h3{font-size:20px}
@@ -2517,7 +2569,7 @@
       "English": { color:"#2563EB", soft:"#DBEAFE" }
     };
     function resStyle(subject){ return RES_STYLE[subject] || { color:"#7C3AED", soft:"#EDE9FE" }; }
-    var RES_FC_ICO = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>';
+    var RES_FC_ICO = '<span class="res-ico-light"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span><span class="res-ico-dark"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="9.5" height="12.5" rx="2" transform="rotate(-14 7 13)"/><rect x="10" y="3.5" width="11" height="14.5" rx="2"/><path d="M15.5 7.7l.9 1.9 2.1.3-1.5 1.5.4 2.1-1.9-1-1.9 1 .4-2.1-1.5-1.5 2.1-.3z" fill="currentColor" stroke="none"/></svg></span>';
     var RES_NT_ICO = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>';
     function fcGroups(){
       var g = { Biology: [], Chemistry: [], Physics: [], English: [] };
@@ -2677,8 +2729,8 @@
       var catIco = $("resCatIco");
       if (catIco && (isFc || isNt)) catIco.innerHTML = isFc ? RES_FC_ICO : RES_NT_ICO;
       if (subEl){
-        if (isFc){ subEl.textContent = "Quick revision — flip the cards and test yourself."; subEl.classList.remove("hidden"); }
-        else if (isNt){ subEl.textContent = "Your subject notes — view or download as PDF."; subEl.classList.remove("hidden"); }
+        if (isFc){ subEl.textContent = "Quick Revision • Smart Learning"; subEl.classList.remove("hidden"); }
+        else if (isNt){ subEl.textContent = "Download and study premium notes"; subEl.classList.remove("hidden"); }
         else subEl.classList.add("hidden");
       }
       var backBtn = $("resBackBtn");
@@ -2694,6 +2746,7 @@
       if (ntPills) ntPills.classList.toggle("hidden", !isNtList);
       if (isNtList){
         var subj = resNtList, st3 = resStyle(subj);
+        if (ntSubjEl) ntSubjEl.setAttribute("data-subj", subj);
         $("resNtBandTitle").textContent = subj + " Notes";
         var ntIco = $("resNtSubjIco");
         if (ntIco){ ntIco.style.background = st3.soft; ntIco.style.color = st3.color; ntIco.innerHTML = iconSvg(subjIconOf(subj), 30); }
@@ -2740,14 +2793,14 @@
         var it = shownRes[j];
         if (it.kind === "fcsubj" || it.kind === "fcdeck"){
           var st = resStyle(it.subj);
-          html += '<div class="subj-row" style="--rowwash:'+st.soft+'"><span class="subj-ico" style="background:'+st.soft+';color:'+st.color+'">'+iconSvg(it.icon,26)+'</span>'
+          html += '<div class="subj-row" data-subj="'+esc(it.subj)+'" style="--rowwash:'+st.soft+'"><span class="subj-ico" style="background:'+st.soft+';color:'+st.color+'">'+iconSvg(it.icon,26)+'</span>'
             + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span>'
-            + '<button class="btn-purple subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>Start Practice →</button></div>';
+            + '<button class="btn-purple subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>Start Practice <span class="btn-arr">→</span></button></div>';
         } else if (it.kind === "ntsubj"){
           var st2 = resStyle(it.subj);
-          html += '<div class="subj-row" style="--rowwash:'+st2.soft+'"><span class="subj-ico" style="background:'+st2.soft+';color:'+st2.color+'">'+iconSvg(it.icon,26)+'</span>'
+          html += '<div class="subj-row" data-subj="'+esc(it.subj)+'" style="--rowwash:'+st2.soft+'"><span class="subj-ico" style="background:'+st2.soft+';color:'+st2.color+'">'+iconSvg(it.icon,26)+'</span>'
             + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span>'
-            + '<button class="btn-purple subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>View Notes →</button></div>';
+            + '<button class="btn-purple subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>View Notes <span class="btn-arr">→</span></button></div>';
         } else {
           var nn = it.note;
           if (isNtList){
@@ -2767,6 +2820,20 @@
             + '<div style="display:flex;gap:10px"><button class="btn-blue" type="button" style="flex:1;width:auto;margin-top:0" data-idx="'+j+'" data-act="view">View</button>'
             + '<button class="btn-ghost" type="button" style="flex:1;width:auto" data-idx="'+j+'" data-act="dl">Download</button></div></div>';
           }
+        }
+      }
+      /* Study Smart card at the bottom of the subject-rows pages (dark
+         mode only — .res-rows-info is hidden in light mode, where the rows
+         pages have no such card). */
+      if ((isFc || (isNt && !isNtList)) && shownRes.length){
+        if (isFc){
+          html += '<div class="res-nt-info res-rows-info"><span class="res-nt-info-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.4 1 2.3h6c0-.9.4-1.8 1-2.3A7 7 0 0 0 12 2z"/></svg></span>'
+            + '<span class="res-nt-info-txt"><b>Study Smart!</b><p>Practice regularly to boost your MDCAT preparation.</p></span>'
+            + '<span class="res-nt-info-deco"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><path d="M15 7h6v6"/></svg></span></div>';
+        } else {
+          html += '<div class="res-nt-info res-rows-info"><span class="res-nt-info-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>'
+            + '<span class="res-nt-info-txt"><b>Study Smart!</b><p>Download notes and prepare better for MDCAT.</p></span>'
+            + '<span class="res-nt-info-deco"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-1.5-1.6-3.8-2-6-2H3v14h3c2.2 0 4.5.4 6 2 1.5-1.6 3.8-2 6-2h3V4h-3c-2.2 0-4.5.4-6 2z"/><path d="M12 6v14"/></svg></span></div>';
         }
       }
       if (isNtList){
