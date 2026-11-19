@@ -1,8 +1,11 @@
 /* MDCAT Prime PWA service worker.
    Caches the app shell so the app installs and opens offline.
-   Navigation is network-first (fresh version when online, cached shell when offline).
-   Only same-origin requests are handled; Firebase / CDN calls always go to the network. */
-var CACHE = "mdcat-prime-v1";
+   Navigation / index.html is network-first with the HTTP cache bypassed
+   (fresh version when online, cached shell when offline) — a stale
+   first-open after a site update must never be served from cache.
+   Only same-origin requests are handled; Firebase / CDN calls always
+   go to the network. */
+var CACHE = "mdcat-prime-v2";
 var SHELL = [
   "/",
   "/index.html",
@@ -33,13 +36,19 @@ self.addEventListener("fetch", function (e) {
   if (e.request.method !== "GET") return;
   var url = new URL(e.request.url);
   if (url.origin !== self.location.origin) return;
-  if (e.request.mode === "navigate") {
+  if (e.request.mode === "navigate" || url.pathname === "/" || url.pathname === "/index.html") {
     e.respondWith(
-      fetch(e.request).then(function (res) {
+      /* "no-cache" forces a real network revalidation — the browser HTTP
+         cache must never answer a navigation with a stale index.html. */
+      fetch(e.request, { cache: "no-cache" }).then(function (res) {
         var copy = res.clone();
-        caches.open(CACHE).then(function (c) { c.put("/index.html", copy); });
+        caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
         return res;
-      }).catch(function () { return caches.match("/index.html"); })
+      }).catch(function () {
+        return caches.match(e.request).then(function (hit) {
+          return hit || caches.match("/index.html");
+        });
+      })
     );
     return;
   }
