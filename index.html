@@ -3362,7 +3362,8 @@
           var num = parseInt(q.answerKey, 10);
           if (!isNaN(num)) ansIdx = num;
           else if (Array.isArray(q.options)) ansIdx = q.options.findIndex(function(o){ return String(o).trim().toLowerCase() === q.answerKey.trim().toLowerCase(); });
-        } else if (typeof q.a === "number") ansIdx = q.a;
+        } else if (typeof q.correctIndex === "number") ansIdx = q.correctIndex;
+        else if (typeof q.a === "number") ansIdx = q.a;
         var opts = Array.isArray(q.options) ? q.options : (q.o || []);
         var qSubj = q.subject || test.subject;
         norm.push({ id: q.id || ("q" + i), subject: qSubj, subjectId: subjIdOf(qSubj),
