@@ -3454,11 +3454,16 @@
       var myToken = pdfToken;
       pdfDoc.getPage(num).then(function(page){
         if (myToken !== pdfToken) return;
-        var vp = page.getViewport({ scale: pdfScale(), rotation: pdfRotation });
+        /* Render at devicePixelRatio (capped at 2) so text stays sharp on
+           phone screens: the canvas holds 2x pixels while its CSS size
+           stays at the layout width. A 1x canvas on a 2x phone screen is
+           upscaled by the browser — that is what made the pages blurry. */
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var vp = page.getViewport({ scale: pdfScale() * dpr, rotation: pdfRotation });
         var cv = rec.canvas;
         cv.width = Math.floor(vp.width);
         cv.height = Math.floor(vp.height);
-        cv.style.width = Math.floor(vp.width) + "px";
+        cv.style.width = Math.floor(vp.width / dpr) + "px";
         var ctx = cv.getContext("2d");
         return page.render({ canvasContext: ctx, viewport: vp }).promise.then(function(){
           if (myToken !== pdfToken) return;
