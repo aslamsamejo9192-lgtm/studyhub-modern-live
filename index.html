@@ -796,6 +796,13 @@
       <p class="wel-pct" id="welPct">0%</p>
     </section>
 
+    <section class="welcome-screen hidden" id="suspendedScreen">
+      <img src="/icons/logo.jpg" width="64" height="64" alt="MDCAT Prime" />
+      <h2>Account Suspended</h2>
+      <p style="font-size:15px;line-height:1.6;opacity:.85;max-width:320px;margin:0 auto">Your account has been suspended by the admin. You cannot use the app right now.<br />Contact MDCAT Prime for help.</p>
+      <button class="btn-blue" id="suspendedSignout" type="button" style="margin-top:20px">Sign Out</button>
+    </section>
+
     <!-- ================= AUTH SCREENS ================= -->
     <section id="authScreen">
       <!-- Welcome (start screen) -->
@@ -914,7 +921,7 @@
 
     <script>
       /* Signed-in users see Welcome Back at once from the saved profile — no middle logo screen, no empty wait. Firebase still confirms the sign-in; when it answers, the bar animates as before. */
-      try{var __cp=JSON.parse(localStorage.getItem("studyhub_cached_profile")||"null");if(__cp&&__cp.fullName){var __wn=document.getElementById("welName");if(__wn)__wn.textContent=String(__cp.fullName).split(" ")[0];var __b=document.getElementById("bootScreen");if(__b)__b.classList.add("hidden");var __a=document.getElementById("authScreen");if(__a)__a.classList.add("hidden");var __w=document.getElementById("welcomeScreen");if(__w)__w.classList.remove("hidden");}}catch(__e){}
+      try{var __cp=JSON.parse(localStorage.getItem("studyhub_cached_profile")||"null");if(__cp&&__cp.fullName){var __wn=document.getElementById("welName");if(__wn)__wn.textContent=String(__cp.fullName).split(" ")[0];var __b=document.getElementById("bootScreen");if(__b)__b.classList.add("hidden");var __a=document.getElementById("authScreen");if(__a)__a.classList.add("hidden");if(__cp.status==="suspended"){var __s=document.getElementById("suspendedScreen");if(__s)__s.classList.remove("hidden");}else{var __w=document.getElementById("welcomeScreen");if(__w)__w.classList.remove("hidden");}}}catch(__e){}
     </script>
 
     <!-- ================= APP SCREEN ================= -->
@@ -1814,12 +1821,12 @@
       var snap = await getDoc(ref);
       if (snap.exists()) {
         var d = snap.data();
-        profile = { uid: user.uid, fullName: d.fullName || "Student", fatherName: d.fatherName || "", email: d.email || user.email || "", role: d.role || "student" };
+        profile = { uid: user.uid, fullName: d.fullName || "Student", fatherName: d.fatherName || "", email: d.email || user.email || "", role: d.role || "student", status: d.status === "suspended" ? "suspended" : "active" };
       } else {
         var isDemo = (user.email || "").toLowerCase() === DEMO_EMAIL;
         var data = { uid: user.uid, fullName: isDemo ? "Demo Student" : (user.displayName || "Student"), fatherName: "", email: (user.email || "").toLowerCase(), role: "student", createdAt: serverTimestamp(), updatedAt: serverTimestamp() };
         await setDoc(ref, data);
-        profile = { uid: user.uid, fullName: data.fullName, fatherName: "", email: data.email, role: "student" };
+        profile = { uid: user.uid, fullName: data.fullName, fatherName: "", email: data.email, role: "student", status: "active" };
       }
       cacheProfile(profile);
     }
@@ -1848,8 +1855,14 @@
         if (cached) { profile = cached; currentUser = { uid: user.uid, name: cached.fullName, email: cached.email || user.email }; refreshUserUI(); }
         currentUser = { uid: user.uid, name: (profile && profile.fullName) || "Student", email: user.email || "" };
         /* Profile loads in the background — Home opens at once with the cached name, no waiting on slow internet. */
-        loadProfile(user).then(function(){ if (currentUser && currentUser.uid === user.uid){ currentUser.name = (profile && profile.fullName) || currentUser.name; refreshUserUI(); var w = $("welName"); if (w) w.textContent = currentUser.name.split(" ")[0]; } }).catch(function(e){ console.warn("Profile load failed:", e); });
-        if (!booted) {
+        loadProfile(user).then(function(){ if (currentUser && currentUser.uid === user.uid){ currentUser.name = (profile && profile.fullName) || currentUser.name; refreshUserUI(); var w = $("welName"); if (w) w.textContent = currentUser.name.split(" ")[0]; if (profile && profile.status === "suspended") { showSuspended(); } else if (!$("suspendedScreen").classList.contains("hidden")) { $("suspendedScreen").classList.add("hidden"); if (booted && $("appScreen").classList.contains("hidden")) { enterApp(currentUser); subscribeAll(); } } } }).catch(function(e){ console.warn("Profile load failed:", e); });
+        /* A cached suspended profile blocks at once; a fresh profile
+           that says suspended is caught by enterApp / the loader above. */
+        if (profile && profile.status === "suspended") {
+          booted = true;
+          hideBoot();
+          showSuspended();
+        } else if (!booted) {
           booted = true;
           hideBoot();
           showWelcome(currentUser, function(){ enterApp(currentUser); subscribeAll(); });
@@ -1867,6 +1880,7 @@
         currentUser = null; profile = null; results = []; liveTests = []; liveNotes = []; liveAnnouncements = [];
         testsReady = false; notesReady = false;
         $("appScreen").classList.add("hidden");
+        $("suspendedScreen").classList.add("hidden");
         $("authScreen").classList.remove("hidden");
         showAuthScreen("welcome");
       }
@@ -1886,7 +1900,23 @@
       $("greetTime").textContent = h < 12 ? "Good Morning," : (h < 17 ? "Good Afternoon," : "Good Evening,");
       applySavedPhoto();
     }
+    /* Suspended accounts never enter the app: the admin panel sets
+       students/{uid}.status to "suspended" (the student app never
+       writes it). Takes effect at the next sign-in, or as soon as the
+       profile finishes loading. */
+    function showSuspended(){
+      $("authScreen").classList.add("hidden");
+      $("welcomeScreen").classList.add("hidden");
+      $("appScreen").classList.add("hidden");
+      $("suspendedScreen").classList.remove("hidden");
+      window.scrollTo(0,0);
+    }
+    $("suspendedSignout").addEventListener("click", async function(){
+      try { localStorage.removeItem("studyhub_cached_profile"); } catch (e) {}
+      try { await signOut(auth); } catch (e) {}
+    });
     function enterApp(user){
+      if (profile && profile.status === "suspended") { showSuspended(); return; }
       currentUser = user;
       $("authScreen").classList.add("hidden");
       $("welcomeScreen").classList.add("hidden");
@@ -3237,6 +3267,7 @@
     }
     async function startExam(test, preQs){
       if (!test) return;
+      if (profile && profile.status === "suspended") { showSuspended(); return; }
       /* Open the exam screen at once (title + full timer), then show the
          questions. The questions are preloaded in the background as soon
          as the tests list loads (see preloadQuestions), so a tap normally
