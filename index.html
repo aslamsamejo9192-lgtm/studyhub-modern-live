@@ -642,6 +642,116 @@
       [data-theme="dark"] #resCatView .res-nt-subj[data-subj="Chemistry"] .res-nt-subj-ico{background:#BE185D !important;color:#F9A8D4 !important}
       [data-theme="dark"] #resCatView .res-nt-subj[data-subj="Biology"] .res-nt-subj-ico{background:#15803D !important;color:#86EFAC !important}
       [data-theme="dark"] #resCatView .res-nt-subj[data-subj="English"] .res-nt-subj-ico{background:#2563EB !important;color:#DBEAFE !important}
+      /* ---------- Resources: MCQS PDF rows + chapters + chapter detail ----------
+         Level 1 rows keep the MCQS reference's tile colours (Biology green,
+         Chemistry blue, Physics pink, English orange) and a "View Chapters >"
+         chevron that stays visible in dark mode. Level 2 is a chapter list
+         (back arrow in the app header + subject banner + numbered rows);
+         Level 3 is a chapter detail (own top bar + dark-blue hero banner +
+         PDF cards with View / Download buttons). */
+      #resCatView .res-cat-deco-mcq{display:none}
+      #resCatView.res-mcq .res-cat-head{background:linear-gradient(120deg,#F5F3FF 0%,#EDE9FE 55%,#FCE7F3 100%);border-radius:22px;padding:16px;position:relative;overflow:hidden}
+      #resCatView.res-mcq .res-cat-ico{background:linear-gradient(135deg,#A78BFA,#7C3AED)}
+      #resCatView.res-mcq .res-cat-txt{padding-right:74px}
+      #resCatView.res-mcq .res-cat-deco{display:none !important}
+      #resCatView.res-mcq .res-cat-deco-mcq{display:block;position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#C4B5FD;opacity:.55;pointer-events:none}
+      #resCatView .res-cat-deco-mcq-spark{display:none}
+      #resCatView.res-mcq .res-cat-deco-mcq-spark{display:flex;align-items:flex-start;gap:8px;position:absolute;right:92px;top:14px;color:#A78BFA;pointer-events:none}
+      #resCatView.res-mcq .res-cat-deco-mcq-spark svg:last-child{margin-top:16px}
+      /* MCQS header title/subtitle match the reference's larger type. */
+      #resCatView.res-mcq .res-cat-ico{width:52px;height:52px}
+      #resCatView.res-mcq .res-cat-txt h3{font-size:30px}
+      #resCatView.res-mcq .res-cat-txt p{font-size:13.5px}
+      /* MCQS rows match the reference's larger type + compact pill, so the
+         one-line count fits next to "View Chapters". */
+      #resCatView.res-mcq #resList .subj-row{padding:12px}
+      #resCatView.res-mcq #resList .subj-ico{width:48px;height:48px}
+      #resCatView.res-mcq #resList .subj-txt b{font-size:18px}
+      #resCatView.res-mcq #resList .subj-txt small{font-size:12.5px}
+      #resCatView.res-mcq #resList .subj-act{font-size:12px;padding:9px 10px}
+      /* Dark MCQS header is the reference's vivid purple (not the dark-navy
+         header the Notes/Flash Cards pages use). */
+      [data-theme="dark"] #resCatView.res-mcq .res-cat-head{background:linear-gradient(120deg,#6D28D9 0%,#7C3AED 55%,#9333EA 100%);border:1px solid rgba(196,181,253,.35);box-shadow:0 10px 24px rgba(109,40,217,.45)}
+      [data-theme="dark"] #resCatView.res-mcq .res-cat-ico{background:linear-gradient(135deg,#C4B5FD,#8B5CF6)}
+      [data-theme="dark"] #resCatView.res-mcq .res-cat-txt h3{color:#F1F5FF}
+      [data-theme="dark"] #resCatView.res-mcq .res-cat-txt p{color:rgba(237,233,254,.92)}
+      [data-theme="dark"] #resCatView.res-mcq .res-cat-deco-mcq{color:#EDE9FE;opacity:.9}
+      [data-theme="dark"] #resCatView.res-mcq .res-cat-deco-mcq-spark{color:#EDE9FE}
+      /* MCQS tile colours (dark): Biology green, Chemistry blue, Physics pink, English orange. */
+      [data-theme="dark"] #resCatView.res-mcq #resList .subj-row[data-subj="Physics"]{background:linear-gradient(90deg,#0E1B33 55%,rgba(236,72,153,.16) 100%)}
+      [data-theme="dark"] #resCatView.res-mcq #resList .subj-row[data-subj="Chemistry"]{background:linear-gradient(90deg,#0E1B33 55%,rgba(59,130,246,.16) 100%)}
+      [data-theme="dark"] #resCatView.res-mcq #resList .subj-row[data-subj="Biology"]{background:linear-gradient(90deg,#0E1B33 55%,rgba(34,197,94,.14) 100%)}
+      [data-theme="dark"] #resCatView.res-mcq #resList .subj-row[data-subj="English"]{background:linear-gradient(90deg,#0E1B33 55%,rgba(217,119,6,.16) 100%)}
+      [data-theme="dark"] #resCatView.res-mcq #resList .subj-row[data-subj="Physics"] .subj-ico{background:#BE185D !important;color:#F9A8D4 !important}
+      [data-theme="dark"] #resCatView.res-mcq #resList .subj-row[data-subj="Chemistry"] .subj-ico{background:#2563EB !important;color:#DBEAFE !important}
+      [data-theme="dark"] #resCatView.res-mcq #resList .subj-row[data-subj="Biology"] .subj-ico{background:#15803D !important;color:#86EFAC !important}
+      [data-theme="dark"] #resCatView.res-mcq #resList .subj-row[data-subj="English"] .subj-ico{background:#B45309 !important;color:#FDE68A !important}
+      /* MCQS detail subject-header tile colours (dark) — same mapping. */
+      [data-theme="dark"] #resCatView.res-mcq .res-nt-subj[data-subj="Physics"] .res-nt-subj-ico{background:#BE185D !important;color:#F9A8D4 !important}
+      [data-theme="dark"] #resCatView.res-mcq .res-nt-subj[data-subj="Chemistry"] .res-nt-subj-ico{background:#2563EB !important;color:#DBEAFE !important}
+      [data-theme="dark"] #resCatView.res-mcq .res-nt-subj[data-subj="Biology"] .res-nt-subj-ico{background:#15803D !important;color:#86EFAC !important}
+      [data-theme="dark"] #resCatView.res-mcq .res-nt-subj[data-subj="English"] .res-nt-subj-ico{background:#B45309 !important;color:#FDE68A !important}
+      /* "View Chapters >" chevron: inline-flex, stays visible in dark. */
+      #resList .mcq-chev{display:inline-flex;align-items:center}
+      /* Level 2: back arrow inside the app header (search + bell hidden
+         while the chapter list is open, like the reference). */
+      .app-header .mcq-head-back{display:none}
+      body.mcq-chapters .app-header .mcq-head-back{display:grid}
+      body.mcq-chapters #headSearch, body.mcq-chapters #bellBtn{display:none}
+      /* Level 3: the app header is replaced by the chapter top bar. */
+      body.mcq-chapter .app-header{display:none}
+      /* Level 2: subject banner — dark blue gradient, subject tile + counts,
+         subject motif watermark on the right. Same in both themes (the app's
+         banners are dark blue in light mode too). */
+      #resCatView .res-mcq-banner{display:flex;align-items:center;gap:14px;border-radius:22px;padding:18px 16px;margin:4px 0 14px;position:relative;overflow:hidden;background:linear-gradient(120deg,#0B1E5C 0%,#1D4ED8 60%,#2563EB 100%);box-shadow:0 12px 26px -12px rgba(30,64,175,.55)}
+      #resCatView .res-mcq-banner-ico{flex:none;width:62px;height:62px;border-radius:18px;display:grid;place-items:center;color:#fff;box-shadow:0 8px 18px rgba(0,0,0,.28)}
+      #resCatView .res-mcq-banner-txt{flex:1;min-width:0;position:relative;z-index:1}
+      #resCatView .res-mcq-banner-txt b{display:block;font-size:26px;font-weight:800;color:#fff;letter-spacing:-.01em}
+      #resCatView .res-mcq-banner-txt small{display:block;margin-top:3px;font-size:13.5px;font-weight:600;color:rgba(255,255,255,.85)}
+      #resCatView .res-mcq-banner-motif{position:absolute;right:0;top:50%;transform:translateY(-50%);color:rgba(147,197,253,.7);pointer-events:none}
+      #resCatView .res-mcq-banner-motif svg{width:120px;height:120px}
+      /* Level 2: numbered chapter rows. */
+      #resList .mcq-chap-row{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #EDE9FE;border-radius:20px;box-shadow:0 6px 18px rgba(124,58,237,.08);padding:13px 14px;margin-top:10px}
+      #resList .mcq-chap-row .subj-txt b{font-size:17px}
+      #resList .mcq-chap-row .subj-txt small{font-size:13px}
+      #resList .mcq-chap-num{flex:none;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;display:grid;place-items:center;font-size:19px;font-weight:800;box-shadow:0 6px 14px rgba(124,58,237,.35)}
+      [data-theme="dark"] #resList .mcq-chap-row{background:#0E1B33;border-color:rgba(148,180,255,.12);box-shadow:0 8px 20px rgba(0,0,0,.30)}
+      /* Level 3: top bar (sticky, replaces the app header). */
+      #resCatView .res-mcq-top{display:flex;align-items:center;gap:12px;padding:6px 0 14px;position:sticky;top:0;z-index:40;background:var(--bg)}
+      #resCatView .res-mcq-top-back{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid rgba(148,163,184,.3);background:#0E1B33;color:#fff;display:grid;place-items:center;cursor:pointer;padding:0}
+      #resCatView .res-mcq-top-txt{flex:1;min-width:0}
+      #resCatView .res-mcq-top-txt b{display:block;font-size:19px;font-weight:800;color:#1E1B4B;overflow-wrap:break-word}
+      #resCatView .res-mcq-top-txt small{display:block;font-size:14px;font-weight:600;color:#6B7280;margin-top:1px;overflow-wrap:break-word}
+      #resCatView .res-mcq-top-av{flex:none;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#A78BFA,#7C3AED);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;border:2px solid rgba(196,181,253,.6)}
+      [data-theme="dark"] #resCatView .res-mcq-top-txt b{color:#F1F5FF}
+      [data-theme="dark"] #resCatView .res-mcq-top-txt small{color:#A9B8D4}
+      /* Level 3: hero banner — dark blue with the subject motif (cells for
+         Biology), big chapter name, real count below. Same in both themes. */
+      #resCatView .res-mcq-hero{position:relative;overflow:hidden;border-radius:22px;padding:22px 18px;margin:0 0 14px;background:linear-gradient(120deg,#0A1E5C 0%,#1E40AF 55%,#1D4ED8 100%);box-shadow:0 12px 26px -12px rgba(30,64,175,.55)}
+      #resCatView .res-mcq-hero-motif{position:absolute;inset:0;color:rgba(147,197,253,.5);pointer-events:none}
+      #resCatView .res-mcq-hero-txt{position:relative;z-index:1}
+      #resCatView .res-mcq-hero-txt b{display:block;font-size:26px;font-weight:800;color:#fff;letter-spacing:-.01em;line-height:1.2}
+      #resCatView .res-mcq-hero-txt small{display:block;margin-top:4px;font-size:14px;font-weight:600;color:rgba(255,255,255,.88)}
+      /* Level 3: PDF cards — red PDF badge + title + size, View + Download pills. */
+      #resList .res-mcq-pdf{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #EDE9FE;border-radius:20px;box-shadow:0 6px 18px rgba(124,58,237,.08);padding:12px 10px;margin-top:10px}
+      #resList .res-mcq-pdf .res-nt-pdf{width:44px;height:44px}
+      #resList .res-mcq-pdf .res-nt-txt b{font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+      #resList .res-mcq-pdf .res-nt-txt small{font-size:12.5px}
+      #resList .res-mcq-pdf-btns{flex:none;display:flex;gap:8px;align-items:center}
+      .res-mcq-view{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;border:0;font-weight:700;font-size:11.5px;border-radius:999px;padding:7px 9px;min-height:36px;white-space:nowrap;cursor:pointer;box-shadow:0 6px 14px rgba(124,58,237,.35)}
+      .res-mcq-dl{display:inline-flex;align-items:center;gap:4px;background:#1E293B;color:#fff;border:1px solid rgba(148,163,184,.25);font-weight:700;font-size:11.5px;border-radius:999px;padding:7px 9px;min-height:36px;white-space:nowrap;cursor:pointer}
+      [data-theme="dark"] #resList .res-mcq-pdf{background:#0E1B33;border-color:rgba(148,180,255,.12);box-shadow:0 8px 20px rgba(0,0,0,.30)}
+      @media (max-width:380px){
+        #resCatView.res-mcq .res-cat-deco-mcq svg{width:56px;height:56px}
+        #resCatView.res-mcq .res-cat-txt{padding-right:64px}
+        #resCatView .res-mcq-banner-ico{width:54px;height:54px;border-radius:16px}
+        #resCatView .res-mcq-banner-txt b{font-size:23px}
+        #resCatView .res-mcq-banner-motif svg{width:100px;height:100px}
+        #resCatView .res-mcq-hero-txt b{font-size:23px}
+        #resList .mcq-chap-num{width:42px;height:42px;font-size:18px}
+        #resList .res-mcq-pdf{padding:12px 10px;gap:8px}
+        #resList .res-mcq-pdf .res-nt-pdf{width:44px;height:44px}
+      }
       @media (max-width:380px){
         #resCatView .res-nt-band{padding:16px 12px 22px;margin:-20px -16px 14px}
         #resCatView .res-nt-band h3{font-size:20px}
@@ -796,6 +906,7 @@
     <section id="appScreen" class="hidden">
       <header class="app-header">
         <div class="inner">
+          <button class="hicon mcq-head-back" id="mcqHeadBack" type="button" aria-label="Back to MCQs"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
           <div class="brand">
             <img src="/icons/logo.jpg" width="46" height="46" alt="MDCAT Prime" />
             <div>
@@ -992,6 +1103,20 @@
               <span class="res-nt-subj-txt"><b id="resNtSubjName">Biology</b><small id="resNtSubjMeta">1 Note • 1 Chapter</small></span>
             </div>
             <div class="res-nt-pills hidden" id="resNtPills" aria-label="Chapters"></div>
+            <div class="res-mcq-banner hidden" id="resMcqBanner">
+              <span class="res-mcq-banner-ico" id="resMcqBannerIco"></span>
+              <span class="res-mcq-banner-txt"><b id="resMcqBannerName">Biology</b><small id="resMcqBannerMeta">0 MCQ PDFs • 0 Chapters</small></span>
+              <span class="res-mcq-banner-motif" id="resMcqBannerMotif" aria-hidden="true"></span>
+            </div>
+            <div class="res-mcq-top hidden" id="resMcqTop">
+              <button class="res-mcq-top-back" type="button" id="resMcqTopBack" aria-label="Back to chapters"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+              <span class="res-mcq-top-txt"><b id="resMcqTopSubj">Biology</b><small id="resMcqTopChap">Cell Structure &amp; Function</small></span>
+              <span class="res-mcq-top-av" id="resMcqTopAv">S</span>
+            </div>
+            <div class="res-mcq-hero hidden" id="resMcqHero">
+              <span class="res-mcq-hero-motif" id="resMcqHeroMotif" aria-hidden="true"></span>
+              <span class="res-mcq-hero-txt"><b id="resMcqHeroName">Cell Structure &amp; Function</b><small id="resMcqHeroMeta">No MCQs yet</small></span>
+            </div>
             <div class="res-cat-head hidden" id="resCatHead">
               <span class="res-cat-ico" id="resCatIco"></span>
               <span class="res-cat-txt">
@@ -999,6 +1124,8 @@
                 <p class="page-sub" id="resCatSub">Quick revision — flip the cards and test yourself.</p>
               </span>
               <span class="res-cat-deco" aria-hidden="true"><svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-1.5-1.6-3.8-2-6-2H3v14h3c2.2 0 4.5.4 6 2 1.5-1.6 3.8-2 6-2h3V4h-3c-2.2 0-4.5.4-6 2z"/><path d="M12 6v14"/></svg></span>
+              <span class="res-cat-deco-mcq" aria-hidden="true"><svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="2.5" width="11" height="16" rx="2" transform="rotate(9 14 10.5)"/><rect x="3.5" y="4.5" width="12" height="16" rx="2"/><text x="9.5" y="9.2" font-size="3.4" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none">MCQs</text><rect x="5.8" y="11" width="2.4" height="2.4" rx="0.5"/><polyline points="6.3 12.2 7 12.9 8 11.6"/><path d="M9.8 12.2h3.4"/><rect x="5.8" y="15" width="2.4" height="2.4" rx="0.5"/><polyline points="6.3 16.2 7 16.9 8 15.6"/><path d="M9.8 16.2h3.4"/></svg></span>
+              <span class="res-cat-deco-mcq-spark" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></svg><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></svg></span>
             </div>
             <div class="list-head" id="resListHead">
               <h3 id="resListHeadTitle">Flash Cards</h3>
@@ -1762,6 +1889,7 @@
     /* ==================== NAVIGATION ==================== */
     function showView(name){
       closePanels();
+      document.body.classList.remove("mcq-chapters", "mcq-chapter");
       if (name !== "exam" && name !== "result") stopExamTimer();
       var views = ["home","tests","notes","dashboard","exam","result","profile","chapters","chaptertest","flashcards"];
       for (var i=0;i<views.length;i++) $("view-"+views[i]).classList.toggle("on", views[i]===name);
@@ -1845,7 +1973,7 @@
     $("subjViewAll").addEventListener("click", function(){ setTestFilter("all"); showView("tests"); });
     $("startPractice").addEventListener("click", function(){ showView("tests"); });
     var resType = null; /* open resource category ("Flashcards" | "PDF Notes" | "PDF MCQs" | "Past Papers" | "Books") or null = the 5-box grid */
-    var resGridScroll = 0, resRowsScroll = 0; /* window scroll to restore on Back (grid / subject rows) */
+    var resGridScroll = 0, resRowsScroll = 0, resChapScroll = 0; /* window scroll to restore on Back (grid / subject rows / chapter list) */
     var resCatBtns = $("resCats").querySelectorAll("[data-rescat]");
     for (var rc=0;rc<resCatBtns.length;rc++){
       resCatBtns[rc].addEventListener("click", function(){
@@ -1860,9 +1988,21 @@
     }
     $("resBackBtn").addEventListener("click", function(){
       if (resType === "PDF Notes" && resNtList){ resNtList = null; renderResources(); window.scrollTo(0, resRowsScroll); return; }
+      if (resType === "PDF MCQs" && resMcqChapter){ resMcqChapter = null; renderResources(); window.scrollTo(0, resChapScroll); return; }
+      if (resType === "PDF MCQs" && resMcqList){ resMcqList = null; resMcqChapter = null; renderResources(); window.scrollTo(0, resRowsScroll); return; }
       resType = null; resetResState(); renderResources(); window.scrollTo(0, resGridScroll);
     });
-    /* Subject-notes list view: band back arrow returns to the subject rows,
+    /* MCQS chapter list: the back arrow in the app header returns to the
+       subject rows; the chapter-detail top bar returns to the chapter list. */
+    $("mcqHeadBack").addEventListener("click", function(){
+      if (resType !== "PDF MCQs" || !resMcqList) return;
+      resMcqList = null; resMcqChapter = null; renderResources(); window.scrollTo(0, resRowsScroll);
+    });
+    $("resMcqTopBack").addEventListener("click", function(){
+      if (resType !== "PDF MCQs" || !resMcqChapter) return;
+      resMcqChapter = null; renderResources(); window.scrollTo(0, resChapScroll);
+    });
+    /* Subject list view: band back arrow returns to the subject rows,
        home icon goes Home, chapter pills filter the list. */
     $("resNtBandBack").addEventListener("click", function(){ resNtList = null; renderResources(); window.scrollTo(0, resRowsScroll); });
     $("resNtBandHome").addEventListener("click", function(){ showView("home"); });
@@ -1886,7 +2026,9 @@
       renderResources();
     });
     $("resNtSearch").addEventListener("input", function(){
-      resNtSearch = this.value.trim().toLowerCase();
+      var v = this.value.trim().toLowerCase();
+      if (resType === "PDF MCQs"){ if (resMcqChapter) return; if (resMcqList) resMcqChapSearch = v; else resMcqSearch = v; }
+      else resNtSearch = v;
       renderResources();
     });
 
@@ -2566,7 +2708,8 @@
        ("Biology · Bioenergetics"); counts come from the real deck arrays. */
     var RES_SUBJS = ["Biology", "Chemistry", "Physics", "English"];
     var resFcSubj = null, resFcChap = null, resNtSubj = null, resNtChap = null, resNtList = null, resNtSearch = "";
-    function resetResState(){ resFcSubj = null; resFcChap = null; resNtSubj = null; resNtChap = null; resNtList = null; resNtSearch = ""; var si = $("resNtSearch"); if (si) si.value = ""; }
+    var resMcqList = null, resMcqChapter = null, resMcqSearch = "", resMcqChapSearch = "";
+    function resetResState(){ resFcSubj = null; resFcChap = null; resNtSubj = null; resNtChap = null; resNtList = null; resNtSearch = ""; resMcqList = null; resMcqChapter = null; resMcqSearch = ""; resMcqChapSearch = ""; var si = $("resNtSearch"); if (si) si.value = ""; }
     /* Screenshot colours for the colourful category pages (NOT the app's test colours):
        Physics purple, Chemistry pink, Biology green, English blue. */
     var RES_STYLE = {
@@ -2578,6 +2721,7 @@
     function resStyle(subject){ return RES_STYLE[subject] || { color:"#7C3AED", soft:"#EDE9FE" }; }
     var RES_FC_ICO = '<span class="res-ico-light"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span><span class="res-ico-dark"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="9.5" height="12.5" rx="2" transform="rotate(-14 7 13)"/><rect x="10" y="3.5" width="11" height="14.5" rx="2"/><path d="M15.5 7.7l.9 1.9 2.1.3-1.5 1.5.4 2.1-1.9-1-1.9 1 .4-2.1-1.5-1.5 2.1-.3z" fill="currentColor" stroke="none"/></svg></span>';
     var RES_NT_ICO = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>';
+    var RES_MCQ_ICO = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5V3h6v1.5"/><path d="m9 13 2 2 4-4"/></svg>';
     function fcGroups(){
       var g = { Biology: [], Chemistry: [], Physics: [], English: [] };
       var keys = Object.keys(FC_DECKS);
@@ -2699,6 +2843,70 @@
         shownRes.push({ kind:"note", note:notes[i] });
       }
     }
+    /* Chapters come from the app's own chapter data for the subject (the
+       same source Tests use); the per-chapter count is the real number of
+       MCQ PDF documents in that chapter. Never invent chapters or counts. */
+    function normChap(s){ return String(s || "").trim().toLowerCase(); }
+    function mcqSubjectChapters(subj){
+      for (var i=0;i<SUBJECTS.length;i++) if (SUBJECTS[i].name === subj) return SUBJECTS[i].chapters.map(function(c){ return c.name; });
+      return [];
+    }
+    function mcqChapterCount(subj, chap){
+      var notes = notesOfKind("mcqs"), n = 0;
+      for (var i=0;i<notes.length;i++){ if (noteSubjOf(notes[i]) === subj && normChap(noteChapOf(notes[i])) === normChap(chap)) n++; }
+      return n;
+    }
+    function mcqSubjectCounts(subj){
+      var notes = notesOfKind("mcqs"), pdfs = 0, chaps = {};
+      for (var i=0;i<notes.length;i++){ if (noteSubjOf(notes[i]) !== subj) continue; pdfs++; chaps[noteChapOf(notes[i])] = 1; }
+      return { pdfs: pdfs, chapters: Object.keys(chaps).length };
+    }
+    function mcqCountLine(n){ return n === 0 ? "(No MCQs yet)" : "(" + n + (n === 1 ? " MCQ PDF)" : " MCQ PDFs)"); }
+    function mcqPdfLine(n){ return n === 0 ? "No MCQs yet" : n + (n === 1 ? " MCQ PDF" : " MCQ PDFs"); }
+    function buildMcqRows(){
+      for (var s=0;s<RES_SUBJS.length;s++){
+        var subj = RES_SUBJS[s];
+        if (resMcqSearch && subj.toLowerCase().indexOf(resMcqSearch) === -1) continue;
+        var c = mcqSubjectCounts(subj);
+        /* Rows stay tappable even at 0 PDFs, so the subject's honest empty
+           state (not invented content) is reachable from the chapter list.
+           The count uses the reference's "N MCQs • M Chapters" wording with
+           the real number of MCQ PDF documents (never invented totals). */
+        shownRes.push({ kind:"mcqsubj", subj:subj, title:subj, sub:c.pdfs + (c.pdfs===1 ? " MCQ" : " MCQs") + " • " + c.chapters + (c.chapters===1 ? " Chapter" : " Chapters"), icon:subjIconOf(subj) });
+      }
+    }
+    function buildMcqChapters(){
+      var chs = mcqSubjectChapters(resMcqList);
+      for (var i=0;i<chs.length;i++){
+        if (resMcqChapSearch && chs[i].toLowerCase().indexOf(resMcqChapSearch) === -1) continue;
+        shownRes.push({ kind:"mcqchap", subj:resMcqList, chapter:chs[i], num:i+1, count:mcqChapterCount(resMcqList, chs[i]) });
+      }
+    }
+    function buildMcqChapterPdfs(){
+      var notes = notesOfKind("mcqs");
+      for (var i=0;i<notes.length;i++){
+        if (noteSubjOf(notes[i]) !== resMcqList) continue;
+        if (normChap(noteChapOf(notes[i])) !== normChap(resMcqChapter)) continue;
+        shownRes.push({ kind:"mcqpdf", note:notes[i] });
+      }
+    }
+    /* Subject motifs for the MCQS chapter banner / hero: Biology uses a DNA
+       helix (the reference) and cells in the chapter hero; the other subjects
+       reuse the app's own subject icons. */
+    var MCQ_TILE_GRAD = {
+      "Biology":"linear-gradient(135deg,#22C55E,#15803D)",
+      "Chemistry":"linear-gradient(135deg,#3B82F6,#1D4ED8)",
+      "Physics":"linear-gradient(135deg,#EC4899,#BE185D)",
+      "English":"linear-gradient(135deg,#F59E0B,#B45309)"
+    };
+    function mcqMotifSvg(subj, size){
+      if (subj === "Biology") return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 2c6 2.5 6 5.5 0 8s-6 5.5 0 8 6 2 6 4"/><path d="M16 2c-6 2.5-6 5.5 0 8s6 5.5 0 8-6 2-6 4"/><path d="M9.5 5.5h5M9.5 10.5h5M9.5 15.5h5M9.5 19.5h5"/></svg>';
+      return iconSvg(subjIconOf(subj), size);
+    }
+    function mcqHeroMotif(subj){
+      if (subj === "Biology") return '<svg width="100%" height="100%" viewBox="0 0 360 110" preserveAspectRatio="xMidYMid slice" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="52" cy="55" r="34" fill="currentColor" fill-opacity=".14"/><circle cx="52" cy="55" r="12" fill="currentColor" stroke="none" opacity=".65"/><circle cx="312" cy="46" r="40" fill="currentColor" fill-opacity=".14"/><circle cx="312" cy="46" r="14" fill="currentColor" stroke="none" opacity=".65"/><circle cx="182" cy="90" r="20" fill="currentColor" fill-opacity=".12"/><circle cx="182" cy="90" r="7" fill="currentColor" stroke="none" opacity=".55"/><circle cx="150" cy="16" r="10" fill="currentColor" fill-opacity=".12"/><circle cx="330" cy="94" r="8" fill="currentColor" fill-opacity=".12"/><circle cx="16" cy="94" r="7" fill="currentColor" fill-opacity=".12"/><circle cx="238" cy="12" r="6" fill="currentColor" fill-opacity=".12"/></svg>';
+      return '<svg style="position:absolute;right:-16px;top:50%;transform:translateY(-50%)" width="140" height="140" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">'+subjIconOf(subj)+'</svg>';
+    }
     function renderResources(){
       var listEl = $("resList"), countEl = $("noteCount"), emptyEl = $("resEmpty");
       if (!listEl) return;
@@ -2719,42 +2927,82 @@
       if (hdT) hdT.classList.add("hidden");
       if (hdS) hdS.classList.add("hidden");
       var isFc = resType === "Flashcards", isNt = resType === "PDF Notes";
+      var isMcq = resType === "PDF MCQs";
       var isNtList = isNt && !!resNtList;
+      var isMcqList = isMcq && !!resMcqList;
+      var isMcqChapter = isMcq && !!resMcqChapter;
+      var isMcqChapters = isMcqList && !isMcqChapter;
+      var isDetail = isNtList;
       var catTitle = isFc ? "Flash Cards" : isNt ? "Notes PDF" : resType === "PDF MCQs" ? "MCQS PDF" : resType;
       $("resCatTitle").textContent = catTitle;
       var listHeadTitle = $("resListHeadTitle");
       if (listHeadTitle) listHeadTitle.textContent = catTitle;
       var catHead = $("resCatHead"), listHead = $("resListHead"), searchWrap = $("resNtSearchWrap");
-      if (catHead) catHead.classList.toggle("hidden", !(isFc || (isNt && !isNtList)));
-      if (listHead) listHead.classList.toggle("hidden", isFc || isNt);
-      if (searchWrap) searchWrap.classList.toggle("hidden", !(isNt && !isNtList));
+      if (catHead) catHead.classList.toggle("hidden", !(isFc || (isNt && !isNtList) || (isMcq && !isMcqList)));
+      if (listHead) listHead.classList.toggle("hidden", isFc || isNt || isMcq);
+      if (searchWrap) searchWrap.classList.toggle("hidden", !((isNt && !isNtList) || (isMcq && !isMcqList) || isMcqChapters));
+      var searchInput = $("resNtSearch");
+      if (searchInput) searchInput.placeholder = isMcqChapters ? "Search chapters..." : isMcq ? "Search subjects..." : "Search notes…";
       if (catEl){
-        catEl.classList.toggle("res-color", isFc || isNt);
+        catEl.classList.toggle("res-color", isFc || isNt || isMcq);
         catEl.classList.toggle("res-nt", isNt);
+        catEl.classList.toggle("res-mcq", isMcq);
         catEl.classList.toggle("res-nt-list", isNtList);
       }
       var catIco = $("resCatIco");
-      if (catIco && (isFc || isNt)) catIco.innerHTML = isFc ? RES_FC_ICO : RES_NT_ICO;
+      if (catIco && (isFc || isNt || isMcq)) catIco.innerHTML = isFc ? RES_FC_ICO : isNt ? RES_NT_ICO : RES_MCQ_ICO;
       if (subEl){
         if (isFc){ subEl.textContent = "Quick Revision • Smart Learning"; subEl.classList.remove("hidden"); }
         else if (isNt){ subEl.textContent = "Download and study premium notes"; subEl.classList.remove("hidden"); }
+        else if (isMcq){ subEl.textContent = "Practice MCQs with high-quality question papers for MDCAT subjects."; subEl.classList.remove("hidden"); }
         else subEl.classList.add("hidden");
       }
       var backBtn = $("resBackBtn");
-      if (backBtn){ backBtn.classList.toggle("hidden", isNtList); backBtn.textContent = "← Back"; }
+      if (backBtn){ backBtn.classList.toggle("hidden", isNtList || isMcqList); backBtn.textContent = "← Back"; }
       if (filtEl) filtEl.classList.toggle("hidden", !(isFc || (isNt && !isNtList)));
+      /* MCQS Level 2 shows the back arrow in the app header; Level 3 hides
+         the app header and shows its own top bar + hero banner. */
+      document.body.classList.toggle("mcq-chapters", isMcqChapters);
+      document.body.classList.toggle("mcq-chapter", isMcqChapter);
+      var mcqBanner = $("resMcqBanner"), mcqTop = $("resMcqTop"), mcqHero = $("resMcqHero");
+      if (mcqBanner) mcqBanner.classList.toggle("hidden", !isMcqChapters);
+      if (mcqTop) mcqTop.classList.toggle("hidden", !isMcqChapter);
+      if (mcqHero) mcqHero.classList.toggle("hidden", !isMcqChapter);
+      if (isMcqChapters){
+        var mc = mcqSubjectCounts(resMcqList);
+        var bIco = $("resMcqBannerIco");
+        if (bIco){ bIco.style.background = MCQ_TILE_GRAD[resMcqList] || "linear-gradient(135deg,#8B5CF6,#6D28D9)"; bIco.innerHTML = mcqMotifSvg(resMcqList, 36); }
+        $("resMcqBannerName").textContent = resMcqList;
+        $("resMcqBannerMeta").textContent = mc.pdfs + (mc.pdfs===1 ? " MCQ" : " MCQs") + " • " + mc.chapters + (mc.chapters===1 ? " Chapter" : " Chapters");
+        var bMot = $("resMcqBannerMotif");
+        if (bMot) bMot.innerHTML = mcqMotifSvg(resMcqList, 120);
+      }
+      if (isMcqChapter){
+        $("resMcqTopSubj").textContent = resMcqList;
+        $("resMcqTopChap").textContent = resMcqChapter;
+        var av = $("headAvatar");
+        if (av) $("resMcqTopAv").textContent = av.textContent || "S";
+        $("resMcqHeroName").textContent = resMcqChapter;
+        $("resMcqHeroMeta").textContent = mcqPdfLine(mcqChapterCount(resMcqList, resMcqChapter));
+        var hMot = $("resMcqHeroMotif");
+        if (hMot) hMot.innerHTML = mcqHeroMotif(resMcqList);
+      }
       if (isFc) fillResFilters("fc");
       if (isNt) fillResFilters("nt");
-      /* Subject-notes list view (View Notes): purple band + subject header +
-         chapter pills replace the category header, search and dropdowns. */
+      /* Subject list view (View Notes / View Chapters): purple band +
+         subject header + chapter pills replace the category header,
+         search and dropdowns. */
       var ntBand = $("resNtBand"), ntSubjEl = $("resNtSubj"), ntPills = $("resNtPills");
-      if (ntBand) ntBand.classList.toggle("hidden", !isNtList);
-      if (ntSubjEl) ntSubjEl.classList.toggle("hidden", !isNtList);
-      if (ntPills) ntPills.classList.toggle("hidden", !isNtList);
-      if (isNtList){
+      if (ntBand) ntBand.classList.toggle("hidden", !isDetail);
+      if (ntSubjEl) ntSubjEl.classList.toggle("hidden", !isDetail);
+      if (ntPills) ntPills.classList.toggle("hidden", !isDetail);
+      if (isDetail){
         var subj = resNtList, st3 = resStyle(subj);
+        var curChap = resNtChap;
         if (ntSubjEl) ntSubjEl.setAttribute("data-subj", subj);
         $("resNtBandTitle").textContent = subj + " Notes";
+        var ntBandBack = $("resNtBandBack");
+        if (ntBandBack) ntBandBack.setAttribute("aria-label", "Back to Notes");
         var ntIco = $("resNtSubjIco");
         if (ntIco){ ntIco.style.background = st3.soft; ntIco.style.color = st3.color; ntIco.innerHTML = iconSvg(subjIconOf(subj), 30); }
         $("resNtSubjName").textContent = subj;
@@ -2765,19 +3013,19 @@
         }
         var cn2 = Object.keys(chaps2).length;
         $("resNtSubjMeta").textContent = mine2.length + (mine2.length===1 ? " Note" : " Notes") + " • " + cn2 + (cn2===1 ? " Chapter" : " Chapters");
-        var chs = ntChapters(subj), ph = '<button class="res-nt-pill'+(resNtChap ? "" : " on")+'" type="button" data-chapi="-1">All</button>';
-        for (var c=0;c<chs.length;c++) ph += '<button class="res-nt-pill'+(resNtChap===chs[c] ? " on" : "")+'" type="button" data-chapi="'+c+'">'+esc(chs[c])+'</button>';
+        var chs = ntChapters(subj), ph = '<button class="res-nt-pill'+(curChap ? "" : " on")+'" type="button" data-chapi="-1">All</button>';
+        for (var c=0;c<chs.length;c++) ph += '<button class="res-nt-pill'+(curChap===chs[c] ? " on" : "")+'" type="button" data-chapi="'+c+'">'+esc(chs[c])+'</button>';
         if (ntPills) ntPills.innerHTML = ph;
       }
       shownRes = [];
       if (isFc) buildFcRows();
       else if (isNt){ if (resNtList) buildNtList(); else buildNtRows(); }
-      else if (notesReady && (resType === "PDF MCQs" || resType === "Past Papers")){
+      else if (isMcq){ if (resMcqChapter) buildMcqChapterPdfs(); else if (resMcqList) buildMcqChapters(); else buildMcqRows(); }
+      else if (notesReady && resType === "Past Papers"){
         for (var n=0;n<liveNotes.length;n++){
           var nt = liveNotes[n];
           var k = noteKind(nt);
-          if (resType === "PDF MCQs" && k !== "mcqs") continue;
-          if (resType === "Past Papers" && k !== "pastpaper") continue;
+          if (k !== "pastpaper") continue;
           shownRes.push({ kind: "note", note: nt });
         }
       }
@@ -2790,6 +3038,10 @@
         if (emptyEl){
           emptyEl.classList.remove("hidden");
           if (isNt && resNtSearch){ $("resEmptyTitle").textContent = "No notes found"; $("resEmptySub").textContent = "Try a different search."; }
+          else if (isMcq && !isMcqList && resMcqSearch){ $("resEmptyTitle").textContent = "No subjects found"; $("resEmptySub").textContent = "Try a different search."; }
+          else if (isMcqChapter){ $("resEmptyTitle").textContent = "No MCQs yet"; $("resEmptySub").textContent = "This chapter has no MCQ PDFs yet."; }
+          else if (isMcqChapters && resMcqChapSearch){ $("resEmptyTitle").textContent = "No chapters found"; $("resEmptySub").textContent = "Try a different search."; }
+          else if (isMcqChapters){ $("resEmptyTitle").textContent = "No Chapters Available Yet"; $("resEmptySub").textContent = "Check back later for new study materials."; }
           else { $("resEmptyTitle").textContent = "No " + resType + " Available Yet"; $("resEmptySub").textContent = "Check back later for new study materials."; }
         }
         return;
@@ -2808,6 +3060,23 @@
           html += '<div class="subj-row" data-subj="'+esc(it.subj)+'" style="--rowwash:'+st2.soft+'"><span class="subj-ico" style="background:'+st2.soft+';color:'+st2.color+'">'+iconSvg(it.icon,26)+'</span>'
             + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span>'
             + '<button class="btn-purple subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>View Notes <span class="btn-arr">→</span></button></div>';
+        } else if (it.kind === "mcqsubj"){
+          var st4 = resStyle(it.subj);
+          html += '<div class="subj-row" data-subj="'+esc(it.subj)+'" style="--rowwash:'+st4.soft+'"><span class="subj-ico" style="background:'+st4.soft+';color:'+st4.color+'">'+iconSvg(it.icon,26)+'</span>'
+            + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span>'
+            + '<button class="btn-purple subj-act" type="button" data-idx="'+j+'">View Chapters <span class="mcq-chev"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span></button></div>';
+        } else if (it.kind === "mcqchap"){
+          html += '<div class="mcq-chap-row" data-idx="'+j+'" role="button" tabindex="0"><span class="mcq-chap-num">'+it.num+'</span>'
+            + '<span class="subj-txt"><b>'+esc(it.chapter)+'</b><small>'+esc(mcqCountLine(it.count))+'</small></span>'
+            + '<button class="btn-purple subj-act" type="button" data-idx="'+j+'">Open <span class="mcq-chev"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span></button></div>';
+        } else if (it.kind === "mcqpdf"){
+          var nn2 = it.note;
+          var sizeLine2 = (nn2.fileSizeFormatted ? nn2.fileSizeFormatted + " • PDF" : "PDF");
+          html += '<div class="res-mcq-pdf" data-idx="'+j+'" role="button" tabindex="0">'
+            + '<span class="res-nt-pdf">PDF</span>'
+            + '<span class="res-nt-txt"><b>'+esc(nn2.title)+'</b><small>'+esc(sizeLine2)+'</small></span>'
+            + '<span class="res-mcq-pdf-btns"><button class="res-mcq-view" type="button" data-idx="'+j+'" data-act="view"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>View</button>'
+            + '<button class="res-mcq-dl" type="button" data-idx="'+j+'" data-act="dl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><polyline points="6 10 12 16 18 10"/></svg>Download</button></span></div>';
         } else {
           var nn = it.note;
           if (isNtList){
@@ -2832,10 +3101,10 @@
       /* Study Smart card at the bottom of the subject-rows pages (dark
          mode only — .res-rows-info is hidden in light mode, where the rows
          pages have no such card). */
-      if ((isFc || (isNt && !isNtList)) && shownRes.length){
-        if (isFc){
+      if ((isFc || (isNt && !isNtList) || (isMcq && !isMcqList)) && shownRes.length){
+        if (isFc || isMcq){
           html += '<div class="res-nt-info res-rows-info"><span class="res-nt-info-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.4 1 2.3h6c0-.9.4-1.8 1-2.3A7 7 0 0 0 12 2z"/></svg></span>'
-            + '<span class="res-nt-info-txt"><b>Study Smart!</b><p>Practice regularly to boost your MDCAT preparation.</p></span>'
+            + '<span class="res-nt-info-txt"><b>Study Smart!</b><p>'+(isMcq ? "Practice regularly to score higher in MDCAT." : "Practice regularly to boost your MDCAT preparation.")+'</p></span>'
             + '<span class="res-nt-info-deco"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><path d="M15 7h6v6"/></svg></span></div>';
         } else {
           html += '<div class="res-nt-info res-rows-info"><span class="res-nt-info-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>'
@@ -2859,6 +3128,9 @@
       if (it.kind === "fcsubj") openFlashcardSet(fcSubjectDeck(it.subj));
       else if (it.kind === "fcdeck") openFlashcards(it.key);
       else if (it.kind === "ntsubj"){ resNtList = it.subj; resNtSearch = ""; var si2 = $("resNtSearch"); if (si2) si2.value = ""; resRowsScroll = window.scrollY || 0; renderResources(); window.scrollTo(0,0); }
+      else if (it.kind === "mcqsubj"){ resMcqList = it.subj; resMcqChapter = null; resMcqChapSearch = ""; var si3 = $("resNtSearch"); if (si3) si3.value = ""; resRowsScroll = window.scrollY || 0; renderResources(); window.scrollTo(0,0); }
+      else if (it.kind === "mcqchap"){ resMcqChapter = it.chapter; resMcqChapSearch = ""; var si4 = $("resNtSearch"); if (si4) si4.value = ""; resChapScroll = window.scrollY || 0; renderResources(); window.scrollTo(0,0); }
+      else if (it.kind === "mcqpdf"){ if (act === "dl") downloadNote(it.note); else openNoteViewer(it.note); }
       else if (act === "dl") downloadNote(it.note);
       else if (it.kind === "note") openNoteViewer(it.note);
     });
