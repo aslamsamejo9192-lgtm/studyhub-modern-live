@@ -2974,12 +2974,29 @@
       }
     }
     /* Chapters come from the app's own chapter data for the subject (the
-       same source Tests use); the per-chapter count is the real number of
-       MCQ PDF documents in that chapter. Never invent chapters or counts. */
+       same source Tests use) PLUS every chapter that real MCQ PDF
+       documents carry for the subject — the panel lets the admin upload to
+       any chapter, so a document chapter that is not in the app's own
+       list must still get a row, or its PDFs can never be reached. The
+       per-chapter count is the real number of MCQ PDF documents in that
+       chapter. Never invent chapters or counts. */
     function normChap(s){ return String(s || "").trim().toLowerCase(); }
     function mcqSubjectChapters(subj){
-      for (var i=0;i<SUBJECTS.length;i++) if (SUBJECTS[i].name === subj) return SUBJECTS[i].chapters.map(function(c){ return c.name; });
-      return [];
+      var out = [], seen = {};
+      for (var i=0;i<SUBJECTS.length;i++){
+        if (SUBJECTS[i].name !== subj) continue;
+        for (var j=0;j<SUBJECTS[i].chapters.length;j++){
+          var c = SUBJECTS[i].chapters[j].name;
+          if (!seen[normChap(c)]){ seen[normChap(c)] = 1; out.push(c); }
+        }
+      }
+      var notes = notesOfKind("mcqs");
+      for (var k=0;k<notes.length;k++){
+        if (noteSubjOf(notes[k]) !== subj) continue;
+        var dc = noteChapOf(notes[k]);
+        if (dc && !seen[normChap(dc)]){ seen[normChap(dc)] = 1; out.push(dc); }
+      }
+      return out;
     }
     function mcqChapterCount(subj, chap){
       var notes = notesOfKind("mcqs"), n = 0;
