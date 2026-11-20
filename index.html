@@ -475,18 +475,19 @@
       .overlay.on{display:grid}
       /* PDF.js viewer toolbar + pages (Taleem-style): page counter, zoom,
          pages render one by one as they scroll into view. */
-      .pdfv-tools{display:flex;align-items:center;gap:6px;margin-top:12px}
+      .pdfv-tools{display:flex;align-items:center;gap:4px;margin-top:12px;min-width:0}
       .pdfv-btn{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:transparent;color:inherit;font-size:19px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:none;padding:0}
       .pdfv-btn:active{transform:scale(.96)}
-      .pdfv-page{font-size:13px;font-weight:700;color:var(--muted);min-width:52px;text-align:center}
-      .pdfv-spacer{flex:1}
-      .pdfv-pages{flex:1;min-height:300px;margin-top:10px;border:1px solid var(--line);border-radius:14px;overflow:auto;background:#0B1526;padding:10px}
+      .pdfv-page{font-size:13px;font-weight:700;color:var(--muted);min-width:44px;text-align:center}
+      .pdfv-spacer{flex:1;min-width:0}
+      .pdfv-pages{flex:1;min-width:0;min-height:300px;margin-top:10px;border:1px solid var(--line);border-radius:14px;overflow:auto;background:#0B1526;padding:10px}
       [data-theme="light"] .pdfv-pages{background:#E8ECF3}
       .pdfv-page-wrap{position:relative;margin:0 auto 10px;box-shadow:0 4px 14px rgba(0,0,0,.25);background:#fff;width:max-content;max-width:100%}
+      .pdfv-pages.pdfv-zoomed .pdfv-page-wrap{max-width:none}
       .pdfv-page-wrap canvas{display:block;max-width:100%;height:auto}
       /* Premium toolbar, menu, search, go-to, progress + error states. */
-      .pdfv-card{position:relative}
-      .pdfv-bar{display:flex;align-items:center;gap:2px}
+      .pdfv-card{position:relative;min-width:0}
+      .pdfv-bar{display:flex;align-items:center;gap:2px;min-width:0}
       .pdfv-ico{flex:none;width:38px;height:38px;border-radius:50%;border:0;background:transparent;color:inherit;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
       .pdfv-ico:active{background:rgba(128,140,160,.18)}
       .pdfv-ico.on{color:#2563EB}
@@ -3500,6 +3501,10 @@
     }
     function pdfApplyZoom(){
       $("noteViewerZoom").textContent = Math.round(pdfZoom * 100) + "%";
+      /* Past 100% the page is allowed to grow wider than the viewer and
+         scroll sideways; at 100% or below the wrap stays capped at the
+         container width, so the page can never spill off the screen. */
+      $("noteViewerPages").classList.toggle("pdfv-zoomed", pdfZoom > 1);
       for (var i = 1; i < pdfPages.length; i++){ pdfPages[i].rendered = false; pdfPages[i].rendering = false; }
       pdfRenderPage(pdfCurrentPage());
       pdfRenderPage(pdfCurrentPage() + 1);
@@ -3712,6 +3717,7 @@
       $("noteViewerDl").onclick = function(){ downloadNote(note); };
       var pagesEl = $("noteViewerPages");
       pagesEl.innerHTML = "";
+      pagesEl.classList.remove("pdfv-zoomed");
       $("noteViewerPage").textContent = "– / –";
       $("noteViewerZoom").textContent = "100%";
       $("noteViewerSearchRow").classList.add("hidden");
