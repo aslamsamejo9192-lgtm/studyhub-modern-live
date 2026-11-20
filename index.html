@@ -473,6 +473,17 @@
       /* ---------- Overlays ---------- */
       .overlay{position:fixed;inset:0;z-index:60;background:rgba(13,30,55,.55);display:none;place-items:center;padding:20px}
       .overlay.on{display:grid}
+      /* PDF.js viewer toolbar + pages (Taleem-style): page counter, zoom,
+         pages render one by one as they scroll into view. */
+      .pdfv-tools{display:flex;align-items:center;gap:6px;margin-top:12px}
+      .pdfv-btn{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:transparent;color:inherit;font-size:19px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:none;padding:0}
+      .pdfv-btn:active{transform:scale(.96)}
+      .pdfv-page{font-size:13px;font-weight:700;color:var(--muted);min-width:52px;text-align:center}
+      .pdfv-spacer{flex:1}
+      .pdfv-pages{flex:1;min-height:300px;margin-top:10px;border:1px solid var(--line);border-radius:14px;overflow:auto;background:#0B1526;padding:10px}
+      [data-theme="light"] .pdfv-pages{background:#E8ECF3}
+      .pdfv-page-wrap{margin:0 auto 10px;box-shadow:0 4px 14px rgba(0,0,0,.25);background:#fff;width:max-content;max-width:100%}
+      .pdfv-page-wrap canvas{display:block;max-width:100%;height:auto}
       .modal-card{width:min(430px,100%);background:#fff;border-radius:24px;padding:26px;box-shadow:0 30px 70px rgba(10,20,40,.35)}
       .modal-card h3{font-size:17px;font-weight:800;margin:0 0 6px}
       .modal-card p{color:var(--muted);font-weight:600;font-size:13px;margin:0}
@@ -1565,9 +1576,16 @@
       <div class="modal-card" style="width:min(560px,100%);max-height:88vh;display:flex;flex-direction:column">
         <h3 id="noteViewerTitle">Note</h3>
         <p id="noteViewerSub"></p>
-        <div style="flex:1;min-height:300px;margin-top:14px;border:1px solid var(--line);border-radius:14px;overflow:hidden">
-          <iframe id="noteViewerFrame" title="PDF viewer" style="width:100%;height:100%;min-height:300px;border:0"></iframe>
+        <div class="pdfv-tools">
+          <button class="pdfv-btn" id="noteViewerPrev" type="button" aria-label="Previous page">‹</button>
+          <span class="pdfv-page" id="noteViewerPage">– / –</span>
+          <button class="pdfv-btn" id="noteViewerNext" type="button" aria-label="Next page">›</button>
+          <span class="pdfv-spacer"></span>
+          <button class="pdfv-btn" id="noteViewerZoomOut" type="button" aria-label="Zoom out">−</button>
+          <span class="pdfv-page" id="noteViewerZoom">100%</span>
+          <button class="pdfv-btn" id="noteViewerZoomIn" type="button" aria-label="Zoom in">+</button>
         </div>
+        <div class="pdfv-pages" id="noteViewerPages"></div>
         <div class="modal-actions" style="margin-top:16px">
           <button class="btn-ghost" id="noteViewerClose" type="button">Close</button>
           <button class="btn-grad" id="noteViewerDl" type="button">Download</button>
@@ -1577,6 +1595,7 @@
 
     <div class="toast" id="toast"></div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script type="module">
     "use strict";
     /* ==================== FIREBASE (live backend) ==================== */
@@ -3319,15 +3338,144 @@
       a.download = String(note.title || "note").replace(/\s+/g, "_") + ".pdf";
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
     }
+    /* ---------- PDF.js viewer (Taleem-style) ---------- */
+    /* Renders each PDF page as its own canvas inside the viewer: page
+       counter, prev/next, zoom, scroll-through pages. Pages render lazily
+       as they scroll into view, so a 22-page paper does not block on the
+       first page. Works for every PDF open in the app (Notes, MCQS PDFs,
+       Past Papers) — they all come through openNoteViewer. The PDFs live
+       on raw.githubusercontent.com and on this same site, and both send
+       Access-Control-Allow-Origin: *, so PDF.js can fetch them. */
+    var pdfDoc = null, pdfToken = 0, pdfBase = 1, pdfZoom = 1, pdfPages = [], pdfObserver = null, pdfScrollTick = false;
+    function pdfScale(){ return pdfBase * pdfZoom; }
+    function pdfViewerLib(){
+      if (window.pdfjsLib){
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+        return window.pdfjsLib;
+      }
+      return null;
+    }
+    function pdfCurrentPage(){
+      var pagesEl = $("noteViewerPages");
+      var top = pagesEl.scrollTop + 40, cur = 1;
+      for (var i = 1; i < pdfPages.length; i++){
+        if (pdfPages[i].wrap.offsetTop <= top) cur = i; else break;
+      }
+      return cur;
+    }
+    function pdfUpdateCounter(){
+      if (!pdfDoc) return;
+      $("noteViewerPage").textContent = pdfCurrentPage() + " / " + pdfDoc.numPages;
+    }
+    function pdfRenderPage(num){
+      var rec = pdfPages[num];
+      if (!rec || rec.rendered || rec.rendering || !pdfDoc) return;
+      rec.rendering = true;
+      var myToken = pdfToken;
+      pdfDoc.getPage(num).then(function(page){
+        if (myToken !== pdfToken) return;
+        var vp = page.getViewport({ scale: pdfScale() });
+        var cv = rec.canvas;
+        cv.width = Math.floor(vp.width);
+        cv.height = Math.floor(vp.height);
+        cv.style.width = Math.floor(vp.width) + "px";
+        var ctx = cv.getContext("2d");
+        return page.render({ canvasContext: ctx, viewport: vp }).promise.then(function(){
+          if (myToken !== pdfToken) return;
+          rec.rendered = true; rec.rendering = false;
+        });
+      }).catch(function(){ rec.rendering = false; });
+    }
+    function pdfObservePages(){
+      if (pdfObserver) pdfObserver.disconnect();
+      if (!("IntersectionObserver" in window)){
+        for (var i = 1; i < pdfPages.length; i++) pdfRenderPage(i);
+        return;
+      }
+      pdfObserver = new IntersectionObserver(function(entries){
+        for (var k = 0; k < entries.length; k++){
+          if (!entries[k].isIntersecting) continue;
+          pdfRenderPage(parseInt(entries[k].target.getAttribute("data-page"), 10));
+        }
+      }, { root: $("noteViewerPages"), rootMargin: "200px" });
+      for (var j = 1; j < pdfPages.length; j++) pdfObserver.observe(pdfPages[j].wrap);
+    }
+    function pdfGoTo(num){
+      if (!pdfDoc) return;
+      num = Math.max(1, Math.min(pdfDoc.numPages, num));
+      pdfRenderPage(num);
+      pdfPages[num].wrap.scrollIntoView({ behavior: "smooth", block: "start" });
+      $("noteViewerPage").textContent = num + " / " + pdfDoc.numPages;
+    }
+    function pdfApplyZoom(){
+      $("noteViewerZoom").textContent = Math.round(pdfZoom * 100) + "%";
+      for (var i = 1; i < pdfPages.length; i++){ pdfPages[i].rendered = false; pdfPages[i].rendering = false; }
+      pdfRenderPage(pdfCurrentPage());
+      pdfRenderPage(pdfCurrentPage() + 1);
+    }
     function openNoteViewer(note){
       if (!note || !note.downloadUrl) { toast("Document URL is not available."); return; }
       $("noteViewerTitle").textContent = note.title;
       $("noteViewerSub").textContent = note.subject + " • PDF Viewer";
-      $("noteViewerFrame").src = note.downloadUrl;
       $("noteViewerOverlay").classList.add("on");
       $("noteViewerDl").onclick = function(){ downloadNote(note); };
+      var pagesEl = $("noteViewerPages");
+      pagesEl.innerHTML = "";
+      $("noteViewerPage").textContent = "– / –";
+      $("noteViewerZoom").textContent = "100%";
+      pdfZoom = 1; pdfPages = [];
+      var myToken = ++pdfToken;
+      var lib = pdfViewerLib();
+      if (!lib){
+        toast("PDF viewer could not load. Check your connection and try again.");
+        return;
+      }
+      lib.getDocument({ url: note.downloadUrl }).promise.then(function(doc){
+        if (myToken !== pdfToken) return;
+        pdfDoc = doc;
+        $("noteViewerPage").textContent = "1 / " + doc.numPages;
+        /* Fit the first page to the viewer width; zoom multiplies this. */
+        return doc.getPage(1).then(function(page){
+          if (myToken !== pdfToken) return;
+          var vp = page.getViewport({ scale: 1 });
+          var avail = pagesEl.clientWidth - 20;
+          pdfBase = Math.max(0.4, Math.min(2.5, avail / vp.width));
+          for (var n = 1; n <= doc.numPages; n++){
+            (function(num){
+              var wrap = document.createElement("div");
+              wrap.className = "pdfv-page-wrap";
+              wrap.setAttribute("data-page", String(num));
+              var cv = document.createElement("canvas");
+              wrap.appendChild(cv);
+              pagesEl.appendChild(wrap);
+              pdfPages[num] = { wrap: wrap, canvas: cv, rendered: false, rendering: false };
+            })(n);
+          }
+          pdfObservePages();
+          pdfRenderPage(1);
+        });
+      }).catch(function(){
+        if (myToken !== pdfToken) return;
+        toast("This PDF could not be opened. Try Download instead.");
+      });
     }
-    $("noteViewerClose").addEventListener("click", function(){ $("noteViewerOverlay").classList.remove("on"); $("noteViewerFrame").src = ""; });
+    $("noteViewerPrev").addEventListener("click", function(){ pdfGoTo(pdfCurrentPage() - 1); });
+    $("noteViewerNext").addEventListener("click", function(){ pdfGoTo(pdfCurrentPage() + 1); });
+    $("noteViewerZoomIn").addEventListener("click", function(){ pdfZoom = Math.min(3, pdfZoom * 1.25); pdfApplyZoom(); });
+    $("noteViewerZoomOut").addEventListener("click", function(){ pdfZoom = Math.max(0.5, pdfZoom / 1.25); pdfApplyZoom(); });
+    $("noteViewerPages").addEventListener("scroll", function(){
+      if (pdfScrollTick) return;
+      pdfScrollTick = true;
+      requestAnimationFrame(function(){ pdfScrollTick = false; pdfUpdateCounter(); });
+    });
+    $("noteViewerClose").addEventListener("click", function(){
+      pdfToken++;
+      if (pdfObserver) pdfObserver.disconnect();
+      if (pdfDoc){ pdfDoc.destroy(); pdfDoc = null; }
+      $("noteViewerPages").innerHTML = "";
+      pdfPages = [];
+      $("noteViewerOverlay").classList.remove("on");
+    });
     /* ---------- Announcements (Latest Updates) ---------- */
     function renderAnnouncements(){
       var listEl = $("updatesList"), emptyEl = $("updatesEmpty");
