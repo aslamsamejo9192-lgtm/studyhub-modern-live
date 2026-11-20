@@ -482,8 +482,46 @@
       .pdfv-spacer{flex:1}
       .pdfv-pages{flex:1;min-height:300px;margin-top:10px;border:1px solid var(--line);border-radius:14px;overflow:auto;background:#0B1526;padding:10px}
       [data-theme="light"] .pdfv-pages{background:#E8ECF3}
-      .pdfv-page-wrap{margin:0 auto 10px;box-shadow:0 4px 14px rgba(0,0,0,.25);background:#fff;width:max-content;max-width:100%}
+      .pdfv-page-wrap{position:relative;margin:0 auto 10px;box-shadow:0 4px 14px rgba(0,0,0,.25);background:#fff;width:max-content;max-width:100%}
       .pdfv-page-wrap canvas{display:block;max-width:100%;height:auto}
+      /* Premium toolbar, menu, search, go-to, progress + error states. */
+      .pdfv-card{position:relative}
+      .pdfv-bar{display:flex;align-items:center;gap:2px}
+      .pdfv-ico{flex:none;width:38px;height:38px;border-radius:50%;border:0;background:transparent;color:inherit;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+      .pdfv-ico:active{background:rgba(128,140,160,.18)}
+      .pdfv-ico.on{color:#2563EB}
+      .pdfv-ico.on svg{fill:currentColor}
+      .pdfv-title{flex:1;min-width:0;margin:0 2px}
+      .pdfv-title b{display:block;font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .pdfv-title small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .pdfv-menu{position:absolute;top:60px;right:14px;z-index:8;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.28);min-width:220px;padding:6px;display:flex;flex-direction:column}
+      [data-theme="dark"] .pdfv-menu{background:#0E1B33}
+      .pdfv-menu button{display:flex;justify-content:space-between;align-items:center;gap:12px;background:transparent;border:0;padding:11px 12px;font-size:13.5px;font-weight:600;text-align:left;cursor:pointer;color:inherit;border-radius:9px}
+      .pdfv-menu button:active{background:rgba(128,140,160,.16)}
+      .pdfv-menu button b{font-weight:800;color:var(--muted)}
+      .pdfv-search{display:flex;align-items:center;gap:6px;margin-top:10px}
+      .pdfv-search input{flex:1;min-width:0;height:38px;border:1px solid var(--line);border-radius:99px;padding:0 14px;font-size:13.5px;background:transparent;color:inherit;outline:none}
+      .pdfv-search input:focus{border-color:#2563EB}
+      .pdfv-goto{display:flex;align-items:center;gap:8px;margin-top:10px}
+      .pdfv-goto input{flex:1;min-width:0;height:38px;border:1px solid var(--line);border-radius:99px;padding:0 14px;font-size:13.5px;background:transparent;color:inherit;outline:none}
+      .pdfv-progress{margin-top:10px}
+      .pdfv-track{display:block;height:6px;border-radius:99px;background:rgba(128,140,160,.25);overflow:hidden}
+      .pdfv-track span{display:block;height:100%;width:0;background:#2563EB;border-radius:99px;transition:width .2s}
+      .pdfv-progress small{display:block;margin-top:6px;font-size:12px;font-weight:600;color:var(--muted);text-align:center}
+      .pdfv-error{margin-top:10px;border:1px solid rgba(220,38,38,.35);background:rgba(220,38,38,.08);border-radius:14px;padding:14px;text-align:center}
+      .pdfv-error p{margin:0 0 10px;font-size:13.5px;font-weight:600}
+      .pdfv-hl{position:absolute;background:rgba(250,204,21,.55);border-radius:2px;pointer-events:none}
+      .pdfv-hl.cur{background:rgba(249,115,22,.7);outline:1px solid #EA580C}
+      #noteViewerPage{cursor:pointer}
+      /* Reading themes: toolbar + page-area colours only — the PDF pages
+         themselves stay white and readable in both modes. */
+      .pdfv-card.pdfv-read-light .pdfv-bar{background:#DBEAFE;color:#0B1220;border-radius:12px;padding:2px 4px}
+      .pdfv-card.pdfv-read-light .pdfv-pages{background:#F1F5F9}
+      .pdfv-card.pdfv-read-dark .pdfv-bar{background:#111C30;color:#fff;border-radius:12px;padding:2px 4px}
+      .pdfv-card.pdfv-read-dark .pdfv-pages{background:#0B1220}
+      .pdfv-card.pdfv-full{width:100vw !important;max-height:100vh !important;height:100vh;border-radius:0}
+      .pdfv-pages.pdfv-single .pdfv-page-wrap{display:none}
+      .pdfv-pages.pdfv-single .pdfv-page-wrap.pdfv-current{display:block}
       .modal-card{width:min(430px,100%);background:#fff;border-radius:24px;padding:26px;box-shadow:0 30px 70px rgba(10,20,40,.35)}
       .modal-card h3{font-size:17px;font-weight:800;margin:0 0 6px}
       .modal-card p{color:var(--muted);font-weight:600;font-size:13px;margin:0}
@@ -1573,9 +1611,36 @@
 
     <!-- ================= NOTE VIEWER ================= -->
     <div class="overlay" id="noteViewerOverlay">
-      <div class="modal-card" style="width:min(560px,100%);max-height:88vh;display:flex;flex-direction:column">
-        <h3 id="noteViewerTitle">Note</h3>
-        <p id="noteViewerSub"></p>
+      <div class="modal-card pdfv-card" id="noteViewerCard" style="width:min(560px,100%);max-height:88vh;display:flex;flex-direction:column">
+        <div class="pdfv-bar">
+          <button class="pdfv-ico" id="noteViewerBack" type="button" aria-label="Back"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <span class="pdfv-title"><b id="noteViewerTitle">Note</b><small id="noteViewerSub"></small></span>
+          <button class="pdfv-ico" id="noteViewerSearchBtn" type="button" aria-label="Search in PDF"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg></button>
+          <button class="pdfv-ico" id="noteViewerBmBtn" type="button" aria-label="Bookmark this page"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+          <button class="pdfv-ico" id="noteViewerDl" type="button" aria-label="Download"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><polyline points="6 10 12 16 18 10"/></svg></button>
+          <button class="pdfv-ico" id="noteViewerMoreBtn" type="button" aria-label="More options"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></button>
+        </div>
+        <div class="pdfv-menu hidden" id="noteViewerMenu">
+          <button type="button" data-m="mode"><span>Reading mode</span><b id="noteViewerMenuMode">Continuous</b></button>
+          <button type="button" data-m="goto"><span>Go to page…</span><b>›</b></button>
+          <button type="button" data-m="full"><span>Full screen</span><b>›</b></button>
+          <button type="button" data-m="theme"><span>Reading theme</span><b id="noteViewerMenuTheme">Dark</b></button>
+          <button type="button" data-m="rotate"><span>Rotate page</span><b>›</b></button>
+          <button type="button" data-m="share"><span>Share PDF</span><b>›</b></button>
+        </div>
+        <div class="pdfv-search hidden" id="noteViewerSearchRow">
+          <input id="noteViewerSearchInput" type="search" placeholder="Search in PDF…" autocomplete="off" />
+          <button class="pdfv-btn" id="noteViewerSearchPrev" type="button" aria-label="Previous result">‹</button>
+          <span class="pdfv-page" id="noteViewerSearchCount">–</span>
+          <button class="pdfv-btn" id="noteViewerSearchNext" type="button" aria-label="Next result">›</button>
+          <button class="pdfv-btn" id="noteViewerSearchClose" type="button" aria-label="Close search">✕</button>
+        </div>
+        <div class="pdfv-goto hidden" id="noteViewerGotoRow">
+          <input id="noteViewerGotoInput" type="number" min="1" inputmode="numeric" placeholder="Page number" />
+          <button class="btn-grad" id="noteViewerGotoGo" type="button">Go</button>
+        </div>
+        <div class="pdfv-progress hidden" id="noteViewerProgress"><div class="pdfv-track"><span id="noteViewerProgressBar"></span></div><small id="noteViewerProgressText">Loading PDF…</small></div>
+        <div class="pdfv-error hidden" id="noteViewerError"><p id="noteViewerErrorText"></p><button class="btn-grad" id="noteViewerRetry" type="button">Retry</button></div>
         <div class="pdfv-tools">
           <button class="pdfv-btn" id="noteViewerPrev" type="button" aria-label="Previous page">‹</button>
           <span class="pdfv-page" id="noteViewerPage">– / –</span>
@@ -1586,10 +1651,6 @@
           <button class="pdfv-btn" id="noteViewerZoomIn" type="button" aria-label="Zoom in">+</button>
         </div>
         <div class="pdfv-pages" id="noteViewerPages"></div>
-        <div class="modal-actions" style="margin-top:16px">
-          <button class="btn-ghost" id="noteViewerClose" type="button">Close</button>
-          <button class="btn-grad" id="noteViewerDl" type="button">Download</button>
-        </div>
       </div>
     </div>
 
@@ -3338,15 +3399,25 @@
       a.download = String(note.title || "note").replace(/\s+/g, "_") + ".pdf";
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
     }
-    /* ---------- PDF.js viewer (Taleem-style) ---------- */
-    /* Renders each PDF page as its own canvas inside the viewer: page
-       counter, prev/next, zoom, scroll-through pages. Pages render lazily
-       as they scroll into view, so a 22-page paper does not block on the
-       first page. Works for every PDF open in the app (Notes, MCQS PDFs,
+    /* ---------- PDF.js viewer (Taleem-style, premium) ---------- */
+    /* Renders each PDF page as its own canvas inside the app: page
+       counter, prev/next, zoom buttons + pinch-to-zoom, continuous and
+       single-page modes, go-to-page, in-PDF search with highlighted
+       results, bookmarks, last reading position, full screen, light/dark
+       reading themes, rotate, share, download. Pages render lazily as
+       they scroll into view, so a 22-page paper opens on the first page
+       at once. Works for every PDF open in the app (Notes, MCQS PDFs,
        Past Papers) — they all come through openNoteViewer. The PDFs live
        on raw.githubusercontent.com and on this same site, and both send
-       Access-Control-Allow-Origin: *, so PDF.js can fetch them. */
+       Access-Control-Allow-Origin: *, so PDF.js can fetch them.
+       Bookmarks + reading position are saved per student in Firestore
+       `pdfProgress` (doc id = uid + "_" + note key) with a localStorage
+       copy on the same device as the fallback, so the feature works even
+       if the Firestore write is ever blocked. */
     var pdfDoc = null, pdfToken = 0, pdfBase = 1, pdfZoom = 1, pdfPages = [], pdfObserver = null, pdfScrollTick = false;
+    var pdfNote = null, pdfKey = "", pdfMode = "continuous", pdfRotation = 0, pdfReadMode = "dark", pdfSinglePage = 1;
+    var pdfBookmarks = [], pdfSaveTimer = null, pdfSearchTimer = null, pdfPinch = null;
+    var pdfSearch = { query: "", pages: {}, list: [], index: -1, running: false };
     function pdfScale(){ return pdfBase * pdfZoom; }
     function pdfViewerLib(){
       if (window.pdfjsLib){
@@ -3355,7 +3426,10 @@
       }
       return null;
     }
-    function pdfCurrentPage(){
+    function pdfHash(s){ var h = 0; s = String(s || ""); for (var i = 0; i < s.length; i++){ h = ((h << 5) - h + s.charCodeAt(i)) | 0; } return "h" + Math.abs(h); }
+    function pdfKeyFor(note){ return "pdf_" + (note.id ? String(note.id) : pdfHash(note.downloadUrl)); }
+    function pdfLocalKey(){ return "mdcatprime_pdf_" + pdfKey; }
+    function pdfScrollPage(){
       var pagesEl = $("noteViewerPages");
       var top = pagesEl.scrollTop + 40, cur = 1;
       for (var i = 1; i < pdfPages.length; i++){
@@ -3363,9 +3437,14 @@
       }
       return cur;
     }
+    function pdfCurrentPage(){
+      if (pdfMode === "single" && pdfDoc) return pdfSinglePage;
+      return pdfScrollPage();
+    }
     function pdfUpdateCounter(){
       if (!pdfDoc) return;
       $("noteViewerPage").textContent = pdfCurrentPage() + " / " + pdfDoc.numPages;
+      pdfUpdateBmBtn();
     }
     function pdfRenderPage(num){
       var rec = pdfPages[num];
@@ -3374,7 +3453,7 @@
       var myToken = pdfToken;
       pdfDoc.getPage(num).then(function(page){
         if (myToken !== pdfToken) return;
-        var vp = page.getViewport({ scale: pdfScale() });
+        var vp = page.getViewport({ scale: pdfScale(), rotation: pdfRotation });
         var cv = rec.canvas;
         cv.width = Math.floor(vp.width);
         cv.height = Math.floor(vp.height);
@@ -3383,6 +3462,7 @@
         return page.render({ canvasContext: ctx, viewport: vp }).promise.then(function(){
           if (myToken !== pdfToken) return;
           rec.rendered = true; rec.rendering = false;
+          pdfDrawHighlights(num);
         });
       }).catch(function(){ rec.rendering = false; });
     }
@@ -3400,41 +3480,274 @@
       }, { root: $("noteViewerPages"), rootMargin: "200px" });
       for (var j = 1; j < pdfPages.length; j++) pdfObserver.observe(pdfPages[j].wrap);
     }
+    function pdfMarkCurrentPage(){
+      for (var i = 1; i < pdfPages.length; i++) pdfPages[i].wrap.classList.toggle("pdfv-current", i === pdfSinglePage);
+    }
     function pdfGoTo(num){
       if (!pdfDoc) return;
       num = Math.max(1, Math.min(pdfDoc.numPages, num));
       pdfRenderPage(num);
-      pdfPages[num].wrap.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (pdfMode === "single"){
+        pdfSinglePage = num;
+        pdfMarkCurrentPage();
+        $("noteViewerPages").scrollTop = 0;
+      } else {
+        pdfPages[num].wrap.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
       $("noteViewerPage").textContent = num + " / " + pdfDoc.numPages;
+      pdfUpdateBmBtn();
+      pdfSaveProgressSoon();
     }
     function pdfApplyZoom(){
       $("noteViewerZoom").textContent = Math.round(pdfZoom * 100) + "%";
       for (var i = 1; i < pdfPages.length; i++){ pdfPages[i].rendered = false; pdfPages[i].rendering = false; }
       pdfRenderPage(pdfCurrentPage());
       pdfRenderPage(pdfCurrentPage() + 1);
+      for (var j = 1; j < pdfPages.length; j++) if (pdfPages[j].rendered) pdfDrawHighlights(j);
+    }
+    function pdfApplyMode(){
+      if (pdfMode === "single") pdfSinglePage = pdfScrollPage();
+      $("noteViewerPages").classList.toggle("pdfv-single", pdfMode === "single");
+      $("noteViewerMenuMode").textContent = pdfMode === "single" ? "Single page" : "Continuous";
+      if (pdfMode === "single"){
+        pdfMarkCurrentPage();
+        $("noteViewerPages").scrollTop = 0;
+      } else if (pdfDoc){
+        pdfPages[pdfSinglePage].wrap.scrollIntoView({ block: "start" });
+      }
+    }
+    function pdfApplyRotation(){
+      pdfRotation = (pdfRotation + 90) % 360;
+      if (!pdfDoc) return;
+      var myToken = pdfToken;
+      pdfDoc.getPage(1).then(function(page){
+        if (myToken !== pdfToken) return;
+        var vp = page.getViewport({ scale: 1, rotation: pdfRotation });
+        var avail = $("noteViewerPages").clientWidth - 20;
+        pdfBase = Math.max(0.4, Math.min(2.5, avail / vp.width));
+        for (var i = 1; i < pdfPages.length; i++){ pdfPages[i].rendered = false; pdfPages[i].rendering = false; }
+        pdfClearHighlights();
+        pdfRenderPage(pdfCurrentPage());
+        pdfRenderPage(pdfCurrentPage() + 1);
+      });
+    }
+    function pdfApplyReadMode(){
+      var card = $("noteViewerCard");
+      card.classList.toggle("pdfv-read-light", pdfReadMode === "light");
+      card.classList.toggle("pdfv-read-dark", pdfReadMode === "dark");
+      $("noteViewerMenuTheme").textContent = pdfReadMode === "light" ? "Light" : "Dark";
+    }
+    function pdfToggleFull(){
+      var card = $("noteViewerCard");
+      if (document.fullscreenElement){ document.exitFullscreen().catch(function(){}); card.classList.remove("pdfv-full"); return; }
+      card.classList.add("pdfv-full");
+      var ov = $("noteViewerOverlay");
+      if (ov.requestFullscreen){ ov.requestFullscreen().catch(function(){ /* the class fallback already fills the screen */ }); }
+    }
+    document.addEventListener("fullscreenchange", function(){
+      if (!document.fullscreenElement) $("noteViewerCard").classList.remove("pdfv-full");
+    });
+    function pdfShare(){
+      if (!pdfNote) return;
+      var url = pdfNote.downloadUrl;
+      if (navigator.share){ navigator.share({ title: pdfNote.title || "PDF", text: pdfNote.title || "PDF", url: url }).catch(function(){}); }
+      else if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(function(){ toast("Link copied."); }).catch(function(){ toast("Sharing is not supported on this device."); }); }
+      else toast("Sharing is not supported on this device.");
+    }
+    /* ---- Bookmarks + last reading position (Firestore + local copy) ---- */
+    function pdfIsBookmarked(page){ return pdfBookmarks.indexOf(page) !== -1; }
+    function pdfUpdateBmBtn(){
+      $("noteViewerBmBtn").classList.toggle("on", pdfDoc ? pdfIsBookmarked(pdfCurrentPage()) : false);
+    }
+    function pdfToggleBookmark(){
+      if (!pdfDoc) return;
+      var p = pdfCurrentPage();
+      var i = pdfBookmarks.indexOf(p);
+      if (i === -1){ pdfBookmarks.push(p); pdfBookmarks.sort(function(a, b){ return a - b; }); toast("Page " + p + " bookmarked."); }
+      else { pdfBookmarks.splice(i, 1); toast("Bookmark removed."); }
+      pdfUpdateBmBtn();
+      pdfSaveProgressSoon();
+    }
+    function pdfSaveProgress(){
+      if (!pdfNote) return;
+      var data = { uid: (auth.currentUser && auth.currentUser.uid) || null, noteId: pdfNote.id || null, title: pdfNote.title || "", lastPage: pdfCurrentPage(), bookmarks: pdfBookmarks.slice(), updatedAt: new Date().toISOString() };
+      try { window.localStorage.setItem(pdfLocalKey(), JSON.stringify(data)); } catch (e) {}
+      var u = auth.currentUser;
+      if (!u) return;
+      setDoc(doc(db, "pdfProgress", u.uid + "_" + pdfKey), data, { merge: true }).catch(function(){ /* the local copy already saved */ });
+    }
+    function pdfSaveProgressSoon(){
+      if (pdfSaveTimer) clearTimeout(pdfSaveTimer);
+      pdfSaveTimer = setTimeout(pdfSaveProgress, 600);
+    }
+    function pdfLoadProgress(){
+      var local = null;
+      try { local = JSON.parse(window.localStorage.getItem(pdfLocalKey()) || "null"); } catch (e) {}
+      var norm = function(d){
+        if (!d) return null;
+        return { lastPage: d.lastPage || 1, bookmarks: Array.isArray(d.bookmarks) ? d.bookmarks : [] };
+      };
+      var u = auth.currentUser;
+      if (!u) return Promise.resolve(norm(local));
+      return getDoc(doc(db, "pdfProgress", u.uid + "_" + pdfKey)).then(function(snap){
+        if (snap.exists()) return norm(snap.data() || {});
+        return norm(local);
+      }).catch(function(){ return norm(local); });
+    }
+    /* ---- In-PDF search with highlighted results ---- */
+    /* Matches are stored as fractions of the unrotated page size, so the
+       highlight boxes stay correct at any zoom. Highlights are drawn
+       only at rotation 0; rotating clears the drawn boxes (the search
+       results list itself is kept). */
+    function pdfClearHighlights(){
+      var els = document.querySelectorAll("#noteViewerPages .pdfv-hl");
+      for (var i = 0; i < els.length; i++) els[i].remove();
+    }
+    function pdfDrawHighlights(num){
+      var rec = pdfPages[num];
+      if (!rec || !rec.rendered) return;
+      var old = rec.wrap.querySelectorAll(".pdfv-hl");
+      for (var i = 0; i < old.length; i++) old[i].remove();
+      var hits = (pdfSearch.pages || {})[num];
+      if (!hits || !hits.length || pdfRotation !== 0) return;
+      var cw = rec.canvas.clientWidth, ch = rec.canvas.clientHeight;
+      if (!cw || !ch) return;
+      for (var k = 0; k < hits.length; k++){
+        var h = hits[k];
+        var cur = pdfSearch.list[pdfSearch.index];
+        var d = document.createElement("div");
+        d.className = "pdfv-hl" + (cur && cur.page === num && cur.ri === k ? " cur" : "");
+        d.style.left = (h.fx * cw) + "px";
+        d.style.top = (h.fy * ch) + "px";
+        d.style.width = Math.max(2, h.fw * cw) + "px";
+        d.style.height = Math.max(2, h.fh * ch) + "px";
+        rec.wrap.appendChild(d);
+      }
+    }
+    function pdfSearchCount(){
+      $("noteViewerSearchCount").textContent = pdfSearch.list.length ? (pdfSearch.index + 1) + " / " + pdfSearch.list.length : "0";
+    }
+    function pdfGotoSearchResult(idx){
+      if (!pdfSearch.list.length) return;
+      pdfSearch.index = (idx + pdfSearch.list.length) % pdfSearch.list.length;
+      var hit = pdfSearch.list[pdfSearch.index];
+      pdfSearchCount();
+      pdfGoTo(hit.page);
+      for (var i = 1; i < pdfPages.length; i++) if (pdfPages[i].rendered) pdfDrawHighlights(i);
+    }
+    function pdfRunSearch(q){
+      q = String(q || "").trim();
+      pdfSearch = { query: q, pages: {}, list: [], index: -1, running: true };
+      pdfClearHighlights();
+      if (!q || !pdfDoc){ pdfSearch.running = false; pdfSearchCount(); return; }
+      var lower = q.toLowerCase();
+      var chain = Promise.resolve();
+      for (var n = 1; n <= pdfDoc.numPages; n++){
+        (function(num){
+          chain = chain.then(function(){
+            if (!pdfDoc || pdfSearch.query !== q) return;
+            return pdfDoc.getPage(num).then(function(page){
+              if (!pdfDoc || pdfSearch.query !== q) return;
+              return page.getTextContent().then(function(tc){
+                if (!pdfDoc || pdfSearch.query !== q) return;
+                var vp0 = page.getViewport({ scale: 1, rotation: 0 });
+                var hits = [];
+                for (var i = 0; i < tc.items.length; i++){
+                  var item = tc.items[i];
+                  var str = String(item.str || "");
+                  if (!str || !item.width) continue;
+                  var from = 0;
+                  while (true){
+                    var at = str.toLowerCase().indexOf(lower, from);
+                    if (at === -1) break;
+                    var frac = Math.min(1, at / Math.max(1, str.length));
+                    var wFrac = Math.min(1, q.length / Math.max(1, str.length));
+                    var x0 = item.transform[4] + frac * item.width;
+                    var y0 = item.transform[5] - item.height;
+                    var r = vp0.convertToViewportRectangle([x0, y0, x0 + wFrac * item.width, item.transform[5]]);
+                    hits.push({
+                      fx: Math.min(r[0], r[2]) / vp0.width,
+                      fy: Math.min(r[1], r[3]) / vp0.height,
+                      fw: Math.abs(r[2] - r[0]) / vp0.width,
+                      fh: Math.abs(r[3] - r[1]) / vp0.height
+                    });
+                    from = at + Math.max(1, q.length);
+                  }
+                }
+                if (hits.length){
+                  pdfSearch.pages[num] = hits;
+                  for (var k = 0; k < hits.length; k++) pdfSearch.list.push({ page: num, ri: k });
+                }
+              });
+            });
+          });
+        })(n);
+      }
+      chain.then(function(){
+        if (!pdfDoc || pdfSearch.query !== q) return;
+        pdfSearch.running = false;
+        pdfSearchCount();
+        if (pdfSearch.list.length){ pdfSearch.index = 0; pdfGotoSearchResult(0); }
+        else toast("No results for '" + q + "'.");
+      });
+    }
+    /* ---- Open / close ---- */
+    function pdfShowError(msg){
+      $("noteViewerErrorText").textContent = msg;
+      $("noteViewerError").classList.remove("hidden");
     }
     function openNoteViewer(note){
       if (!note || !note.downloadUrl) { toast("Document URL is not available."); return; }
+      pdfNote = note;
+      pdfKey = pdfKeyFor(note);
+      pdfMode = "continuous"; pdfRotation = 0; pdfZoom = 1; pdfPages = [];
+      pdfBookmarks = [];
+      pdfSearch = { query: "", pages: {}, list: [], index: -1, running: false };
       $("noteViewerTitle").textContent = note.title;
       $("noteViewerSub").textContent = note.subject + " • PDF Viewer";
+      pdfReadMode = document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
+      pdfApplyReadMode();
+      pdfApplyMode();
       $("noteViewerOverlay").classList.add("on");
       $("noteViewerDl").onclick = function(){ downloadNote(note); };
       var pagesEl = $("noteViewerPages");
       pagesEl.innerHTML = "";
       $("noteViewerPage").textContent = "– / –";
       $("noteViewerZoom").textContent = "100%";
-      pdfZoom = 1; pdfPages = [];
+      $("noteViewerSearchRow").classList.add("hidden");
+      $("noteViewerSearchInput").value = "";
+      $("noteViewerSearchCount").textContent = "–";
+      $("noteViewerGotoRow").classList.add("hidden");
+      $("noteViewerMenu").classList.add("hidden");
+      $("noteViewerError").classList.add("hidden");
+      $("noteViewerProgress").classList.remove("hidden");
+      $("noteViewerProgressBar").style.width = "0%";
+      $("noteViewerProgressText").textContent = "Loading PDF…";
       var myToken = ++pdfToken;
       var lib = pdfViewerLib();
       if (!lib){
-        toast("PDF viewer could not load. Check your connection and try again.");
+        $("noteViewerProgress").classList.add("hidden");
+        pdfShowError("PDF viewer could not load. Check your connection and try again.");
         return;
       }
-      lib.getDocument({ url: note.downloadUrl }).promise.then(function(doc){
+      var progressP = pdfLoadProgress();
+      var loadingTask = lib.getDocument({ url: note.downloadUrl });
+      loadingTask.onProgress = function(p){
         if (myToken !== pdfToken) return;
+        if (p && p.total > 0){
+          var pct = Math.round((p.loaded / p.total) * 100);
+          $("noteViewerProgressBar").style.width = pct + "%";
+          $("noteViewerProgressText").textContent = "Loading PDF… " + pct + "%";
+        }
+      };
+      Promise.all([loadingTask.promise, progressP]).then(function(results){
+        if (myToken !== pdfToken) return;
+        var doc = results[0];
+        var progress = results[1];
         pdfDoc = doc;
+        if (progress && Array.isArray(progress.bookmarks)) pdfBookmarks = progress.bookmarks.slice();
+        $("noteViewerProgress").classList.add("hidden");
         $("noteViewerPage").textContent = "1 / " + doc.numPages;
-        /* Fit the first page to the viewer width; zoom multiplies this. */
         return doc.getPage(1).then(function(page){
           if (myToken !== pdfToken) return;
           var vp = page.getViewport({ scale: 1 });
@@ -3452,30 +3765,117 @@
             })(n);
           }
           pdfObservePages();
-          pdfRenderPage(1);
+          pdfUpdateBmBtn();
+          var resume = progress && progress.lastPage ? Math.max(1, Math.min(doc.numPages, progress.lastPage)) : 1;
+          if (resume > 1){ pdfGoTo(resume); toast("Resumed at page " + resume + "."); }
+          else pdfRenderPage(1);
         });
-      }).catch(function(){
+      }).catch(function(err){
         if (myToken !== pdfToken) return;
-        toast("This PDF could not be opened. Try Download instead.");
+        $("noteViewerProgress").classList.add("hidden");
+        var msg = /404|MissingPDF|InvalidPDF|not a valid/i.test(String((err && err.message) || err))
+          ? "This PDF link is no longer valid or the file is damaged."
+          : "Could not load this PDF. Check your connection and try again.";
+        pdfShowError(msg);
       });
     }
-    $("noteViewerPrev").addEventListener("click", function(){ pdfGoTo(pdfCurrentPage() - 1); });
-    $("noteViewerNext").addEventListener("click", function(){ pdfGoTo(pdfCurrentPage() + 1); });
-    $("noteViewerZoomIn").addEventListener("click", function(){ pdfZoom = Math.min(3, pdfZoom * 1.25); pdfApplyZoom(); });
-    $("noteViewerZoomOut").addEventListener("click", function(){ pdfZoom = Math.max(0.5, pdfZoom / 1.25); pdfApplyZoom(); });
-    $("noteViewerPages").addEventListener("scroll", function(){
-      if (pdfScrollTick) return;
-      pdfScrollTick = true;
-      requestAnimationFrame(function(){ pdfScrollTick = false; pdfUpdateCounter(); });
-    });
-    $("noteViewerClose").addEventListener("click", function(){
+    function pdfShowGoto(){
+      $("noteViewerGotoRow").classList.remove("hidden");
+      var inp = $("noteViewerGotoInput");
+      inp.value = "";
+      inp.focus();
+    }
+    function pdfToggleMenu(show){
+      var m = $("noteViewerMenu");
+      m.classList.toggle("hidden", show === undefined ? !m.classList.contains("hidden") : !show);
+    }
+    $("noteViewerBack").addEventListener("click", function(){
+      pdfSaveProgress();
       pdfToken++;
       if (pdfObserver) pdfObserver.disconnect();
       if (pdfDoc){ pdfDoc.destroy(); pdfDoc = null; }
       $("noteViewerPages").innerHTML = "";
       pdfPages = [];
+      pdfNote = null;
       $("noteViewerOverlay").classList.remove("on");
+      if (document.fullscreenElement) document.exitFullscreen().catch(function(){});
+      $("noteViewerCard").classList.remove("pdfv-full");
     });
+    $("noteViewerPrev").addEventListener("click", function(){ pdfGoTo(pdfCurrentPage() - 1); });
+    $("noteViewerNext").addEventListener("click", function(){ pdfGoTo(pdfCurrentPage() + 1); });
+    $("noteViewerPage").addEventListener("click", function(){ pdfShowGoto(); });
+    $("noteViewerZoomIn").addEventListener("click", function(){ pdfZoom = Math.min(3, pdfZoom * 1.25); pdfApplyZoom(); });
+    $("noteViewerZoomOut").addEventListener("click", function(){ pdfZoom = Math.max(0.5, pdfZoom / 1.25); pdfApplyZoom(); });
+    $("noteViewerBmBtn").addEventListener("click", function(){ pdfToggleBookmark(); });
+    $("noteViewerRetry").addEventListener("click", function(){
+      $("noteViewerError").classList.add("hidden");
+      if (pdfNote) openNoteViewer(pdfNote);
+    });
+    $("noteViewerMoreBtn").addEventListener("click", function(e){ e.stopPropagation(); pdfToggleMenu(); });
+    $("noteViewerMenu").addEventListener("click", function(e){
+      var b = e.target.closest("button[data-m]");
+      if (!b) return;
+      var m = b.getAttribute("data-m");
+      pdfToggleMenu(false);
+      if (m === "mode"){ pdfMode = pdfMode === "single" ? "continuous" : "single"; pdfApplyMode(); }
+      else if (m === "goto"){ pdfShowGoto(); }
+      else if (m === "full"){ pdfToggleFull(); }
+      else if (m === "theme"){ pdfReadMode = pdfReadMode === "light" ? "dark" : "light"; pdfApplyReadMode(); }
+      else if (m === "rotate"){ pdfApplyRotation(); }
+      else if (m === "share"){ pdfShare(); }
+    });
+    $("noteViewerSearchBtn").addEventListener("click", function(){
+      var row = $("noteViewerSearchRow");
+      row.classList.toggle("hidden");
+      if (!row.classList.contains("hidden")) $("noteViewerSearchInput").focus();
+    });
+    $("noteViewerSearchClose").addEventListener("click", function(){
+      $("noteViewerSearchRow").classList.add("hidden");
+      $("noteViewerSearchInput").value = "";
+      pdfRunSearch("");
+    });
+    $("noteViewerSearchInput").addEventListener("input", function(){
+      if (pdfSearchTimer) clearTimeout(pdfSearchTimer);
+      var q = this.value;
+      pdfSearchTimer = setTimeout(function(){ pdfRunSearch(q); }, 500);
+    });
+    $("noteViewerSearchInput").addEventListener("keydown", function(e){
+      if (e.key === "Enter"){ e.preventDefault(); pdfRunSearch(this.value); }
+    });
+    $("noteViewerSearchPrev").addEventListener("click", function(){ pdfGotoSearchResult(pdfSearch.index - 1); });
+    $("noteViewerSearchNext").addEventListener("click", function(){ pdfGotoSearchResult(pdfSearch.index + 1); });
+    $("noteViewerGotoGo").addEventListener("click", function(){
+      var n = parseInt($("noteViewerGotoInput").value, 10);
+      if (!isNaN(n)){ pdfGoTo(n); $("noteViewerGotoRow").classList.add("hidden"); }
+    });
+    $("noteViewerGotoInput").addEventListener("keydown", function(e){
+      if (e.key === "Enter"){
+        e.preventDefault();
+        var n = parseInt(this.value, 10);
+        if (!isNaN(n)){ pdfGoTo(n); $("noteViewerGotoRow").classList.add("hidden"); }
+      }
+    });
+    $("noteViewerPages").addEventListener("scroll", function(){
+      if (pdfScrollTick) return;
+      pdfScrollTick = true;
+      requestAnimationFrame(function(){ pdfScrollTick = false; pdfUpdateCounter(); pdfSaveProgressSoon(); });
+    });
+    $("noteViewerPages").addEventListener("touchstart", function(e){
+      if (e.touches.length === 2){
+        pdfPinch = { d: Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY), zoom: pdfZoom };
+      }
+    }, { passive: true });
+    $("noteViewerPages").addEventListener("touchmove", function(e){
+      if (pdfPinch && e.touches.length === 2){
+        e.preventDefault();
+        var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        if (pdfPinch.d > 0){
+          var nz = Math.max(0.5, Math.min(3, pdfPinch.zoom * (d / pdfPinch.d)));
+          if (Math.abs(nz - pdfZoom) > 0.03){ pdfZoom = nz; pdfApplyZoom(); }
+        }
+      }
+    }, { passive: false });
+    $("noteViewerPages").addEventListener("touchend", function(e){ if (e.touches.length < 2) pdfPinch = null; });
     /* ---------- Announcements (Latest Updates) ---------- */
     function renderAnnouncements(){
       var listEl = $("updatesList"), emptyEl = $("updatesEmpty");
