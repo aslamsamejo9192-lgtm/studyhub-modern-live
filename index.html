@@ -1132,7 +1132,7 @@
             </div>
             <div class="res-mcq-banner hidden" id="resMcqBanner">
               <span class="res-mcq-banner-ico" id="resMcqBannerIco"></span>
-              <span class="res-mcq-banner-txt"><b id="resMcqBannerName">Biology</b><small id="resMcqBannerMeta">0 MCQ PDFs • 0 Chapters</small></span>
+              <span class="res-mcq-banner-txt"><b id="resMcqBannerName">Biology</b><small id="resMcqBannerMeta">0 PDFs • 0 Chapters</small></span>
               <span class="res-mcq-banner-motif" id="resMcqBannerMotif" aria-hidden="true"></span>
             </div>
             <div class="res-mcq-top hidden" id="resMcqTop">
@@ -3017,9 +3017,9 @@
         var c = mcqSubjectCounts(subj);
         /* Rows stay tappable even at 0 PDFs, so the subject's honest empty
            state (not invented content) is reachable from the chapter list.
-           The count uses the reference's "N MCQs • M Chapters" wording with
+           The count uses the "N PDFs • M Chapters" wording with
            the real number of MCQ PDF documents (never invented totals). */
-        shownRes.push({ kind:"mcqsubj", subj:subj, title:subj, sub:c.pdfs + (c.pdfs===1 ? " MCQ" : " MCQs") + " • " + c.chapters + (c.chapters===1 ? " Chapter" : " Chapters"), icon:subjIconOf(subj) });
+        shownRes.push({ kind:"mcqsubj", subj:subj, title:subj, sub:c.pdfs + (c.pdfs===1 ? " PDF" : " PDFs") + " • " + c.chapters + (c.chapters===1 ? " Chapter" : " Chapters"), icon:subjIconOf(subj) });
       }
     }
     function buildMcqChapters(){
@@ -3124,7 +3124,7 @@
         var bIco = $("resMcqBannerIco");
         if (bIco){ bIco.style.background = MCQ_TILE_GRAD[resMcqList] || "linear-gradient(135deg,#8B5CF6,#6D28D9)"; bIco.innerHTML = mcqMotifSvg(resMcqList, 36); }
         $("resMcqBannerName").textContent = resMcqList;
-        $("resMcqBannerMeta").textContent = mc.pdfs + (mc.pdfs===1 ? " MCQ" : " MCQs") + " • " + mc.chapters + (mc.chapters===1 ? " Chapter" : " Chapters");
+        $("resMcqBannerMeta").textContent = mc.pdfs + (mc.pdfs===1 ? " PDF" : " PDFs") + " • " + mc.chapters + (mc.chapters===1 ? " Chapter" : " Chapters");
         var bMot = $("resMcqBannerMotif");
         if (bMot) bMot.innerHTML = mcqMotifSvg(resMcqList, 120);
       }
