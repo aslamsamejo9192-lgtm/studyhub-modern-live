@@ -3013,8 +3013,8 @@
       for (var i=0;i<notes.length;i++){ if (noteSubjOf(notes[i]) !== subj) continue; pdfs++; chaps[noteChapOf(notes[i])] = 1; }
       return { pdfs: pdfs, chapters: Object.keys(chaps).length };
     }
-    function mcqCountLine(n){ return n === 0 ? "(No MCQs yet)" : "(" + n + (n === 1 ? " MCQ PDF)" : " MCQ PDFs)"); }
-    function mcqPdfLine(n){ return n === 0 ? "No MCQs yet" : n + (n === 1 ? " MCQ PDF" : " MCQ PDFs"); }
+    function mcqCountLine(n){ return n === 0 ? "(No PDFs Available)" : "(" + n + (n === 1 ? " PDF Available)" : " PDFs Available)"); }
+    function mcqPdfLine(n){ return n === 0 ? "No PDFs Available" : n + (n === 1 ? " PDF Available" : " PDFs Available"); }
     function buildMcqRows(){
       for (var s=0;s<RES_SUBJS.length;s++){
         var subj = RES_SUBJS[s];
