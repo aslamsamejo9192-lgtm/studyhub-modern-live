@@ -913,7 +913,7 @@
             <div class="err-msg" id="regErr"></div>
           </form>
           <p class="auth-switch">Already have an account? <button id="toLoginLink" type="button">Sign in</button></p>
-          <p class="auth-terms">By signing up, you agree to our <u>Terms and Conditions</u></p>
+          <p class="auth-terms">By signing up, you agree to our Terms and Conditions</p>
           </div>
         </div>
       </div>
@@ -943,7 +943,7 @@
             <div class="err-msg" id="loginErr"></div>
           </form>
           <p class="auth-switch">New here? <button id="toRegisterLink" type="button">Create account</button></p>
-          <p class="auth-terms">By signing in, you agree to our <u>Terms and Conditions</u></p>
+          <p class="auth-terms">By signing in, you agree to our Terms and Conditions</p>
           </div>
         </div>
       </div>
@@ -1074,7 +1074,6 @@
 
           <div class="sec-head">
             <h3>Latest Updates</h3>
-            <span class="view-all" style="cursor:default">View All</span>
           </div>
           <div id="updatesList"></div>
           <div class="empty-card" id="updatesEmpty">
@@ -1672,8 +1671,6 @@
     var app = initializeApp(firebaseConfig);
     var auth = getAuth(app);
     var db = getFirestore(app, "ai-studio-fa3ed221-9d1d-49f7-9a67-0a698e2cdf28");
-    var DEMO_EMAIL = "demo@studyhub.pk";
-    var DEMO_PASS = "demo1234";
 
     /* ==================== QUESTION BANK (40 original MCQs) ==================== */
     var SUBJECTS = [
@@ -1770,7 +1767,41 @@
       var t = $("toast"); t.textContent = msg; t.classList.add("on");
       clearTimeout(t._h); t._h = setTimeout(function(){ t.classList.remove("on"); }, 2600);
     }
-    function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+    function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
+    /* Flashcard text may carry the website's own <sub>/<sup> formula markup,
+       but it comes from Firestore, so nothing else may run as HTML. Escape
+       everything, then re-allow ONLY <sub> and <sup> tags (no attributes:
+       an attribute can never survive the escaping to match this pattern). */
+    function safeCardHtml(s){
+      var t = String(s == null ? "" : s)
+        /* The website's own card data already carries pre-escaped entities
+           (e.g. "&amp;"); decode them once so they display exactly as
+           before — the escaping below then makes everything inert again. */
+        .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'");
+      t = t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+      return t.replace(/&lt;(\/?)(sub|sup)&gt;/gi, "<$1$2>");
+    }
+    /* Firestore Timestamps are not Dates: new Date(Timestamp) is Invalid
+       Date and a sort on it becomes a no-op. Normalise any date-ish value. */
+    function tsMs(t){
+      if (!t) return 0;
+      if (typeof t.toMillis === "function"){ try { return t.toMillis(); } catch (e) { return 0; } }
+      if (typeof t === "number") return t;
+      var ms = Date.parse(t);
+      return isNaN(ms) ? 0 : ms;
+    }
+    /* Only https: links and same-origin relative paths may ever be opened,
+       downloaded or shared: a javascript:/data: URL from a Firestore field
+       would execute on the programmatic click. */
+    function isSafePdfUrl(u){
+      var s = String(u || "").trim();
+      if (!s) return false;
+      if (s.toLowerCase().indexOf("https://") === 0) return true;
+      if (s.charAt(0) === "/") return true;
+      if (s.indexOf("./") === 0 || s.indexOf("../") === 0) return true;
+      if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(s)) return true;
+      return false;
+    }
     function subjById(id){ for (var i=0;i<SUBJECTS.length;i++) if (SUBJECTS[i].id===id) return SUBJECTS[i]; return null; }
     function fmtClock(sec){ sec=Math.max(0,Math.round(sec)); var m=Math.floor(sec/60), s=sec%60; return (m<10?"0":"")+m+":"+(s<10?"0":"")+s; }
     function fmtDur(sec){ var m=Math.floor(sec/60), s=sec%60; return m+":"+(s<10?"0":"")+s; }
@@ -1864,6 +1895,7 @@
       var name = $("rgName").value.trim(), father = $("rgFather").value.trim(),
           email = $("rgEmail").value.trim().toLowerCase(), pass = $("rgPass").value;
       if (!name) { $("regErr").textContent = "Please enter your full name."; return; }
+      if (!father) { $("regErr").textContent = "Please enter your father's name."; return; }
       if (!validEmail(email)) { $("regErr").textContent = "Please enter a valid email address."; return; }
       if (pass.length < 6) { $("regErr").textContent = "Password must be at least 6 characters."; return; }
       if (pass !== $("rgPass2").value) { $("regErr").textContent = "Passwords do not match."; return; }
@@ -1873,7 +1905,14 @@
         var cred = await createUserWithEmailAndPassword(auth, email, pass);
         var u = cred.user;
         var data = { uid: u.uid, fullName: name, fatherName: father, email: email, role: "student", createdAt: serverTimestamp(), updatedAt: serverTimestamp() };
-        await setDoc(doc(db, "students", u.uid), data);
+        try { await setDoc(doc(db, "students", u.uid), data); }
+        catch (werr) {
+          /* The Auth account now exists but its profile row did not: sign
+             out again so the user is not entered into the app with the
+             entered name discarded ("Student"). */
+          try { await signOut(auth); } catch (e) {}
+          throw werr;
+        }
         profile = { uid: u.uid, fullName: name, fatherName: father, email: email, role: "student" };
         cacheProfile(profile);
       } catch (err) { $("regErr").textContent = authErrMessage(err); clearBusy(ev.target); }
@@ -1883,6 +1922,7 @@
       ev.preventDefault();
       var email = $("liEmail").value.trim().toLowerCase(), pass = $("liPass").value;
       if (!validEmail(email)) { $("loginErr").textContent = "Please enter a valid email address."; return; }
+      if (!pass) { $("loginErr").textContent = "Please enter your password."; return; }
       $("loginErr").textContent = "";
       setBusy(ev.target, "Signing in...");
       try { await signInWithEmailAndPassword(auth, email, pass); }
@@ -1910,8 +1950,7 @@
         var d = snap.data();
         profile = { uid: user.uid, fullName: d.fullName || "Student", fatherName: d.fatherName || "", email: d.email || user.email || "", role: d.role || "student", status: d.status === "suspended" ? "suspended" : "active" };
       } else {
-        var isDemo = (user.email || "").toLowerCase() === DEMO_EMAIL;
-        var data = { uid: user.uid, fullName: isDemo ? "Demo Student" : (user.displayName || "Student"), fatherName: "", email: (user.email || "").toLowerCase(), role: "student", createdAt: serverTimestamp(), updatedAt: serverTimestamp() };
+        var data = { uid: user.uid, fullName: (user.displayName || "Student"), fatherName: "", email: (user.email || "").toLowerCase(), role: "student", createdAt: serverTimestamp(), updatedAt: serverTimestamp() };
         await setDoc(ref, data);
         profile = { uid: user.uid, fullName: data.fullName, fatherName: "", email: data.email, role: "student", status: "active" };
       }
@@ -1982,7 +2021,7 @@
       $("profEmail").textContent = currentUser.email;
       $("epName").value = displayName;
       var epF = $("epFather"); if (epF) epF.value = (profile && profile.fatherName) || "";
-      $("greetName").textContent = currentUser.email === DEMO_EMAIL ? "Muhammad" : displayName.split(" ")[0];
+      $("greetName").textContent = displayName.split(" ")[0];
       var h = new Date().getHours();
       $("greetTime").textContent = h < 12 ? "Good Morning," : (h < 17 ? "Good Afternoon," : "Good Evening,");
       applySavedPhoto();
@@ -2072,16 +2111,19 @@
       var cand = [];
       for (var i=0;i<liveTests.length;i++){ var t = liveTests[i]; if (subjectId === "all" || subjIdOf(t.subject) === subjectId) cand.push(t); }
       cqShuffle(cand);
-      var pool = [];
+      /* The same question can live in two tests — dedupe by id (or text)
+         so a custom test never asks it twice. */
+      var pool = [], seenQ = {};
+      function pushQ(d){ var k = d.id ? ("id:" + d.id) : ("t:" + String(d.questionText || d.q || "").trim()); if (seenQ[k]) return; seenQ[k] = 1; pool.push(d); }
       for (var k=0;k<cand.length && pool.length < count;k++){
         var cached = qCache[cand[k].id];
         if (cached) {
-          for (var qi=0;qi<cached.length;qi++){ var cd = cached[qi]; if (!cd.subject) cd.subject = cand[k].subject; if (!cd.topic) cd.topic = cand[k].topic; pool.push(cd); }
+          for (var qi=0;qi<cached.length;qi++){ var cd = cached[qi]; if (!cd.subject) cd.subject = cand[k].subject; if (!cd.topic) cd.topic = cand[k].topic; pushQ(cd); }
           continue;
         }
         try {
           var snap = await getDocs(collection(db, "tests", cand[k].id, "questions"));
-          snap.forEach(function(d){ var data = d.data(); data.id = d.id; if (!data.subject) data.subject = cand[k].subject; if (!data.topic) data.topic = cand[k].topic; pool.push(data); });
+          snap.forEach(function(d){ var data = d.data(); data.id = d.id; if (!data.subject) data.subject = cand[k].subject; if (!data.topic) data.topic = cand[k].topic; pushQ(data); });
         } catch (e) { console.warn("Custom pool load failed:", e); }
       }
       cqShuffle(pool);
@@ -2098,6 +2140,7 @@
       try {
         var picked = await buildCustomPool(cqSubject, cqCount);
         if (!picked.length) { toast("No questions available for this subject yet."); return; }
+        if (picked.length < cqCount) toast("Only " + picked.length + " questions available — starting with " + picked.length + ".");
         closeCustom();
         var label = CQ_SUBJ_LABEL[cqSubject] || "All Subjects";
         var t = { id:"custom-"+Date.now(), title:"Custom Test · "+label, subject:label, topic:"Custom Test", durationSeconds:picked.length*60, totalMarks:picked.length };
@@ -2141,7 +2184,7 @@
        home icon goes Home, chapter pills filter the list. */
     $("resNtBandBack").addEventListener("click", function(){
       if (resType === "Flashcards"){ resFcList = null; resFcChap = null; }
-      else resNtList = null;
+      else { resNtList = null; resNtChap = null; }
       renderResources(); window.scrollTo(0, resRowsScroll);
     });
     $("resNtBandHome").addEventListener("click", function(){ showView("home"); });
@@ -2332,7 +2375,7 @@
     /* Distinct chapter titles for one subject, in the order the tests were published (oldest first = syllabus order, same as MDCAT Prime). */
     function chaptersFor(subjId){
       var order = [], map = {};
-      var sorted = liveTests.slice().sort(function(a,b){ return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime(); });
+      var sorted = liveTests.slice().sort(function(a,b){ return tsMs(a.createdAt) - tsMs(b.createdAt); });
       for (var i=0;i<sorted.length;i++){
         var t = sorted[i];
         if (subjIdOf(t.subject) !== subjId) continue;
@@ -2673,10 +2716,21 @@
     var FC_DECKS_BUILTIN = JSON.parse(JSON.stringify(FC_DECKS));
     var fcDeckKey = "ac", fcDeck = null, fcIndex = 0, fcFlipped = false;
     function renderFlashcard(){
-      var deck = fcDeck || FC_DECKS[fcDeckKey], card = deck.cards[fcIndex];
-      /* Card text keeps the website's own <sub>/<sup> markup, so innerHTML like the website. */
-      $("fcFront").innerHTML = card.front;
-      $("fcBack").innerHTML = card.back;
+      var deck = fcDeck || FC_DECKS[fcDeckKey];
+      if (!deck || !deck.cards || !deck.cards.length){
+        $("fcFront").innerHTML = ""; $("fcBack").innerHTML = "";
+        $("fcCounter").textContent = "Card 0 of 0";
+        $("fcPrevBtn").disabled = true; $("fcNextBtn").disabled = true;
+        return;
+      }
+      if (fcIndex < 0) fcIndex = 0;
+      if (fcIndex > deck.cards.length - 1) fcIndex = deck.cards.length - 1;
+      var card = deck.cards[fcIndex];
+      /* Card text keeps the website's own <sub>/<sup> markup — but it comes
+         from Firestore, so it goes through safeCardHtml: everything is
+         escaped except bare <sub>/<sup> tags. */
+      $("fcFront").innerHTML = safeCardHtml(card.front);
+      $("fcBack").innerHTML = safeCardHtml(card.back);
       $("fcCounter").textContent = "Card " + (fcIndex + 1) + " of " + deck.cards.length;
       $("fcInner").classList.toggle("flipped", fcFlipped);
       $("fcPrevBtn").disabled = fcIndex === 0;
@@ -2763,7 +2817,7 @@
     }
     function renderAll(){ renderHomeStats(); renderSubjects(); renderTests(); renderResources(); }
     /* ==================== LIVE DATA (Firestore) ==================== */
-    function unsubscribeAll(){ for (var i=0;i<unsubs.length;i++){ try { unsubs[i](); } catch (e) {} } unsubs = []; if (notesUnsub) { try { notesUnsub(); } catch (e) {} notesUnsub = null; } if (fcUnsub) { try { fcUnsub(); } catch (e) {} fcUnsub = null; } }
+    function unsubscribeAll(){ for (var i=0;i<unsubs.length;i++){ try { unsubs[i](); } catch (e) {} } unsubs = []; if (notesUnsub) { try { notesUnsub(); } catch (e) {} notesUnsub = null; } if (fcUnsub) { try { fcUnsub(); } catch (e) {} fcUnsub = null; } if (profileUnsub) { try { profileUnsub(); } catch (e) {} profileUnsub = null; } }
     function subscribeAll(){
       if (!currentUser) return;
       unsubscribeAll();
@@ -2772,7 +2826,7 @@
         unsubs.push(onSnapshot(query(collection(db, "tests"), where("published", "==", true)), function(snap){
           var list = [];
           snap.forEach(function(d){ var data = d.data(); data.id = d.id; list.push(data); });
-          list.sort(function(a,b){ return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime(); });
+          list.sort(function(a,b){ return tsMs(b.createdAt) - tsMs(a.createdAt); });
           liveTests = list; testsReady = true; renderTests(); preloadQuestions(); renderResources();
           if ($("view-chapters").classList.contains("on")) renderChapters();
         }, function(err){ console.warn("Tests load failed:", err); testsReady = true; renderTests();
@@ -2783,11 +2837,23 @@
         unsubs.push(onSnapshot(query(collection(db, "attempts"), where("uid", "==", currentUser.uid)), function(snap){
           var list = [];
           snap.forEach(function(d){ var data = d.data(); data.id = d.id; list.push(data); });
-          list.sort(function(a,b){ return new Date(a.submittedAt || a.startedAt || 0).getTime() - new Date(b.submittedAt || b.startedAt || 0).getTime(); });
+          list.sort(function(a,b){ return tsMs(a.submittedAt || a.startedAt) - tsMs(b.submittedAt || b.startedAt); });
           results = mapAttempts(list);
           renderHomeStats(); renderProgress();
         }, function(err){ console.warn("Attempts load failed:", err); }));
       } catch (e) { console.warn("Attempts listener failed:", e); }
+      /* Suspend takes effect mid-session too: watch the student's own doc.
+         The listener fires at once with the current status, then again on
+         any change — a suspend issued while the student is inside the app
+         shows the suspended screen at once, no refresh needed. */
+      try {
+        profileUnsub = onSnapshot(doc(db, "students", currentUser.uid), function(snap){
+          if (!snap || typeof snap.data !== "function") return;
+          if (typeof snap.exists === "function" && !snap.exists()) return;
+          var d = snap.data() || {};
+          if (d.status === "suspended"){ if (profile) profile.status = "suspended"; showSuspended(); }
+        }, function(err){ console.warn("Profile listener failed:", err); });
+      } catch (e) { console.warn("Profile listener failed:", e); }
       /* Published notes. */
       fetchNotes();
       /* Admin-created flashcards (Firestore `flashcards` collection). */
@@ -2797,7 +2863,7 @@
         unsubs.push(onSnapshot(query(collection(db, "announcements"), where("published", "==", true)), function(snap){
           var list = [];
           snap.forEach(function(d){ var data = d.data(); data.id = d.id; list.push(data); });
-          list.sort(function(a,b){ return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime(); });
+          list.sort(function(a,b){ return tsMs(b.createdAt) - tsMs(a.createdAt); });
           liveAnnouncements = list; renderAnnouncements();
         }, function(err){ console.warn("Announcements load failed:", err); }));
       } catch (e) { console.warn("Announcements listener failed:", e); }
@@ -2824,6 +2890,7 @@
     }
     /* ---------- Notes ---------- */
     var notesUnsub = null;
+    var profileUnsub = null;   // own student-doc listener (mid-session suspend)
     /* Notes show instantly from the last saved list (phone storage), then
        the live listener replaces them with fresh data — so Notes never
        sit blank for seconds, and a chapter changed in the panel appears
@@ -2842,7 +2909,7 @@
         notesUnsub = onSnapshot(query(collection(db, "notes"), where("published", "==", true)), function(snap){
           var list = [];
           snap.forEach(function(d){ var data = d.data(); data.id = d.id; list.push(data); });
-          list.sort(function(a,b){ return new Date(b.uploadedAt || 0).getTime() - new Date(a.uploadedAt || 0).getTime(); });
+          list.sort(function(a,b){ return tsMs(b.uploadedAt) - tsMs(a.uploadedAt); });
           liveNotes = list; notesReady = true;
           try { localStorage.setItem(NOTES_CACHE_KEY, JSON.stringify(list)); } catch (e) {}
           renderResources();
@@ -2898,7 +2965,7 @@
             var merged = false;
             var deckKeys = Object.keys(FC_DECKS);
             for (var k=0;k<deckKeys.length;k++){
-              if (FC_DECKS[deckKeys[k]].label === g.label){
+              if (FC_DECKS[deckKeys[k]].label.toLowerCase() === g.label.toLowerCase()){
                 FC_DECKS[deckKeys[k]].cards = FC_DECKS[deckKeys[k]].cards.concat(g.cards);
                 merged = true;
                 break;
@@ -2971,14 +3038,24 @@
       }
       return out;
     }
-    /* A note belongs to a subject when its own subject field names it. */
+    /* A note belongs to a subject when its own subject field names it; if
+       the subject is missing or unrecognised, fall back to the subject
+       whose chapter list contains the note's chapter; otherwise "Other",
+       so the note stays visible instead of vanishing silently. */
     function noteSubjOf(n){
       var s = String(n.subject || "").toLowerCase();
       if (s.indexOf("biology") !== -1) return "Biology";
       if (s.indexOf("chemistry") !== -1) return "Chemistry";
       if (s.indexOf("physics") !== -1) return "Physics";
       if (s.indexOf("english") !== -1) return "English";
-      return null;
+      var chap = normChap(n.chapter);
+      if (chap){
+        for (var i=0;i<SUBJECTS.length;i++){
+          var chs = SUBJECTS[i].chapters || [];
+          for (var j=0;j<chs.length;j++){ if (normChap(chs[j].name) === chap) return SUBJECTS[i].name; }
+        }
+      }
+      return "Other";
     }
     /* A note's chapter is its own chapter field when set, else its title. */
     function noteChapOf(n){ return String(n.chapter || n.title || ""); }
@@ -3057,13 +3134,24 @@
     function buildNtRows(){
       var notes = notesOfKind("notes");
       var subjs = resNtSubj ? [resNtSubj] : RES_SUBJS.slice();
+      /* "Other" appears only when a note actually maps there. */
+      if (!resNtSubj){
+        var hasOther = false;
+        for (var oi=0;oi<notes.length;oi++){ if (noteSubjOf(notes[oi]) === "Other"){ hasOther = true; break; } }
+        if (hasOther) subjs.push("Other");
+      }
       for (var s=0;s<subjs.length;s++){
         var subj = subjs[s], mine = [];
-        if (resNtSearch && subj.toLowerCase().indexOf(resNtSearch) === -1) continue;
         for (var i=0;i<notes.length;i++){
           if (noteSubjOf(notes[i]) !== subj) continue;
           if (resNtChap && noteChapOf(notes[i]) !== resNtChap) continue;
           mine.push(notes[i]);
+        }
+        if (resNtSearch){
+          var sq = resNtSearch, subjHit = subj.toLowerCase().indexOf(sq) !== -1, titleHit = false;
+          for (var ti=0;ti<mine.length;ti++){ if (String(mine[ti].title || "").toLowerCase().indexOf(sq) !== -1){ titleHit = true; break; } }
+          if (!subjHit && !titleHit) continue;
+          if (!subjHit) mine = mine.filter(function(n){ return String(n.title || "").toLowerCase().indexOf(sq) !== -1; });
         }
         if (resNtChap && !mine.length) continue;
         var chaps = {}, cn = 0;
@@ -3416,6 +3504,7 @@
     });
     function downloadNote(note){
       if (!note || !note.downloadUrl) { toast("Document URL is not available."); return; }
+      if (!isSafePdfUrl(note.downloadUrl)) { toast("This file link is not safe."); return; }
       var a = document.createElement("a");
       a.href = note.downloadUrl; a.target = "_blank"; a.rel = "noopener noreferrer";
       a.download = String(note.title || "note").replace(/\s+/g, "_") + ".pdf";
@@ -3440,6 +3529,7 @@
     var pdfNote = null, pdfKey = "", pdfMode = "continuous", pdfRotation = 0, pdfReadMode = "dark", pdfSinglePage = 1;
     var pdfBookmarks = [], pdfSaveTimer = null, pdfSearchTimer = null, pdfPinch = null;
     var pdfSearch = { query: "", pages: {}, list: [], index: -1, running: false };
+    var pdfSearchToken = 0;   // aborts stale search chains (a newer run wins)
     function pdfScale(){ return pdfBase * pdfZoom; }
     function pdfViewerLib(){
       if (window.pdfjsLib){
@@ -3454,8 +3544,14 @@
     function pdfScrollPage(){
       var pagesEl = $("noteViewerPages");
       var top = pagesEl.scrollTop + 40, cur = 1;
+      /* wrap.offsetTop is relative to the positioned .pdfv-card, not to the
+         pages container — measure each wrap against the container itself,
+         or the counter flips a page late near boundaries. */
+      var base = pagesEl.getBoundingClientRect().top;
       for (var i = 1; i < pdfPages.length; i++){
-        if (pdfPages[i].wrap.offsetTop <= top) cur = i; else break;
+        if (!pdfPages[i] || !pdfPages[i].wrap) continue;
+        var wt = pdfPages[i].wrap.getBoundingClientRect().top - base + pagesEl.scrollTop;
+        if (wt <= top) cur = i; else break;
       }
       return cur;
     }
@@ -3581,6 +3677,7 @@
     function pdfShare(){
       if (!pdfNote) return;
       var url = pdfNote.downloadUrl;
+      if (!isSafePdfUrl(url)) { toast("This file link is not safe."); return; }
       if (navigator.share){ navigator.share({ title: pdfNote.title || "PDF", text: pdfNote.title || "PDF", url: url }).catch(function(){}); }
       else if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(function(){ toast("Link copied."); }).catch(function(){ toast("Sharing is not supported on this device."); }); }
       else toast("Sharing is not supported on this device.");
@@ -3668,6 +3765,7 @@
     }
     function pdfRunSearch(q){
       q = String(q || "").trim();
+      var mySearch = ++pdfSearchToken;
       pdfSearch = { query: q, pages: {}, list: [], index: -1, running: true };
       pdfClearHighlights();
       if (!q || !pdfDoc){ pdfSearch.running = false; pdfSearchCount(); return; }
@@ -3676,11 +3774,11 @@
       for (var n = 1; n <= pdfDoc.numPages; n++){
         (function(num){
           chain = chain.then(function(){
-            if (!pdfDoc || pdfSearch.query !== q) return;
+            if (!pdfDoc || pdfSearch.query !== q || mySearch !== pdfSearchToken) return;
             return pdfDoc.getPage(num).then(function(page){
-              if (!pdfDoc || pdfSearch.query !== q) return;
+              if (!pdfDoc || pdfSearch.query !== q || mySearch !== pdfSearchToken) return;
               return page.getTextContent().then(function(tc){
-                if (!pdfDoc || pdfSearch.query !== q) return;
+                if (!pdfDoc || pdfSearch.query !== q || mySearch !== pdfSearchToken) return;
                 var vp0 = page.getViewport({ scale: 1, rotation: 0 });
                 var hits = [];
                 for (var i = 0; i < tc.items.length; i++){
@@ -3715,7 +3813,7 @@
         })(n);
       }
       chain.then(function(){
-        if (!pdfDoc || pdfSearch.query !== q) return;
+        if (!pdfDoc || pdfSearch.query !== q || mySearch !== pdfSearchToken) return;
         pdfSearch.running = false;
         pdfSearchCount();
         if (pdfSearch.list.length){ pdfSearch.index = 0; pdfGotoSearchResult(0); }
@@ -3729,13 +3827,14 @@
     }
     function openNoteViewer(note){
       if (!note || !note.downloadUrl) { toast("Document URL is not available."); return; }
+      if (!isSafePdfUrl(note.downloadUrl)) { toast("This file link is not safe."); return; }
       pdfNote = note;
       pdfKey = pdfKeyFor(note);
       pdfMode = "continuous"; pdfRotation = 0; pdfZoom = 1; pdfPages = [];
       pdfBookmarks = [];
       pdfSearch = { query: "", pages: {}, list: [], index: -1, running: false };
       $("noteViewerTitle").textContent = note.title;
-      $("noteViewerSub").textContent = note.subject + " • PDF Viewer";
+      $("noteViewerSub").textContent = (note.subject ? note.subject + " • " : "") + "PDF Viewer";
       pdfReadMode = document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
       pdfApplyReadMode();
       pdfApplyMode();
@@ -4023,17 +4122,30 @@
         var ansIdx = -1;
         if (typeof q.answerKey === "number") ansIdx = q.answerKey;
         else if (typeof q.answerKey === "string") {
-          var num = parseInt(q.answerKey, 10);
+          var keyStr = q.answerKey.trim();
+          var num = parseInt(keyStr, 10);
           if (!isNaN(num)) ansIdx = num;
-          else if (Array.isArray(q.options)) ansIdx = q.options.findIndex(function(o){ return String(o).trim().toLowerCase() === q.answerKey.trim().toLowerCase(); });
-        } else if (typeof q.correctIndex === "number") ansIdx = q.correctIndex;
-        else if (typeof q.a === "number") ansIdx = q.a;
+          /* A single letter key ("B") means option B, not an option whose
+             text happens to be "B". */
+          else if (/^[A-Da-d]$/.test(keyStr)) ansIdx = "abcd".indexOf(keyStr.toLowerCase());
+          else if (Array.isArray(q.options)) ansIdx = q.options.findIndex(function(o){ return String(o).trim().toLowerCase() === keyStr.toLowerCase(); });
+        }
         var opts = Array.isArray(q.options) ? q.options : (q.o || []);
+        /* A present-but-unusable answerKey (missing, non-matching, or out
+           of range) must not block the fall-through: try correctIndex,
+           then a. A valid in-range key always wins. */
+        if (ansIdx < 0 || ansIdx >= opts.length){
+          if (typeof q.correctIndex === "number") ansIdx = q.correctIndex;
+          else if (typeof q.a === "number") ansIdx = q.a;
+        }
+        /* Clamp: still no valid answer means "no valid answer", never a
+           crash or an "undefined" in the review. */
+        if (ansIdx < 0 || ansIdx >= opts.length) ansIdx = -1;
         var qSubj = q.subject || test.subject;
         norm.push({ id: q.id || ("q" + i), subject: qSubj, subjectId: subjIdOf(qSubj),
           color: (testStyle(qSubj)).color, chapter: q.topic || test.topic || test.subject,
           q: q.questionText || q.q, o: opts, a: ansIdx, e: q.explanation || q.e || "", marks: (typeof q.marks === "number" ? q.marks : 1),
-          neg: (typeof q.negativeMarks === "number" ? q.negativeMarks : 0), fallback: usedFallback });
+          neg: 0, /* No negative marking: the FAQ promises a wrong answer scores 0. */ fallback: usedFallback });
       }
       var liveTest = { id: test.id, title: test.title, subject: test.subject, topic: test.topic,
         durationSeconds: test.durationSeconds, totalMarks: test.totalMarks, qs: norm, _customQs: (test._customQs || null) };
@@ -4127,6 +4239,9 @@
     async function finishExam(){
       if (!exam || exam._submitted) return;
       exam._submitted = true;
+      /* The timer can fire while the submit-confirm dialog is open — take
+         the dialog down first so the result never renders underneath it. */
+      $("submitOverlay").classList.remove("on");
       var qs = exam.test.qs, correct = 0, incorrect = 0, answered = 0, earned = 0, per = {};
       var answersById = {};
       for (var i=0;i<qs.length;i++){
@@ -4141,7 +4256,11 @@
         }
       }
       var secs = Math.max(1, Math.round((Date.now() - exam.startedAt)/1000));
-      var totalMarks = exam.test.totalMarks || qs.length;
+      /* Denominator is the sum of per-question marks, not the stored
+         totalMarks — a test whose stored total disagrees with its
+         questions scored a systematically wrong percentage. */
+      var marksSum = qs.reduce(function(a,qq){ return a + (qq.marks || 1); }, 0);
+      var totalMarks = marksSum > 0 ? marksSum : (exam.test.totalMarks || qs.length);
       var score = Math.max(0, earned);
       var pct = totalMarks ? Math.round(score/totalMarks*100) : 0;
       var unanswered = qs.length - answered;
@@ -4180,11 +4299,14 @@
       var qs = exam.test.qs, letters = ["A","B","C","D"], html = "";
       for (var i=0;i<qs.length;i++){
         var mine = exam.answers[i];
+        var mineOk = mine >= 0 && mine < qs[i].o.length;
+        var ansOk = qs[i].a >= 0 && qs[i].a < qs[i].o.length;
         html += '<div class="rev"><div class="rq">Q'+(i+1)+'. '+esc(qs[i].q)+'</div><div class="ra">'
-          + (mine === -1 ? '<span class="skip">Not attempted</span>'
+          + (!mineOk ? '<span class="skip">Not attempted</span>'
              : mine === qs[i].a ? '<span class="ok">Your answer: '+letters[mine]+'. '+esc(qs[i].o[mine])+' — Correct</span>'
              : '<span class="bad">Your answer: '+letters[mine]+'. '+esc(qs[i].o[mine])+' — Wrong</span>')
-          + '<span class="ok">Correct answer: '+letters[qs[i].a]+'. '+esc(qs[i].o[qs[i].a])+'</span></div>'
+          + (ansOk ? '<span class="ok">Correct answer: '+letters[qs[i].a]+'. '+esc(qs[i].o[qs[i].a])+'</span>'
+             : '<span class="skip">Correct answer: Not set</span>') + '</div>'
           + '<div class="exp"><b>Explanation:</b> '+esc(qs[i].e)+'</div></div>';
       }
       var rl = $("reviewList");
@@ -4198,10 +4320,11 @@
     /* ==================== PROFILE ==================== */
     var PANEL_IDS = ["editPanel","settingsPanel","faqPanel","aboutPanel","contactPanel"];
     function closePanels(){
-      for (var i=0;i<PANEL_IDS.length;i++){ var el = $(PANEL_IDS[i]); el.classList.add("hidden"); el.classList.remove("open-full"); }
+      for (var i=0;i<PANEL_IDS.length;i++){ var el = $(PANEL_IDS[i]); if (!el) continue; el.classList.add("hidden"); el.classList.remove("open-full"); }
     }
     function togglePanel(id){
-      var p = $(id), wasHidden = p.classList.contains("hidden");
+      var p = $(id); if (!p) return;
+      var wasHidden = p.classList.contains("hidden");
       closePanels();
       if (wasHidden) { p.classList.remove("hidden"); p.classList.add("open-full"); window.scrollTo(0,0); }
     }
@@ -4232,11 +4355,14 @@
     function applySavedPhoto(){
       var key = photoKey(), data = key ? localStorage.getItem(key) : null;
       var name = (profile && profile.fullName) || (currentUser && currentUser.name) || "Student";
-      var img = data ? '<img src="' + data + '" alt="Profile photo" />' : null;
+      /* Only a real saved photo (canvas re-encoded data:image/…) may render
+         as an image — anything else falls back to initials. */
+      var photoOk = !!(data && data.indexOf("data:image/") === 0);
+      var img = photoOk ? '<img src="' + data + '" alt="Profile photo" />' : null;
       if ($("headAvatar")) $("headAvatar").innerHTML = img || initials(name);
       if ($("profAvatar")) $("profAvatar").innerHTML = img || initials(name);
       if ($("epPhotoPrev")) $("epPhotoPrev").innerHTML = img || initials(name);
-      var rm = $("epRemovePhoto"); if (rm) rm.style.display = data ? "" : "none";
+      var rm = $("epRemovePhoto"); if (rm) rm.style.display = photoOk ? "" : "none";
     }
     function pickPhoto(){ $("photoInput").click(); }
     $("avatarCamBtn").addEventListener("click", pickPhoto);

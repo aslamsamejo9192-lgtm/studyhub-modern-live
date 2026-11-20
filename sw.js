@@ -5,7 +5,7 @@
    first-open after a site update must never be served from cache.
    Only same-origin requests are handled; Firebase / CDN calls always
    go to the network. */
-var CACHE = "mdcat-prime-v2";
+var CACHE = "mdcat-prime-v3";
 var SHELL = [
   "/",
   "/index.html",
@@ -41,8 +41,10 @@ self.addEventListener("fetch", function (e) {
       /* "no-cache" forces a real network revalidation — the browser HTTP
          cache must never answer a navigation with a stale index.html. */
       fetch(e.request, { cache: "no-cache" }).then(function (res) {
-        var copy = res.clone();
-        caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
+        if (res && res.ok) {
+          var copy = res.clone();
+          caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
+        }
         return res;
       }).catch(function () {
         return caches.match(e.request).then(function (hit) {
@@ -52,11 +54,33 @@ self.addEventListener("fetch", function (e) {
     );
     return;
   }
+  /* PDFs under /resources/* change when the admin replaces them, so they
+     are revalidated on every fetch (stale-while-revalidate: serve the
+     saved copy at once, refresh it in the background). Anything else is
+     cache-first — but only successful responses are ever stored, so a
+     transient 404/500 is never cached and re-served. */
+  if (url.pathname.indexOf("/resources/") === 0) {
+    e.respondWith(
+      caches.match(e.request).then(function (hit) {
+        var fresh = fetch(e.request, { cache: "no-cache" }).then(function (res) {
+          if (res && res.ok) {
+            var copy = res.clone();
+            caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
+          }
+          return res;
+        }).catch(function () { return null; });
+        return hit || fresh;
+      })
+    );
+    return;
+  }
   e.respondWith(
     caches.match(e.request).then(function (hit) {
       return hit || fetch(e.request).then(function (res) {
-        var copy = res.clone();
-        caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
+        if (res && res.ok) {
+          var copy = res.clone();
+          caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
+        }
         return res;
       });
     })

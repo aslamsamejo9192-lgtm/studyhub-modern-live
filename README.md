@@ -41,11 +41,11 @@ All data is live — nothing is demo or session-only:
 
 ## Demo login
 
-The login screen has a clearly labelled "Use Demo Account" button. It
-signs in through real Firebase Auth with the shared demo account
-(`demo@studyhub.pk`). That demo user must exist in Firebase Auth
-(email/password) for the button to work; if it does not exist yet, the
-button says so instead of faking a login.
+Removed: the app no longer ships a demo account. The old "Use Demo
+Account" button and its shared demo credentials were deleted from the
+code (audit fix, 2026-11-20) — sign-in is real accounts only. The
+`demo@studyhub.pk` Firebase Auth user itself was left untouched and
+should be disabled or deleted in the Firebase console.
 
 ## Deploy notes
 
