@@ -542,6 +542,12 @@
       .btn-purple{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:#7C3AED;color:#fff;border:0;font-weight:700;font-size:13.5px;border-radius:999px;padding:11px 14px;min-height:44px;box-shadow:none;white-space:nowrap}
       .btn-purple:active{transform:scale(.97)}
       .btn-purple:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+      /* Simple purple arrow button (replaces the "View Chapters" pill on
+         subject rows): same purple as .btn-purple, flat, 44px circle. */
+      .mcq-arrow-btn{flex:none;width:44px;height:44px;min-height:44px;border-radius:50%;border:0;background:#7C3AED;color:#fff;display:inline-flex;align-items:center;justify-content:center;box-shadow:none;cursor:pointer;padding:0}
+      .mcq-arrow-btn:active{transform:scale(.97)}
+      .mcq-arrow-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+      [data-theme="dark"] #resList .mcq-arrow-btn{background:linear-gradient(135deg,#8B5CF6,#6D28D9)}
       #resList .subj-act{flex:none;width:auto;margin-top:0}
       @media (max-width:380px){
         #resList .subj-row{gap:9px;padding:12px}
@@ -754,7 +760,6 @@
       #resList .res-mcq-pdf .res-nt-txt b{font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
       #resList .res-mcq-pdf .res-nt-txt small{font-size:12.5px}
       #resList .res-mcq-pdf-btns{flex:none;display:flex;gap:8px;align-items:center}
-      .res-mcq-view{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;border:0;font-weight:700;font-size:11.5px;border-radius:999px;padding:7px 9px;min-height:36px;white-space:nowrap;cursor:pointer;box-shadow:none}
       .res-mcq-dl{display:inline-flex;align-items:center;gap:4px;background:#1E293B;color:#fff;border:1px solid rgba(148,163,184,.25);font-weight:700;font-size:11.5px;border-radius:999px;padding:7px 9px;min-height:36px;white-space:nowrap;cursor:pointer}
       [data-theme="dark"] #resList .res-mcq-pdf{background:#0E1B33;border-color:rgba(148,180,255,.12);box-shadow:0 8px 20px rgba(0,0,0,.30)}
       @media (max-width:380px){
@@ -3211,12 +3216,14 @@
         var it = shownRes[j];
         if (it.kind === "fcsubj" || it.kind === "fcdeck" || it.kind === "fcall"){
           var st = resStyle(it.subj);
-          var fcBtn = it.kind === "fcsubj"
-            ? 'View Chapters <span class="mcq-chev"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span>'
-            : 'Start Practice <span class="btn-arr">→</span>';
+          /* Subject rows get the simple purple arrow button; deck rows keep
+             the "Start Practice" pill. */
+          var actBtn = it.kind === "fcsubj"
+            ? '<button class="mcq-arrow-btn" type="button" data-idx="'+j+'" aria-label="View chapters"><span class="mcq-chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span></button>'
+            : '<button class="btn-purple subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>Start Practice <span class="btn-arr">→</span></button>';
           html += '<div class="subj-row" data-subj="'+esc(it.subj)+'" style="--rowwash:'+st.soft+'"><span class="subj-ico" style="background:'+st.soft+';color:'+st.color+'">'+iconSvg(it.icon,26)+'</span>'
             + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span>'
-            + '<button class="btn-purple subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>'+fcBtn+'</button></div>';
+            + actBtn + '</div>';
         } else if (it.kind === "ntsubj"){
           var st2 = resStyle(it.subj);
           html += '<div class="subj-row" data-subj="'+esc(it.subj)+'" style="--rowwash:'+st2.soft+'"><span class="subj-ico" style="background:'+st2.soft+';color:'+st2.color+'">'+iconSvg(it.icon,26)+'</span>'
@@ -3226,7 +3233,7 @@
           var st4 = resStyle(it.subj);
           html += '<div class="subj-row" data-subj="'+esc(it.subj)+'" style="--rowwash:'+st4.soft+'"><span class="subj-ico" style="background:'+st4.soft+';color:'+st4.color+'">'+iconSvg(it.icon,26)+'</span>'
             + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span>'
-            + '<button class="btn-purple subj-act" type="button" data-idx="'+j+'">View Chapters <span class="mcq-chev"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span></button></div>';
+            + '<button class="mcq-arrow-btn" type="button" data-idx="'+j+'" aria-label="View chapters"><span class="mcq-chev"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span></button></div>';
         } else if (it.kind === "mcqchap"){
           html += '<div class="mcq-chap-row" data-idx="'+j+'" role="button" tabindex="0"><span class="mcq-chap-num">'+it.num+'</span>'
             + '<span class="subj-txt"><b>'+esc(it.chapter)+'</b><small>'+esc(mcqCountLine(it.count))+'</small></span>'
@@ -3237,8 +3244,10 @@
           html += '<div class="res-mcq-pdf" data-idx="'+j+'" role="button" tabindex="0">'
             + '<span class="res-nt-pdf">PDF</span>'
             + '<span class="res-nt-txt"><b>'+esc(nn2.title)+'</b><small>'+esc(sizeLine2)+'</small></span>'
-            + '<span class="res-mcq-pdf-btns"><button class="res-mcq-view" type="button" data-idx="'+j+'" data-act="view"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>View</button>'
-            + '<button class="res-mcq-dl" type="button" data-idx="'+j+'" data-act="dl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><polyline points="6 10 12 16 18 10"/></svg>Download</button></span></div>';
+            /* No View button on the card: tapping the card itself opens the
+               viewer (the list click handler opens it for any tap that is
+               not the Download button). */
+            + '<span class="res-mcq-pdf-btns"><button class="res-mcq-dl" type="button" data-idx="'+j+'" data-act="dl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><polyline points="6 10 12 16 18 10"/></svg>Download</button></span></div>';
         } else {
           var nn = it.note;
           if (isNtList){
