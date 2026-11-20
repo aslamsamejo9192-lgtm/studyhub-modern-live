@@ -152,19 +152,19 @@
 
       /* ---------- Buttons ---------- */
       .btn-grad{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--grad);border:1px solid transparent;color:#fff;
-        font-weight:600;font-size:15px;letter-spacing:-.01em;border-radius:12px;padding:11px 20px;min-height:48px;box-shadow:0 8px 20px rgba(19,91,250,.28),0 1px 0 rgba(255,255,255,.18) inset;transition:transform .15s,box-shadow .15s}
-      .btn-grad:hover{transform:translateY(-1px);box-shadow:0 12px 26px rgba(19,91,250,.36),0 1px 0 rgba(255,255,255,.18) inset}
+        font-weight:600;font-size:15px;letter-spacing:-.01em;border-radius:12px;padding:11px 20px;min-height:48px;box-shadow:none;transition:transform .15s,box-shadow .15s}
+      .btn-grad:hover{transform:translateY(-1px);box-shadow:none}
       .btn-grad:active{transform:scale(.98)}
       .btn-blue{display:inline-flex;align-items:center;justify-content:center;gap:9px;width:100%;background:var(--grad);border:1px solid transparent;
-        color:#fff;font-weight:600;font-size:15px;letter-spacing:-.01em;border-radius:12px;padding:11px 20px;min-height:46px;box-shadow:0 8px 20px rgba(19,91,250,.28),0 1px 0 rgba(255,255,255,.18) inset;transition:transform .15s,box-shadow .15s}
-      .btn-blue:hover{transform:translateY(-1px);box-shadow:0 12px 26px rgba(19,91,250,.36),0 1px 0 rgba(255,255,255,.18) inset}
+        color:#fff;font-weight:600;font-size:15px;letter-spacing:-.01em;border-radius:12px;padding:11px 20px;min-height:46px;box-shadow:none;transition:transform .15s,box-shadow .15s}
+      .btn-blue:hover{transform:translateY(-1px);box-shadow:none}
       .btn-blue:active{transform:scale(.98)}
       .btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:rgba(37,99,235,.05);border:1.5px solid #CBD5E1;
         color:var(--ink2);font-weight:600;font-size:15px;letter-spacing:-.01em;border-radius:12px;padding:11px 20px;min-height:46px;transition:transform .15s,background .15s}
       .btn-ghost:hover{border-color:#93C5FD;background:#EFF6FF;transform:translateY(-1px)}
       .btn-ghost:active{transform:scale(.98)}
       .btn-white{display:inline-flex;align-items:center;gap:9px;background:#fff;color:var(--blue-dark);border:0;font-weight:800;
-        font-size:15px;border-radius:999px;padding:13px 26px;min-height:48px;box-shadow:0 10px 24px rgba(10,20,40,.25)}
+        font-size:15px;border-radius:999px;padding:13px 26px;min-height:48px;box-shadow:none}
 
       /* ---------- Views ---------- */
       .view{display:none;padding:20px 0 96px}
@@ -225,7 +225,7 @@
       .searchbar input::placeholder{color:var(--muted2)}
       .chips{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0 4px}
       .fchip{border:0;background:#EFF6FF;color:var(--ink2);font-weight:800;font-size:13.5px;border-radius:15px;padding:11px 20px;min-height:42px}
-      .fchip.active{background:var(--grad);color:#fff;box-shadow:0 8px 18px rgba(19,91,250,.28)}
+      .fchip.active{background:var(--grad);color:#fff;box-shadow:none}
       .cq-label{font-size:13px;font-weight:800;color:var(--ink2);margin:16px 0 0}
       .list-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:18px 0 14px}
       .list-head h3{font-size:17px;font-weight:800;margin:0}
@@ -288,7 +288,7 @@
       /* ---------- Dashboard / progress ---------- */
       .tabs{display:grid;grid-template-columns:1fr 1fr;background:#EFF6FF;border-radius:16px;padding:5px;gap:5px;margin:18px 0}
       .tabs button{border:0;background:transparent;color:var(--ink2);font-weight:800;font-size:14px;border-radius:12px;padding:11px;min-height:42px}
-      .tabs button.active{background:#fff;color:var(--blue-dark);box-shadow:0 4px 12px rgba(10,20,40,.10)}
+      .tabs button.active{background:#fff;color:var(--blue-dark);box-shadow:none}
       .prog-subj{display:flex;flex-direction:column;gap:15px}
       .prog-row .row{display:flex;justify-content:space-between;gap:10px;font-weight:800;font-size:13.5px}
       .prog-row .row span{color:var(--muted);font-weight:600;font-size:13px}
@@ -429,7 +429,7 @@
         font-weight:800;font-size:13px;display:grid;place-items:center;min-height:36px;padding:0}
       .pal-btn.answered{background:var(--green-soft);border-color:#86EFAC;color:#15803D}
       .pal-btn.marked{background:#FEF3C7;border-color:#F6A202;color:#B45309}
-      .pal-btn.current{box-shadow:0 0 0 2px var(--blue);color:var(--ink)}
+      .pal-btn.current{outline:2px solid var(--blue);color:var(--ink)}
       .legend{display:flex;flex-direction:column;gap:7px;margin-top:14px;font-size:12px;color:var(--muted);font-weight:600}
       .legend span{display:flex;align-items:center;gap:8px}
       .legend i{width:11px;height:11px;border-radius:4px;display:inline-block}
@@ -534,7 +534,7 @@
       .subj-txt{flex:1;min-width:0}
       .subj-txt b{display:block;font-size:15.5px;font-weight:800;line-height:1.25;color:#1E1B4B}
       .subj-txt small{display:block;font-size:12.5px;font-weight:600;color:#6B7280;margin-top:2px}
-      .btn-purple{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:#7C3AED;color:#fff;border:0;font-weight:700;font-size:13.5px;border-radius:999px;padding:11px 14px;min-height:44px;box-shadow:0 8px 18px rgba(124,58,237,.35);white-space:nowrap}
+      .btn-purple{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:#7C3AED;color:#fff;border:0;font-weight:700;font-size:13.5px;border-radius:999px;padding:11px 14px;min-height:44px;box-shadow:none;white-space:nowrap}
       .btn-purple:active{transform:scale(.97)}
       .btn-purple:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
       #resList .subj-act{flex:none;width:auto;margin-top:0}
@@ -576,7 +576,7 @@
       #resCatView .res-nt-pills{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 0 4px;padding:2px 0 6px}
       #resCatView .res-nt-pills::-webkit-scrollbar{display:none}
       #resCatView .res-nt-pill{flex:none;border:1.5px solid #E5E7EB;background:#fff;color:#4B5563;font-weight:800;font-size:14px;border-radius:999px;padding:10px 18px;min-height:40px;white-space:nowrap;cursor:pointer}
-      #resCatView .res-nt-pill.on{background:linear-gradient(135deg,#6D28D9,#7C3AED);color:#fff;border-color:transparent;box-shadow:0 6px 14px rgba(124,58,237,.3)}
+      #resCatView .res-nt-pill.on{background:linear-gradient(135deg,#6D28D9,#7C3AED);color:#fff;border-color:transparent;box-shadow:none}
       #resList .res-nt-card{display:flex;align-items:center;gap:12px;width:100%;background:#fff;border:1px solid #EDE9FE;border-radius:18px;box-shadow:0 6px 18px rgba(124,58,237,.08);padding:14px;margin-top:10px;cursor:pointer;text-align:left}
       #resList .res-nt-pdf{flex:none;width:50px;height:50px;border-radius:10px;background:linear-gradient(180deg,#F04444,#DC2626);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;letter-spacing:.02em;box-shadow:0 6px 14px rgba(220,38,38,.3)}
       #resList .res-nt-txt{flex:1;min-width:0}
@@ -623,7 +623,7 @@
       [data-theme="dark"] #resList .subj-row[data-subj="Chemistry"] .subj-ico{background:#BE185D !important;color:#F9A8D4 !important}
       [data-theme="dark"] #resList .subj-row[data-subj="Biology"] .subj-ico{background:#15803D !important;color:#86EFAC !important}
       [data-theme="dark"] #resList .subj-row[data-subj="English"] .subj-ico{background:#2563EB !important;color:#DBEAFE !important}
-      [data-theme="dark"] #resList .btn-purple{background:linear-gradient(135deg,#8B5CF6,#6D28D9);box-shadow:0 8px 20px rgba(124,58,237,.45)}
+      [data-theme="dark"] #resList .btn-purple{background:linear-gradient(135deg,#8B5CF6,#6D28D9);box-shadow:none}
       [data-theme="dark"] #resList .btn-purple .btn-arr{display:none}
       /* Study Smart card on the rows pages: dark only (light rows have none). */
       #resCatView .res-rows-info{display:none}
@@ -652,23 +652,28 @@
       #resCatView .res-cat-deco-mcq{display:none}
       #resCatView.res-mcq .res-cat-head{background:linear-gradient(120deg,#F5F3FF 0%,#EDE9FE 55%,#FCE7F3 100%);border-radius:22px;padding:16px;position:relative;overflow:hidden}
       #resCatView.res-mcq .res-cat-ico{background:linear-gradient(135deg,#A78BFA,#7C3AED)}
-      #resCatView.res-mcq .res-cat-txt{padding-right:74px}
+      #resCatView.res-mcq .res-cat-txt{padding-right:60px}
       #resCatView.res-mcq .res-cat-deco{display:none !important}
       #resCatView.res-mcq .res-cat-deco-mcq{display:block;position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#C4B5FD;opacity:.55;pointer-events:none}
       #resCatView .res-cat-deco-mcq-spark{display:none}
       #resCatView.res-mcq .res-cat-deco-mcq-spark{display:flex;align-items:flex-start;gap:8px;position:absolute;right:92px;top:14px;color:#A78BFA;pointer-events:none}
       #resCatView.res-mcq .res-cat-deco-mcq-spark svg:last-child{margin-top:16px}
-      /* MCQS header title/subtitle match the reference's larger type. */
-      #resCatView.res-mcq .res-cat-ico{width:52px;height:52px}
-      #resCatView.res-mcq .res-cat-txt h3{font-size:30px}
-      #resCatView.res-mcq .res-cat-txt p{font-size:13.5px}
+      /* MCQS header is compact (the 30px title wrapped to two lines and the
+         subtitle to four on a phone): one-line title, tighter subtitle,
+         smaller icon/motif, less padding — the short band of the reference. */
+      #resCatView.res-mcq .res-cat-head{padding:12px 14px}
+      #resCatView.res-mcq .res-cat-ico{width:48px;height:48px;border-radius:16px}
+      #resCatView.res-mcq .res-cat-txt h3{font-size:22px;white-space:nowrap}
+      #resCatView.res-mcq .res-cat-txt p{font-size:12.5px;line-height:1.35}
+      #resCatView.res-mcq .res-cat-deco-mcq svg{width:56px;height:56px}
+      #resCatView.res-mcq .res-cat-deco-mcq-spark{right:80px;top:10px}
       /* MCQS rows match the reference's larger type + compact pill, so the
          one-line count fits next to "View Chapters". */
-      #resCatView.res-mcq #resList .subj-row{padding:12px}
-      #resCatView.res-mcq #resList .subj-ico{width:48px;height:48px}
+      #resCatView.res-mcq #resList .subj-row{padding:12px;gap:10px}
+      #resCatView.res-mcq #resList .subj-ico{width:44px;height:44px;border-radius:13px}
       #resCatView.res-mcq #resList .subj-txt b{font-size:18px}
-      #resCatView.res-mcq #resList .subj-txt small{font-size:12.5px}
-      #resCatView.res-mcq #resList .subj-act{font-size:12px;padding:9px 10px}
+      #resCatView.res-mcq #resList .subj-txt small{font-size:12px;white-space:nowrap}
+      #resCatView.res-mcq #resList .subj-act{font-size:11.5px;padding:9px 8px}
       /* Dark MCQS header is the reference's vivid purple (not the dark-navy
          header the Notes/Flash Cards pages use). */
       [data-theme="dark"] #resCatView.res-mcq .res-cat-head{background:linear-gradient(120deg,#6D28D9 0%,#7C3AED 55%,#9333EA 100%);border:1px solid rgba(196,181,253,.35);box-shadow:0 10px 24px rgba(109,40,217,.45)}
@@ -693,11 +698,10 @@
       [data-theme="dark"] #resCatView.res-mcq .res-nt-subj[data-subj="English"] .res-nt-subj-ico{background:#B45309 !important;color:#FDE68A !important}
       /* "View Chapters >" chevron: inline-flex, stays visible in dark. */
       #resList .mcq-chev{display:inline-flex;align-items:center}
-      /* Level 2: back arrow inside the app header (search + bell hidden
-         while the chapter list is open, like the reference). */
-      .app-header .mcq-head-back{display:none}
-      body.mcq-chapters .app-header .mcq-head-back{display:grid}
-      body.mcq-chapters #headSearch, body.mcq-chapters #bellBtn{display:none}
+      /* Level 2: back arrow sits below the normal app header, above the
+         subject banner — a dark circular button, same style as the Level 3
+         top bar back button. */
+      #resCatView .res-mcq-listback{display:flex;padding:2px 0 12px}
       /* Level 3: the app header is replaced by the chapter top bar. */
       body.mcq-chapter .app-header{display:none}
       /* Level 2: subject banner — dark blue gradient, subject tile + counts,
@@ -714,7 +718,7 @@
       #resList .mcq-chap-row{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #EDE9FE;border-radius:20px;box-shadow:0 6px 18px rgba(124,58,237,.08);padding:13px 14px;margin-top:10px}
       #resList .mcq-chap-row .subj-txt b{font-size:17px}
       #resList .mcq-chap-row .subj-txt small{font-size:13px}
-      #resList .mcq-chap-num{flex:none;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;display:grid;place-items:center;font-size:19px;font-weight:800;box-shadow:0 6px 14px rgba(124,58,237,.35)}
+      #resList .mcq-chap-num{flex:none;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;display:grid;place-items:center;font-size:19px;font-weight:800;box-shadow:none}
       [data-theme="dark"] #resList .mcq-chap-row{background:#0E1B33;border-color:rgba(148,180,255,.12);box-shadow:0 8px 20px rgba(0,0,0,.30)}
       /* Level 3: top bar (sticky, replaces the app header). */
       #resCatView .res-mcq-top{display:flex;align-items:center;gap:12px;padding:6px 0 14px;position:sticky;top:0;z-index:40;background:var(--bg)}
@@ -722,7 +726,6 @@
       #resCatView .res-mcq-top-txt{flex:1;min-width:0}
       #resCatView .res-mcq-top-txt b{display:block;font-size:19px;font-weight:800;color:#1E1B4B;overflow-wrap:break-word}
       #resCatView .res-mcq-top-txt small{display:block;font-size:14px;font-weight:600;color:#6B7280;margin-top:1px;overflow-wrap:break-word}
-      #resCatView .res-mcq-top-av{flex:none;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#A78BFA,#7C3AED);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;border:2px solid rgba(196,181,253,.6)}
       [data-theme="dark"] #resCatView .res-mcq-top-txt b{color:#F1F5FF}
       [data-theme="dark"] #resCatView .res-mcq-top-txt small{color:#A9B8D4}
       /* Level 3: hero banner — dark blue with the subject motif (cells for
@@ -738,7 +741,7 @@
       #resList .res-mcq-pdf .res-nt-txt b{font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
       #resList .res-mcq-pdf .res-nt-txt small{font-size:12.5px}
       #resList .res-mcq-pdf-btns{flex:none;display:flex;gap:8px;align-items:center}
-      .res-mcq-view{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;border:0;font-weight:700;font-size:11.5px;border-radius:999px;padding:7px 9px;min-height:36px;white-space:nowrap;cursor:pointer;box-shadow:0 6px 14px rgba(124,58,237,.35)}
+      .res-mcq-view{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;border:0;font-weight:700;font-size:11.5px;border-radius:999px;padding:7px 9px;min-height:36px;white-space:nowrap;cursor:pointer;box-shadow:none}
       .res-mcq-dl{display:inline-flex;align-items:center;gap:4px;background:#1E293B;color:#fff;border:1px solid rgba(148,163,184,.25);font-weight:700;font-size:11.5px;border-radius:999px;padding:7px 9px;min-height:36px;white-space:nowrap;cursor:pointer}
       [data-theme="dark"] #resList .res-mcq-pdf{background:#0E1B33;border-color:rgba(148,180,255,.12);box-shadow:0 8px 20px rgba(0,0,0,.30)}
       @media (max-width:380px){
@@ -906,7 +909,6 @@
     <section id="appScreen" class="hidden">
       <header class="app-header">
         <div class="inner">
-          <button class="hicon mcq-head-back" id="mcqHeadBack" type="button" aria-label="Back to MCQs"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
           <div class="brand">
             <img src="/icons/logo.jpg" width="46" height="46" alt="MDCAT Prime" />
             <div>
@@ -1103,6 +1105,9 @@
               <span class="res-nt-subj-txt"><b id="resNtSubjName">Biology</b><small id="resNtSubjMeta">1 Note • 1 Chapter</small></span>
             </div>
             <div class="res-nt-pills hidden" id="resNtPills" aria-label="Chapters"></div>
+            <div class="res-mcq-listback hidden" id="resMcqListBackWrap">
+              <button class="res-mcq-top-back" type="button" id="resMcqListBack" aria-label="Back to MCQs"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+            </div>
             <div class="res-mcq-banner hidden" id="resMcqBanner">
               <span class="res-mcq-banner-ico" id="resMcqBannerIco"></span>
               <span class="res-mcq-banner-txt"><b id="resMcqBannerName">Biology</b><small id="resMcqBannerMeta">0 MCQ PDFs • 0 Chapters</small></span>
@@ -1111,7 +1116,6 @@
             <div class="res-mcq-top hidden" id="resMcqTop">
               <button class="res-mcq-top-back" type="button" id="resMcqTopBack" aria-label="Back to chapters"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
               <span class="res-mcq-top-txt"><b id="resMcqTopSubj">Biology</b><small id="resMcqTopChap">Cell Structure &amp; Function</small></span>
-              <span class="res-mcq-top-av" id="resMcqTopAv">S</span>
             </div>
             <div class="res-mcq-hero hidden" id="resMcqHero">
               <span class="res-mcq-hero-motif" id="resMcqHeroMotif" aria-hidden="true"></span>
@@ -1889,7 +1893,7 @@
     /* ==================== NAVIGATION ==================== */
     function showView(name){
       closePanels();
-      document.body.classList.remove("mcq-chapters", "mcq-chapter");
+      document.body.classList.remove("mcq-chapter");
       if (name !== "exam" && name !== "result") stopExamTimer();
       var views = ["home","tests","notes","dashboard","exam","result","profile","chapters","chaptertest","flashcards"];
       for (var i=0;i<views.length;i++) $("view-"+views[i]).classList.toggle("on", views[i]===name);
@@ -1994,7 +1998,7 @@
     });
     /* MCQS chapter list: the back arrow in the app header returns to the
        subject rows; the chapter-detail top bar returns to the chapter list. */
-    $("mcqHeadBack").addEventListener("click", function(){
+    $("resMcqListBack").addEventListener("click", function(){
       if (resType !== "PDF MCQs" || !resMcqList) return;
       resMcqList = null; resMcqChapter = null; renderResources(); window.scrollTo(0, resRowsScroll);
     });
@@ -2960,11 +2964,13 @@
       var backBtn = $("resBackBtn");
       if (backBtn){ backBtn.classList.toggle("hidden", isNtList || isMcqList); backBtn.textContent = "← Back"; }
       if (filtEl) filtEl.classList.toggle("hidden", !(isFc || (isNt && !isNtList)));
-      /* MCQS Level 2 shows the back arrow in the app header; Level 3 hides
-         the app header and shows its own top bar + hero banner. */
-      document.body.classList.toggle("mcq-chapters", isMcqChapters);
+      /* MCQS Level 2 shows its own dark circular back button above the
+         banner (below the normal app header); Level 3 hides the app header
+         and shows its own top bar + hero banner. */
       document.body.classList.toggle("mcq-chapter", isMcqChapter);
       var mcqBanner = $("resMcqBanner"), mcqTop = $("resMcqTop"), mcqHero = $("resMcqHero");
+      var mcqListBack = $("resMcqListBackWrap");
+      if (mcqListBack) mcqListBack.classList.toggle("hidden", !isMcqChapters);
       if (mcqBanner) mcqBanner.classList.toggle("hidden", !isMcqChapters);
       if (mcqTop) mcqTop.classList.toggle("hidden", !isMcqChapter);
       if (mcqHero) mcqHero.classList.toggle("hidden", !isMcqChapter);
@@ -2980,8 +2986,6 @@
       if (isMcqChapter){
         $("resMcqTopSubj").textContent = resMcqList;
         $("resMcqTopChap").textContent = resMcqChapter;
-        var av = $("headAvatar");
-        if (av) $("resMcqTopAv").textContent = av.textContent || "S";
         $("resMcqHeroName").textContent = resMcqChapter;
         $("resMcqHeroMeta").textContent = mcqPdfLine(mcqChapterCount(resMcqList, resMcqChapter));
         var hMot = $("resMcqHeroMotif");
