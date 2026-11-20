@@ -2824,18 +2824,39 @@
     }
     /* ---------- Notes ---------- */
     var notesUnsub = null;
-    function fetchNotes(){
+    /* Notes show instantly from the last saved list (phone storage), then
+       the live listener replaces them with fresh data — so Notes never
+       sit blank for seconds, and a chapter changed in the panel appears
+       without a manual refresh. */
+    var NOTES_CACHE_KEY = "studyhub_cached_notes_v1";
+    function fetchNotes(soft){
       if (notesUnsub) { try { notesUnsub(); } catch (e) {} notesUnsub = null; }
-      notesReady = false; renderResources();
+      if (!soft){
+        if (!liveNotes.length){
+          try { var cached = JSON.parse(localStorage.getItem(NOTES_CACHE_KEY) || "null"); if (cached && cached.length){ liveNotes = cached; notesReady = true; } } catch (e) {}
+        }
+        if (!liveNotes.length) notesReady = false;
+        renderResources();
+      }
       try {
         notesUnsub = onSnapshot(query(collection(db, "notes"), where("published", "==", true)), function(snap){
           var list = [];
           snap.forEach(function(d){ var data = d.data(); data.id = d.id; list.push(data); });
           list.sort(function(a,b){ return new Date(b.uploadedAt || 0).getTime() - new Date(a.uploadedAt || 0).getTime(); });
-          liveNotes = list; notesReady = true; renderResources();
+          liveNotes = list; notesReady = true;
+          try { localStorage.setItem(NOTES_CACHE_KEY, JSON.stringify(list)); } catch (e) {}
+          renderResources();
         }, function(err){ console.warn("Notes load failed:", err); notesReady = true; renderResources(); });
       } catch (e) { console.warn("Notes listener failed:", e); notesReady = true; renderResources(); }
     }
+    /* App coming back to the front (after a chapter was changed in the
+       panel, or after the phone slept): re-attach the notes listener so
+       fresh data arrives on its own — no manual refresh needed. Soft mode
+       keeps the saved list on screen while it re-syncs, so nothing
+       flashes blank. */
+    document.addEventListener("visibilitychange", function(){
+      if (!document.hidden && currentUser && typeof fetchNotes === "function") fetchNotes(true);
+    });
     /* Admin-created flashcards (Firestore `flashcards` collection, written
        by the admin panel: one doc per card — subject, chapter, front,
        back, published). The app groups them by subject + chapter into
