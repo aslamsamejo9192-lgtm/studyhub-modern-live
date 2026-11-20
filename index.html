@@ -2053,13 +2053,18 @@
     });
     /* Subject list view: band back arrow returns to the subject rows,
        home icon goes Home, chapter pills filter the list. */
-    $("resNtBandBack").addEventListener("click", function(){ resNtList = null; renderResources(); window.scrollTo(0, resRowsScroll); });
+    $("resNtBandBack").addEventListener("click", function(){
+      if (resType === "Flashcards"){ resFcList = null; resFcChap = null; }
+      else resNtList = null;
+      renderResources(); window.scrollTo(0, resRowsScroll);
+    });
     $("resNtBandHome").addEventListener("click", function(){ showView("home"); });
     $("resNtPills").addEventListener("click", function(e){
       var p = e.target.closest("[data-chapi]");
       if (!p) return;
       var idx = parseInt(p.getAttribute("data-chapi"), 10);
-      resNtChap = idx < 0 ? null : (ntChapters(resNtList)[idx] || null);
+      if (resType === "Flashcards" && resFcList) resFcChap = idx < 0 ? null : (fcChapters(resFcList)[idx] || null);
+      else resNtChap = idx < 0 ? null : (ntChapters(resNtList)[idx] || null);
       renderResources();
     });
     $("resSubjSel").addEventListener("change", function(){
@@ -2801,9 +2806,9 @@
        Flashcard decks are grouped by the subject in each deck's own label
        ("Biology · Bioenergetics"); counts come from the real deck arrays. */
     var RES_SUBJS = ["Biology", "Chemistry", "Physics", "English"];
-    var resFcSubj = null, resFcChap = null, resNtSubj = null, resNtChap = null, resNtList = null, resNtSearch = "";
+    var resFcSubj = null, resFcChap = null, resFcList = null, resNtSubj = null, resNtChap = null, resNtList = null, resNtSearch = "";
     var resMcqList = null, resMcqChapter = null, resMcqSearch = "", resMcqChapSearch = "";
-    function resetResState(){ resFcSubj = null; resFcChap = null; resNtSubj = null; resNtChap = null; resNtList = null; resNtSearch = ""; resMcqList = null; resMcqChapter = null; resMcqSearch = ""; resMcqChapSearch = ""; var si = $("resNtSearch"); if (si) si.value = ""; }
+    function resetResState(){ resFcSubj = null; resFcChap = null; resFcList = null; resNtSubj = null; resNtChap = null; resNtList = null; resNtSearch = ""; resMcqList = null; resMcqChapter = null; resMcqSearch = ""; resMcqChapSearch = ""; var si = $("resNtSearch"); if (si) si.value = ""; }
     /* Screenshot colours for the colourful category pages (NOT the app's test colours):
        Physics purple, Chemistry pink, Biology green, English blue. */
     var RES_STYLE = {
@@ -2909,6 +2914,21 @@
           for (var d2=0;d2<decks.length;d2++) total += decks[d2].deck.cards.length;
           shownRes.push({ kind:"fcsubj", subj:subj, title:subj, sub:total + " Flashcards", disabled: total === 0, icon:subjIconOf(subj) });
         }
+      }
+    }
+    /* Flashcards subject detail (Notes-style): one subject's decks as
+       boxes, with an "All Chapters" entry that still practices the whole
+       subject as one combined set. */
+    function buildFcList(){
+      var decks = fcGroups()[resFcList] || [];
+      if (!resFcChap){
+        var total = 0;
+        for (var d=0;d<decks.length;d++) total += decks[d].deck.cards.length;
+        shownRes.push({ kind:"fcall", subj:resFcList, title:"All Chapters", sub:total + " Flashcards", disabled: total===0, icon:subjIconOf(resFcList) });
+      }
+      for (var d2=0;d2<decks.length;d2++){
+        if (resFcChap && decks[d2].chapter !== resFcChap) continue;
+        shownRes.push({ kind:"fcdeck", subj:resFcList, key:decks[d2].key, title:decks[d2].deck.title.replace(" — Flashcards",""), sub:decks[d2].deck.cards.length + " Flashcards", icon:subjIconOf(resFcList) });
       }
     }
     function buildNtRows(){
@@ -3023,16 +3043,17 @@
       var isFc = resType === "Flashcards", isNt = resType === "PDF Notes";
       var isMcq = resType === "PDF MCQs";
       var isNtList = isNt && !!resNtList;
+      var isFcList = isFc && !!resFcList;
       var isMcqList = isMcq && !!resMcqList;
       var isMcqChapter = isMcq && !!resMcqChapter;
       var isMcqChapters = isMcqList && !isMcqChapter;
-      var isDetail = isNtList;
+      var isDetail = isNtList || isFcList;
       var catTitle = isFc ? "Flash Cards" : isNt ? "Notes PDF" : resType === "PDF MCQs" ? "MCQS PDF" : resType;
       $("resCatTitle").textContent = catTitle;
       var listHeadTitle = $("resListHeadTitle");
       if (listHeadTitle) listHeadTitle.textContent = catTitle;
       var catHead = $("resCatHead"), listHead = $("resListHead"), searchWrap = $("resNtSearchWrap");
-      if (catHead) catHead.classList.toggle("hidden", !(isFc || (isNt && !isNtList) || (isMcq && !isMcqList)));
+      if (catHead) catHead.classList.toggle("hidden", !((isFc && !isFcList) || (isNt && !isNtList) || (isMcq && !isMcqList)));
       if (listHead) listHead.classList.toggle("hidden", isFc || isNt || isMcq);
       if (searchWrap) searchWrap.classList.toggle("hidden", !((isNt && !isNtList) || (isMcq && !isMcqList) || isMcqChapters));
       var searchInput = $("resNtSearch");
@@ -3053,8 +3074,8 @@
         else subEl.classList.add("hidden");
       }
       var backBtn = $("resBackBtnWrap");
-      if (backBtn){ backBtn.classList.toggle("hidden", isNtList || isMcqList); }
-      if (filtEl) filtEl.classList.toggle("hidden", !(isFc || (isNt && !isNtList)));
+      if (backBtn){ backBtn.classList.toggle("hidden", isNtList || isFcList || isMcqList); }
+      if (filtEl) filtEl.classList.toggle("hidden", !((isFc && !isFcList) || (isNt && !isNtList)));
       /* MCQS Level 2 shows its own dark circular back button above the
          banner (below the normal app header); Level 3 hides the app header
          and shows its own top bar + hero banner. */
@@ -3092,28 +3113,38 @@
       if (ntSubjEl) ntSubjEl.classList.toggle("hidden", !isDetail);
       if (ntPills) ntPills.classList.toggle("hidden", !isDetail);
       if (isDetail){
-        var subj = resNtList, st3 = resStyle(subj);
-        var curChap = resNtChap;
+        var subj = isFcList ? resFcList : resNtList, st3 = resStyle(subj);
+        var curChap = isFcList ? resFcChap : resNtChap;
         if (ntSubjEl) ntSubjEl.setAttribute("data-subj", subj);
-        $("resNtBandTitle").textContent = subj + " Notes";
+        $("resNtBandTitle").textContent = subj + (isFcList ? " Flash Cards" : " Notes");
         var ntBandBack = $("resNtBandBack");
-        if (ntBandBack) ntBandBack.setAttribute("aria-label", "Back to Notes");
+        if (ntBandBack) ntBandBack.setAttribute("aria-label", isFcList ? "Back to Flash Cards" : "Back to Notes");
         var ntIco = $("resNtSubjIco");
         if (ntIco){ ntIco.style.background = st3.soft; ntIco.style.color = st3.color; ntIco.innerHTML = iconSvg(subjIconOf(subj), 30); }
         $("resNtSubjName").textContent = subj;
-        var mine2 = [], chaps2 = {};
-        for (var q=0;q<liveNotes.length;q++){
-          if (noteKind(liveNotes[q]) !== "notes" || noteSubjOf(liveNotes[q]) !== subj) continue;
-          mine2.push(liveNotes[q]); chaps2[noteChapOf(liveNotes[q])] = 1;
+        var chs, metaTxt;
+        if (isFcList){
+          var fdecks = fcGroups()[subj] || [], fTotal = 0;
+          for (var fd=0;fd<fdecks.length;fd++) fTotal += fdecks[fd].deck.cards.length;
+          chs = fcChapters(subj);
+          metaTxt = fTotal + " Flashcards • " + chs.length + (chs.length===1 ? " Chapter" : " Chapters");
+        } else {
+          var mine2 = [], chaps2 = {};
+          for (var q=0;q<liveNotes.length;q++){
+            if (noteKind(liveNotes[q]) !== "notes" || noteSubjOf(liveNotes[q]) !== subj) continue;
+            mine2.push(liveNotes[q]); chaps2[noteChapOf(liveNotes[q])] = 1;
+          }
+          var cn2 = Object.keys(chaps2).length;
+          metaTxt = mine2.length + (mine2.length===1 ? " Note" : " Notes") + " • " + cn2 + (cn2===1 ? " Chapter" : " Chapters");
+          chs = ntChapters(subj);
         }
-        var cn2 = Object.keys(chaps2).length;
-        $("resNtSubjMeta").textContent = mine2.length + (mine2.length===1 ? " Note" : " Notes") + " • " + cn2 + (cn2===1 ? " Chapter" : " Chapters");
-        var chs = ntChapters(subj), ph = '<button class="res-nt-pill'+(curChap ? "" : " on")+'" type="button" data-chapi="-1">All</button>';
+        $("resNtSubjMeta").textContent = metaTxt;
+        var ph = '<button class="res-nt-pill'+(curChap ? "" : " on")+'" type="button" data-chapi="-1">All</button>';
         for (var c=0;c<chs.length;c++) ph += '<button class="res-nt-pill'+(curChap===chs[c] ? " on" : "")+'" type="button" data-chapi="'+c+'">'+esc(chs[c])+'</button>';
         if (ntPills) ntPills.innerHTML = ph;
       }
       shownRes = [];
-      if (isFc) buildFcRows();
+      if (isFc){ if (resFcList) buildFcList(); else buildFcRows(); }
       else if (isNt){ if (resNtList) buildNtList(); else buildNtRows(); }
       else if (isMcq){ if (resMcqChapter) buildMcqChapterPdfs(); else if (resMcqList) buildMcqChapters(); else buildMcqRows(); }
       else if (notesReady && resType === "Past Papers"){
@@ -3145,11 +3176,14 @@
       var html = "";
       for (var j=0;j<shownRes.length;j++){
         var it = shownRes[j];
-        if (it.kind === "fcsubj" || it.kind === "fcdeck"){
+        if (it.kind === "fcsubj" || it.kind === "fcdeck" || it.kind === "fcall"){
           var st = resStyle(it.subj);
+          var fcBtn = it.kind === "fcsubj"
+            ? 'View Chapters <span class="mcq-chev"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span>'
+            : 'Start Practice <span class="btn-arr">→</span>';
           html += '<div class="subj-row" data-subj="'+esc(it.subj)+'" style="--rowwash:'+st.soft+'"><span class="subj-ico" style="background:'+st.soft+';color:'+st.color+'">'+iconSvg(it.icon,26)+'</span>'
             + '<span class="subj-txt"><b>'+esc(it.title)+'</b><small>'+esc(it.sub)+'</small></span>'
-            + '<button class="btn-purple subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>Start Practice <span class="btn-arr">→</span></button></div>';
+            + '<button class="btn-purple subj-act" type="button" data-idx="'+j+'"'+(it.disabled ? " disabled" : "")+'>'+fcBtn+'</button></div>';
         } else if (it.kind === "ntsubj"){
           var st2 = resStyle(it.subj);
           html += '<div class="subj-row" data-subj="'+esc(it.subj)+'" style="--rowwash:'+st2.soft+'"><span class="subj-ico" style="background:'+st2.soft+';color:'+st2.color+'">'+iconSvg(it.icon,26)+'</span>'
@@ -3196,7 +3230,7 @@
       /* Study Smart card at the bottom of the subject-rows pages (dark
          mode only — .res-rows-info is hidden in light mode, where the rows
          pages have no such card). */
-      if ((isFc || (isNt && !isNtList) || (isMcq && !isMcqList)) && shownRes.length){
+      if (((isFc && !isFcList) || (isNt && !isNtList) || (isMcq && !isMcqList)) && shownRes.length){
         if (isFc || isMcq){
           html += '<div class="res-nt-info res-rows-info"><span class="res-nt-info-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.4 1 2.3h6c0-.9.4-1.8 1-2.3A7 7 0 0 0 12 2z"/></svg></span>'
             + '<span class="res-nt-info-txt"><b>Study Smart!</b><p>'+(isMcq ? "Practice regularly to score higher in MDCAT." : "Practice regularly to boost your MDCAT preparation.")+'</p></span>'
@@ -3207,10 +3241,16 @@
             + '<span class="res-nt-info-deco"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-1.5-1.6-3.8-2-6-2H3v14h3c2.2 0 4.5.4 6 2 1.5-1.6 3.8-2 6-2h3V4h-3c-2.2 0-4.5.4-6 2z"/><path d="M12 6v14"/></svg></span></div>';
         }
       }
-      if (isNtList){
-        html += '<div class="res-nt-info"><span class="res-nt-info-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>'
-          + '<span class="res-nt-info-txt"><b>Study Smart!</b><p>Download notes and prepare better for MDCAT.</p></span>'
-          + '<span class="res-nt-info-deco"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-1.5-1.6-3.8-2-6-2H3v14h3c2.2 0 4.5.4 6 2 1.5-1.6 3.8-2 6-2h3V4h-3c-2.2 0-4.5.4-6 2z"/><path d="M12 6v14"/></svg></span></div>';
+      if (isDetail){
+        if (isFcList){
+          html += '<div class="res-nt-info"><span class="res-nt-info-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.4 1 2.3h6c0-.9.4-1.8 1-2.3A7 7 0 0 0 12 2z"/></svg></span>'
+            + '<span class="res-nt-info-txt"><b>Study Smart!</b><p>Practice regularly to boost your MDCAT preparation.</p></span>'
+            + '<span class="res-nt-info-deco"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><path d="M15 7h6v6"/></svg></span></div>';
+        } else {
+          html += '<div class="res-nt-info"><span class="res-nt-info-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></span>'
+            + '<span class="res-nt-info-txt"><b>Study Smart!</b><p>Download notes and prepare better for MDCAT.</p></span>'
+            + '<span class="res-nt-info-deco"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-1.5-1.6-3.8-2-6-2H3v14h3c2.2 0 4.5.4 6 2 1.5-1.6 3.8-2 6-2h3V4h-3c-2.2 0-4.5.4-6 2z"/><path d="M12 6v14"/></svg></span></div>';
+        }
       }
       listEl.innerHTML = html;
     }
@@ -3220,7 +3260,8 @@
       var it = shownRes[parseInt(b.getAttribute("data-idx"), 10)];
       if (!it || it.disabled) return;
       var act = b.getAttribute("data-act");
-      if (it.kind === "fcsubj") openFlashcardSet(fcSubjectDeck(it.subj));
+      if (it.kind === "fcsubj"){ resFcList = it.subj; resFcChap = null; resRowsScroll = window.scrollY || 0; renderResources(); window.scrollTo(0,0); }
+      else if (it.kind === "fcall") openFlashcardSet(fcSubjectDeck(it.subj));
       else if (it.kind === "fcdeck") openFlashcards(it.key);
       else if (it.kind === "ntsubj"){ resNtList = it.subj; resNtSearch = ""; var si2 = $("resNtSearch"); if (si2) si2.value = ""; resRowsScroll = window.scrollY || 0; renderResources(); window.scrollTo(0,0); }
       else if (it.kind === "mcqsubj"){ resMcqList = it.subj; resMcqChapter = null; resMcqChapSearch = ""; var si3 = $("resNtSearch"); if (si3) si3.value = ""; resRowsScroll = window.scrollY || 0; renderResources(); window.scrollTo(0,0); }
