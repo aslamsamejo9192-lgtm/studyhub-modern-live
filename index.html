@@ -2665,7 +2665,7 @@
     }
     function renderAll(){ renderHomeStats(); renderSubjects(); renderTests(); renderResources(); }
     /* ==================== LIVE DATA (Firestore) ==================== */
-    function unsubscribeAll(){ for (var i=0;i<unsubs.length;i++){ try { unsubs[i](); } catch (e) {} } unsubs = []; if (notesUnsub) { try { notesUnsub(); } catch (e) {} notesUnsub = null; } }
+    function unsubscribeAll(){ for (var i=0;i<unsubs.length;i++){ try { unsubs[i](); } catch (e) {} } unsubs = []; if (notesUnsub) { try { notesUnsub(); } catch (e) {} notesUnsub = null; } if (fcUnsub) { try { fcUnsub(); } catch (e) {} fcUnsub = null; } }
     function subscribeAll(){
       if (!currentUser) return;
       unsubscribeAll();
@@ -2692,6 +2692,8 @@
       } catch (e) { console.warn("Attempts listener failed:", e); }
       /* Published notes. */
       fetchNotes();
+      /* Admin-created flashcards (Firestore `flashcards` collection). */
+      fetchFirestoreFlashcards();
       /* Published announcements. */
       try {
         unsubs.push(onSnapshot(query(collection(db, "announcements"), where("published", "==", true)), function(snap){
@@ -2735,6 +2737,49 @@
           liveNotes = list; notesReady = true; renderResources();
         }, function(err){ console.warn("Notes load failed:", err); notesReady = true; renderResources(); });
       } catch (e) { console.warn("Notes listener failed:", e); notesReady = true; renderResources(); }
+    }
+    /* Admin-created flashcards (Firestore `flashcards` collection, written
+       by the admin panel: one doc per card — subject, chapter, front,
+       back, published). The app groups them by subject + chapter into
+       decks and merges them with the built-in decks, so admin cards
+       appear in Flash Cards alongside the built-in 225. Empty collection
+       = no change at all. */
+    var fcUnsub = null;
+    function fetchFirestoreFlashcards(){
+      if (fcUnsub) { try { fcUnsub(); } catch (e) {} fcUnsub = null; }
+      try {
+        fcUnsub = onSnapshot(query(collection(db, "flashcards"), where("published", "==", true)), function(snap){
+          var groups = {};
+          snap.forEach(function(d){
+            var c = d.data() || {};
+            var subj = String(c.subject || "").trim();
+            var chap = String(c.chapter || "").trim();
+            var front = String(c.front || "").trim();
+            var back = String(c.back || "").trim();
+            if (!subj || !chap || !front || !back) return;
+            if (["Biology", "Chemistry", "Physics", "English"].indexOf(subj) === -1) return;
+            var key = "fs_" + subj.toLowerCase() + "_" + chap.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+            if (!groups[key]) groups[key] = { title: chap + " — Flashcards", label: subj + " · " + chap, cards: [] };
+            var t = c.createdAt, ms = 0;
+            if (t && typeof t.toMillis === "function") ms = t.toMillis();
+            else if (t) ms = new Date(t).getTime() || 0;
+            groups[key].cards.push({ front: front, back: back, _t: ms });
+          });
+          var keys = Object.keys(groups);
+          for (var i=0;i<keys.length;i++){
+            var g = groups[keys[i]];
+            g.cards.sort(function(a,b){ return (a._t || 0) - (b._t || 0); });
+            g.cards = g.cards.map(function(card){ return { front: card.front, back: card.back }; });
+            FC_DECKS[keys[i]] = g;
+          }
+          /* Drop merged decks whose cards were unpublished or deleted. */
+          var all = Object.keys(FC_DECKS);
+          for (var j=0;j<all.length;j++){
+            if (all[j].indexOf("fs_") === 0 && !groups[all[j]]) delete FC_DECKS[all[j]];
+          }
+          if ($("view-notes").classList.contains("on")) renderResources();
+        }, function(err){ console.warn("Flashcards load failed:", err); });
+      } catch (e) { console.warn("Flashcards listener failed:", e); }
     }
     /* What kind of material is a note: PDF Notes, PDF MCQs or Past Papers.
        A note's own type field decides when set; otherwise the title decides
