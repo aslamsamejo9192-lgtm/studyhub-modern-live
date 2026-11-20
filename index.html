@@ -2579,6 +2579,12 @@
         workenergy: { title: 'Work Power and Energy — Flashcards', label: 'Physics · Work Power and Energy', cards: FC_CARDS_WORKENERGY },
         electrostatics: { title: 'Electrostatics — Flashcards', label: 'Physics · Electrostatics', cards: FC_CARDS_ELECTROSTATICS }
       };
+    /* Pristine copy of the built-in decks. The Firestore merge below rebuilds
+       FC_DECKS from this on every snapshot, so an admin deck for a chapter
+       that already has a built-in deck merges INTO that deck (one box per
+       chapter, built-in cards first) instead of adding a second box with the
+       same name, and a re-delivered snapshot never duplicates cards. */
+    var FC_DECKS_BUILTIN = JSON.parse(JSON.stringify(FC_DECKS));
     var fcDeckKey = "ac", fcDeck = null, fcIndex = 0, fcFlipped = false;
     function renderFlashcard(){
       var deck = fcDeck || FC_DECKS[fcDeckKey], card = deck.cards[fcIndex];
@@ -2771,17 +2777,27 @@
             else if (t) ms = new Date(t).getTime() || 0;
             groups[key].cards.push({ front: front, back: back, _t: ms });
           });
+          /* Rebuild from the pristine built-in decks, then merge each admin
+             group: same subject+chapter as a built-in deck -> append its
+             cards to that deck (one box per chapter); otherwise a new deck.
+             Rebuilding first also drops groups whose cards were unpublished
+             or deleted, and stops a re-delivered snapshot duplicating cards. */
+          FC_DECKS = JSON.parse(JSON.stringify(FC_DECKS_BUILTIN));
           var keys = Object.keys(groups);
           for (var i=0;i<keys.length;i++){
             var g = groups[keys[i]];
             g.cards.sort(function(a,b){ return (a._t || 0) - (b._t || 0); });
             g.cards = g.cards.map(function(card){ return { front: card.front, back: card.back }; });
-            FC_DECKS[keys[i]] = g;
-          }
-          /* Drop merged decks whose cards were unpublished or deleted. */
-          var all = Object.keys(FC_DECKS);
-          for (var j=0;j<all.length;j++){
-            if (all[j].indexOf("fs_") === 0 && !groups[all[j]]) delete FC_DECKS[all[j]];
+            var merged = false;
+            var deckKeys = Object.keys(FC_DECKS);
+            for (var k=0;k<deckKeys.length;k++){
+              if (FC_DECKS[deckKeys[k]].label === g.label){
+                FC_DECKS[deckKeys[k]].cards = FC_DECKS[deckKeys[k]].cards.concat(g.cards);
+                merged = true;
+                break;
+              }
+            }
+            if (!merged) FC_DECKS[keys[i]] = g;
           }
           if ($("view-notes").classList.contains("on")) renderResources();
         }, function(err){ console.warn("Flashcards load failed:", err); });
