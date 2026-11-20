@@ -3203,7 +3203,7 @@
           emptyEl.classList.remove("hidden");
           if (isNt && resNtSearch){ $("resEmptyTitle").textContent = "No notes found"; $("resEmptySub").textContent = "Try a different search."; }
           else if (isMcq && !isMcqList && resMcqSearch){ $("resEmptyTitle").textContent = "No subjects found"; $("resEmptySub").textContent = "Try a different search."; }
-          else if (isMcqChapter){ $("resEmptyTitle").textContent = "No MCQs yet"; $("resEmptySub").textContent = "This chapter has no MCQ PDFs yet."; }
+          else if (isMcqChapter){ $("resEmptyTitle").textContent = "No PDFs Available"; $("resEmptySub").textContent = "This chapter has no PDFs available yet."; }
           else if (isMcqChapters && resMcqChapSearch){ $("resEmptyTitle").textContent = "No chapters found"; $("resEmptySub").textContent = "Try a different search."; }
           else if (isMcqChapters){ $("resEmptyTitle").textContent = "No Chapters Available Yet"; $("resEmptySub").textContent = "Check back later for new study materials."; }
           else { $("resEmptyTitle").textContent = "No " + resType + " Available Yet"; $("resEmptySub").textContent = "Check back later for new study materials."; }
