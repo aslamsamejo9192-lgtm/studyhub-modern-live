@@ -399,6 +399,10 @@
       .qmeta .qn{color:var(--blue-dark);font-weight:800;font-size:13px;letter-spacing:.04em}
       .qmeta .qs{color:var(--muted);font-weight:700;font-size:13px}
       .qtext{font-size:16px;font-weight:700;line-height:1.5;margin:13px 0 18px}
+      .qtable{width:100%;table-layout:fixed;border-collapse:collapse;margin:0 0 16px;font-size:13px;line-height:1.45}
+      .qtable th,.qtable td{border:1px solid var(--line);padding:7px 8px;text-align:left;overflow-wrap:break-word;word-break:break-word}
+      .qtable th{background:var(--blue-soft);font-weight:700}
+      .qimg{display:block;max-width:100%;height:auto;border-radius:12px;background:#fff;margin:0 0 16px}
       .opts{display:flex;flex-direction:column;gap:10px}
       .opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);
         border-radius:15px;padding:13px 15px;color:var(--ink);font-size:14px;font-weight:600;min-height:48px}
@@ -1298,6 +1302,7 @@
                 <span class="qs" id="qSubject"></span>
               </div>
               <div class="qtext" id="qText"></div>
+              <div class="qmedia" id="qMedia"></div>
               <div class="opts" id="qOpts"></div>
               <div class="exam-actions">
                 <button class="btn-ghost" id="prevBtn" type="button">&larr; Previous</button>
@@ -4135,6 +4140,7 @@
       $("qNum").textContent = "";
       $("qSubject").textContent = "";
       $("qText").textContent = "";
+      $("qMedia").innerHTML = "";
       $("qOpts").innerHTML = "";
       $("palGrid").innerHTML = "";
       showView("exam");
@@ -4185,6 +4191,7 @@
         norm.push({ id: q.id || ("q" + i), subject: qSubj, subjectId: subjIdOf(qSubj),
           color: (testStyle(qSubj)).color, chapter: q.topic || test.topic || test.subject,
           q: q.questionText || q.q, o: opts, a: ansIdx, e: q.explanation || q.e || "", marks: (typeof q.marks === "number" ? q.marks : 1),
+          imageUrl: (typeof q.imageUrl === "string" ? q.imageUrl.trim() : ""), table: (Array.isArray(q.table) ? q.table : null),
           neg: 0, /* No negative marking: the FAQ promises a wrong answer scores 0. */ fallback: usedFallback });
       }
       var liveTest = { id: test.id, title: test.title, subject: test.subject, topic: test.topic,
@@ -4212,11 +4219,33 @@
       $("examTimer").textContent = fmtClock(exam.left);
       $("timerChip").classList.toggle("low", exam.left <= 60);
     }
+    /* Question media: an optional table (first row = header) and/or a
+       diagram image. Every cell and the image URL go through esc(); an
+       image renders only when isSafePdfUrl() passes it, so a
+       javascript:/data: URL from a Firestore field can never execute. */
+    function questionMediaHtml(q){
+      var out = "";
+      if (q && Array.isArray(q.table) && q.table.length){
+        var h = '<table class="qtable">';
+        for (var r=0;r<q.table.length;r++){
+          var cells = Array.isArray(q.table[r]) ? q.table[r] : [q.table[r]];
+          h += "<tr>";
+          for (var c=0;c<cells.length;c++){ h += r === 0 ? "<th>"+esc(cells[c])+"</th>" : "<td>"+esc(cells[c])+"</td>"; }
+          h += "</tr>";
+        }
+        out += h + "</table>";
+      }
+      if (q && typeof q.imageUrl === "string" && q.imageUrl.trim() && isSafePdfUrl(q.imageUrl)){
+        out += '<img class="qimg" src="'+esc(q.imageUrl.trim())+'" alt="Question diagram">';
+      }
+      return out;
+    }
     function renderQuestion(){
       var q = exam.test.qs[exam.idx];
       $("qNum").textContent = "QUESTION " + (exam.idx+1) + " OF " + exam.test.qs.length;
       $("qSubject").textContent = q.subject + " · " + q.chapter;
       $("qText").textContent = q.q;
+      $("qMedia").innerHTML = questionMediaHtml(q);
       var html = "", letters = ["A","B","C","D"];
       for (var i=0;i<q.o.length;i++){
         html += '<button class="opt'+(exam.answers[exam.idx]===i ? " sel":"")+'" type="button" data-opt="'+i+'"><span class="ol">'+letters[i]+'</span><span>'+esc(q.o[i])+'</span></button>';
@@ -4341,7 +4370,7 @@
         var mine = exam.answers[i];
         var mineOk = mine >= 0 && mine < qs[i].o.length;
         var ansOk = qs[i].a >= 0 && qs[i].a < qs[i].o.length;
-        html += '<div class="rev"><div class="rq">Q'+(i+1)+'. '+esc(qs[i].q)+'</div><div class="ra">'
+        html += '<div class="rev"><div class="rq">Q'+(i+1)+'. '+esc(qs[i].q)+'</div>'+questionMediaHtml(qs[i])+'<div class="ra">'
           + (!mineOk ? '<span class="skip">Not attempted</span>'
              : mine === qs[i].a ? '<span class="ok">Your answer: '+letters[mine]+'. '+esc(qs[i].o[mine])+' — Correct</span>'
              : '<span class="bad">Your answer: '+letters[mine]+'. '+esc(qs[i].o[mine])+' — Wrong</span>')
