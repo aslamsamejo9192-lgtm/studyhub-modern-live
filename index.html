@@ -2166,19 +2166,19 @@
     }
     $("resBackBtn").addEventListener("click", function(){
       if (resType === "PDF Notes" && resNtList){ resNtList = null; renderResources(); window.scrollTo(0, resRowsScroll); return; }
-      if (resType === "PDF MCQs" && resMcqChapter){ resMcqChapter = null; renderResources(); window.scrollTo(0, resChapScroll); return; }
-      if (resType === "PDF MCQs" && resMcqList){ resMcqList = null; resMcqChapter = null; renderResources(); window.scrollTo(0, resRowsScroll); return; }
+      if (resType === "PDF MCQs" && resMcqChapter){ resMcqChapter = null; resMcqFChap = null; renderResources(); window.scrollTo(0, resChapScroll); return; }
+      if (resType === "PDF MCQs" && resMcqList){ resMcqList = null; resMcqChapter = null; resMcqFSubj = null; resMcqFChap = null; renderResources(); window.scrollTo(0, resRowsScroll); return; }
       resType = null; resetResState(); renderResources(); window.scrollTo(0, resGridScroll);
     });
     /* MCQS chapter list: the back arrow in the app header returns to the
        subject rows; the chapter-detail top bar returns to the chapter list. */
     $("resMcqListBack").addEventListener("click", function(){
       if (resType !== "PDF MCQs" || !resMcqList) return;
-      resMcqList = null; resMcqChapter = null; renderResources(); window.scrollTo(0, resRowsScroll);
+      resMcqList = null; resMcqChapter = null; resMcqFSubj = null; resMcqFChap = null; renderResources(); window.scrollTo(0, resRowsScroll);
     });
     $("resMcqTopBack").addEventListener("click", function(){
       if (resType !== "PDF MCQs" || !resMcqChapter) return;
-      resMcqChapter = null; renderResources(); window.scrollTo(0, resChapScroll);
+      resMcqChapter = null; resMcqFChap = null; renderResources(); window.scrollTo(0, resChapScroll);
     });
     /* Subject list view: band back arrow returns to the subject rows,
        home icon goes Home, chapter pills filter the list. */
@@ -2200,18 +2200,29 @@
       var v = this.value || null;
       if (resType === "Flashcards"){ resFcSubj = v; resFcChap = null; }
       else if (resType === "PDF Notes"){ resNtSubj = v; resNtChap = null; resNtList = null; }
+      else if (resType === "PDF MCQs"){
+        if (resMcqList){
+          /* On the chapter list the subject dropdown navigates: picking a
+             subject opens that subject's chapters; All Subjects goes back
+             to the subject list. */
+          if (v){ resMcqList = v; }
+          else { resMcqList = null; resMcqFSubj = null; }
+          resMcqChapter = null; resMcqFChap = null;
+        } else { resMcqFSubj = v; resMcqFChap = null; }
+      }
       renderResources();
     });
     $("resChapSel").addEventListener("change", function(){
       var v = this.value || null;
       if (resType === "Flashcards") resFcChap = v;
       else if (resType === "PDF Notes") resNtChap = v;
+      else if (resType === "PDF MCQs") resMcqFChap = v;
       renderResources();
     });
     $("resNtSearch").addEventListener("input", function(){
       var v = this.value.trim().toLowerCase();
-      if (resType === "PDF MCQs"){ if (resMcqChapter) return; if (resMcqList) resMcqChapSearch = v; else resMcqSearch = v; }
-      else resNtSearch = v;
+      if (resType === "PDF MCQs") return;
+      resNtSearch = v;
       renderResources();
     });
 
@@ -2997,8 +3008,8 @@
        ("Biology · Bioenergetics"); counts come from the real deck arrays. */
     var RES_SUBJS = ["Biology", "Chemistry", "Physics", "English"];
     var resFcSubj = null, resFcChap = null, resFcList = null, resNtSubj = null, resNtChap = null, resNtList = null, resNtSearch = "";
-    var resMcqList = null, resMcqChapter = null, resMcqSearch = "", resMcqChapSearch = "";
-    function resetResState(){ resFcSubj = null; resFcChap = null; resFcList = null; resNtSubj = null; resNtChap = null; resNtList = null; resNtSearch = ""; resMcqList = null; resMcqChapter = null; resMcqSearch = ""; resMcqChapSearch = ""; var si = $("resNtSearch"); if (si) si.value = ""; }
+    var resMcqList = null, resMcqChapter = null, resMcqFSubj = null, resMcqFChap = null;
+    function resetResState(){ resFcSubj = null; resFcChap = null; resFcList = null; resNtSubj = null; resNtChap = null; resNtList = null; resNtSearch = ""; resMcqList = null; resMcqChapter = null; resMcqFSubj = null; resMcqFChap = null; var si = $("resNtSearch"); if (si) si.value = ""; }
     /* Screenshot colours for the colourful category pages (NOT the app's test colours):
        Physics purple, Chemistry pink, Biology green, English blue. */
     var RES_STYLE = {
@@ -3082,12 +3093,12 @@
     function fillResFilters(which){
       var subjSel = $("resSubjSel"), chapSel = $("resChapSel");
       if (!subjSel || !chapSel) return;
-      var subjVal = which === "fc" ? resFcSubj : resNtSubj;
-      var chapVal = which === "fc" ? resFcChap : resNtChap;
+      var subjVal = which === "fc" ? resFcSubj : which === "mcq" ? (resMcqList || resMcqFSubj) : resNtSubj;
+      var chapVal = which === "fc" ? resFcChap : which === "mcq" ? resMcqFChap : resNtChap;
       var so = [{ v:"", t:"All Subjects" }];
       for (var i=0;i<RES_SUBJS.length;i++) so.push({ v:RES_SUBJS[i], t:RES_SUBJS[i] });
       fillSel(subjSel, so, subjVal || "");
-      var chaps = which === "fc" ? fcChapters(subjVal) : ntChapters(subjVal);
+      var chaps = which === "fc" ? fcChapters(subjVal) : which === "mcq" ? mcqChaptersForFilter(subjVal) : ntChapters(subjVal);
       var co = [{ v:"", t:"All Chapters" }];
       for (var j=0;j<chaps.length;j++) co.push({ v:chaps[j], t:chaps[j] });
       fillSel(chapSel, co, chapVal || "");
@@ -3193,6 +3204,22 @@
       }
       return out;
     }
+    /* Chapter options for the MCQS filter dropdowns: one subject's
+       chapters when a subject is picked, else the union of all subjects'
+       chapters (deduped by normalised name), like the Flash Cards filter. */
+    function mcqChaptersForFilter(subj){
+      var out = [], seen = {};
+      if (subj){
+        var chs = mcqSubjectChapters(subj);
+        for (var i=0;i<chs.length;i++) out.push(chs[i]);
+        return out;
+      }
+      for (var s=0;s<RES_SUBJS.length;s++){
+        var all = mcqSubjectChapters(RES_SUBJS[s]);
+        for (var j=0;j<all.length;j++){ if (!seen[normChap(all[j])]){ seen[normChap(all[j])] = 1; out.push(all[j]); } }
+      }
+      return out;
+    }
     function mcqChapterCount(subj, chap){
       var notes = notesOfKind("mcqs"), n = 0;
       for (var i=0;i<notes.length;i++){ if (noteSubjOf(notes[i]) === subj && normChap(noteChapOf(notes[i])) === normChap(chap)) n++; }
@@ -3206,9 +3233,20 @@
     function mcqCountLine(n){ return n === 0 ? "(No PDFs Available)" : "(" + n + (n === 1 ? " PDF Available)" : " PDFs Available)"); }
     function mcqPdfLine(n){ return n === 0 ? "No PDFs Available" : n + (n === 1 ? " PDF Available" : " PDFs Available"); }
     function buildMcqRows(){
-      for (var s=0;s<RES_SUBJS.length;s++){
-        var subj = RES_SUBJS[s];
-        if (resMcqSearch && subj.toLowerCase().indexOf(resMcqSearch) === -1) continue;
+      /* A picked chapter shows that chapter's PDF rows directly, like the
+         Flash Cards filter shows the picked chapter's decks. */
+      if (resMcqFChap){
+        var notes = notesOfKind("mcqs");
+        for (var i=0;i<notes.length;i++){
+          if (resMcqFSubj && noteSubjOf(notes[i]) !== resMcqFSubj) continue;
+          if (normChap(noteChapOf(notes[i])) !== normChap(resMcqFChap)) continue;
+          shownRes.push({ kind:"mcqpdf", note:notes[i] });
+        }
+        return;
+      }
+      var subjs = resMcqFSubj ? [resMcqFSubj] : RES_SUBJS.slice();
+      for (var s=0;s<subjs.length;s++){
+        var subj = subjs[s];
         var c = mcqSubjectCounts(subj);
         /* Rows stay tappable even at 0 PDFs, so the subject's honest empty
            state (not invented content) is reachable from the chapter list.
@@ -3220,7 +3258,7 @@
     function buildMcqChapters(){
       var chs = mcqSubjectChapters(resMcqList);
       for (var i=0;i<chs.length;i++){
-        if (resMcqChapSearch && chs[i].toLowerCase().indexOf(resMcqChapSearch) === -1) continue;
+        if (resMcqFChap && normChap(chs[i]) !== normChap(resMcqFChap)) continue;
         shownRes.push({ kind:"mcqchap", subj:resMcqList, chapter:chs[i], num:i+1, count:mcqChapterCount(resMcqList, chs[i]) });
       }
     }
@@ -3283,9 +3321,9 @@
       var catHead = $("resCatHead"), listHead = $("resListHead"), searchWrap = $("resNtSearchWrap");
       if (catHead) catHead.classList.toggle("hidden", !((isFc && !isFcList) || (isNt && !isNtList) || (isMcq && !isMcqList)));
       if (listHead) listHead.classList.toggle("hidden", isFc || isNt || isMcq);
-      if (searchWrap) searchWrap.classList.toggle("hidden", !((isNt && !isNtList) || (isMcq && !isMcqList) || isMcqChapters));
+      if (searchWrap) searchWrap.classList.toggle("hidden", !(isNt && !isNtList));
       var searchInput = $("resNtSearch");
-      if (searchInput) searchInput.placeholder = isMcqChapters ? "Search chapters..." : isMcq ? "Search subjects..." : "Search notes…";
+      if (searchInput) searchInput.placeholder = "Search notes…";
       if (catEl){
         catEl.classList.toggle("res-color", isFc || isNt || isMcq);
         catEl.classList.toggle("res-nt", isNt);
@@ -3303,7 +3341,7 @@
       }
       var backBtn = $("resBackBtnWrap");
       if (backBtn){ backBtn.classList.toggle("hidden", isNtList || isFcList || isMcqList); }
-      if (filtEl) filtEl.classList.toggle("hidden", !((isFc && !isFcList) || (isNt && !isNtList)));
+      if (filtEl) filtEl.classList.toggle("hidden", !((isFc && !isFcList) || (isNt && !isNtList) || (isMcq && !isMcqList) || isMcqChapters));
       /* MCQS Level 2 shows its own dark circular back button above the
          banner (below the normal app header); Level 3 hides the app header
          and shows its own top bar + hero banner. */
@@ -3333,6 +3371,7 @@
       }
       if (isFc) fillResFilters("fc");
       if (isNt) fillResFilters("nt");
+      if (isMcq) fillResFilters("mcq");
       /* Subject list view (View Notes / View Chapters): purple band +
          subject header + chapter pills replace the category header,
          search and dropdowns. */
@@ -3392,9 +3431,10 @@
         if (emptyEl){
           emptyEl.classList.remove("hidden");
           if (isNt && resNtSearch){ $("resEmptyTitle").textContent = "No notes found"; $("resEmptySub").textContent = "Try a different search."; }
-          else if (isMcq && !isMcqList && resMcqSearch){ $("resEmptyTitle").textContent = "No subjects found"; $("resEmptySub").textContent = "Try a different search."; }
+          else if (isMcq && !isMcqList && resMcqFChap){ $("resEmptyTitle").textContent = "No PDFs found"; $("resEmptySub").textContent = "Try a different filter."; }
+          else if (isMcq && !isMcqList && resMcqFSubj){ $("resEmptyTitle").textContent = "No subjects found"; $("resEmptySub").textContent = "Try a different filter."; }
           else if (isMcqChapter){ $("resEmptyTitle").textContent = "No PDFs Available"; $("resEmptySub").textContent = "This chapter has no PDFs available yet."; }
-          else if (isMcqChapters && resMcqChapSearch){ $("resEmptyTitle").textContent = "No chapters found"; $("resEmptySub").textContent = "Try a different search."; }
+          else if (isMcqChapters && resMcqFChap){ $("resEmptyTitle").textContent = "No chapters found"; $("resEmptySub").textContent = "Try a different filter."; }
           else if (isMcqChapters){ $("resEmptyTitle").textContent = "No Chapters Available Yet"; $("resEmptySub").textContent = "Check back later for new study materials."; }
           else { $("resEmptyTitle").textContent = "No " + resType + " Available Yet"; $("resEmptySub").textContent = "Check back later for new study materials."; }
         }
@@ -3496,8 +3536,8 @@
       else if (it.kind === "fcall") openFlashcardSet(fcSubjectDeck(it.subj));
       else if (it.kind === "fcdeck") openFlashcards(it.key);
       else if (it.kind === "ntsubj"){ resNtList = it.subj; resNtSearch = ""; var si2 = $("resNtSearch"); if (si2) si2.value = ""; resRowsScroll = window.scrollY || 0; renderResources(); window.scrollTo(0,0); }
-      else if (it.kind === "mcqsubj"){ resMcqList = it.subj; resMcqChapter = null; resMcqChapSearch = ""; var si3 = $("resNtSearch"); if (si3) si3.value = ""; resRowsScroll = window.scrollY || 0; renderResources(); window.scrollTo(0,0); }
-      else if (it.kind === "mcqchap"){ resMcqChapter = it.chapter; resMcqChapSearch = ""; var si4 = $("resNtSearch"); if (si4) si4.value = ""; resChapScroll = window.scrollY || 0; renderResources(); window.scrollTo(0,0); }
+      else if (it.kind === "mcqsubj"){ resMcqList = it.subj; resMcqChapter = null; resMcqFSubj = null; resMcqFChap = null; resRowsScroll = window.scrollY || 0; renderResources(); window.scrollTo(0,0); }
+      else if (it.kind === "mcqchap"){ resMcqChapter = it.chapter; resMcqFChap = null; resChapScroll = window.scrollY || 0; renderResources(); window.scrollTo(0,0); }
       else if (it.kind === "mcqpdf"){ if (act === "dl") downloadNote(it.note); else openNoteViewer(it.note); }
       else if (act === "dl") downloadNote(it.note);
       else if (it.kind === "note") openNoteViewer(it.note);
