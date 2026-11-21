@@ -1678,21 +1678,36 @@
     var db = getFirestore(app, "ai-studio-fa3ed221-9d1d-49f7-9a67-0a698e2cdf28");
 
     /* ==================== QUESTION BANK (40 original MCQs) ==================== */
+    /* ==================== QUESTION BANK (PMDC MDCAT 2026 syllabus chapters; 40 original MCQs kept under their matching chapters) ==================== */
     var SUBJECTS = [
       { id:"biology", name:"Biology", color:"#16A34A", soft:"#DCFCE7", icon:'<path d="M11 20A7 7 0 0 1 4 13c0-4 3-8 8-10 4.5-1.8 8-1 8-1s.5 3.5-1 8c-1.8 5.5-5 9-8 10Z"/><path d="M4 21c4-6 8-9 12-11"/>',
         chapters:[
+          { name:"Acellular Life", qs:[]},
+          { name:"Bioenergetics", qs:[]},
+          { name:"Biological Molecules", qs:[]},
           { name:"Cell Structure & Function", qs:[
             {q:"Which organelle is known as the powerhouse of the cell?", o:["Nucleus","Ribosome","Mitochondria","Golgi apparatus"], a:2, e:"Mitochondria produce most of the cell's ATP through cellular respiration, so they are called the powerhouse of the cell."},
             {q:"Protein synthesis in a cell takes place in the:", o:["Lysosomes","Ribosomes","Vacuoles","Centrioles"], a:1, e:"Ribosomes read messenger RNA and assemble amino acids into proteins."},
             {q:"Photosynthesis occurs inside which organelle?", o:["Chloroplast","Mitochondria","Endoplasmic reticulum","Nucleus"], a:0, e:"Chloroplasts contain chlorophyll, the pigment that captures light energy for photosynthesis."},
             {q:"Which structure controls all activities of the cell and stores genetic material?", o:["Cell membrane","Cytoplasm","Nucleus","Cell wall"], a:2, e:"The nucleus contains DNA and directs the cell's growth, metabolism and division."}
           ]},
+          { name:"Coordination & Control", qs:[]},
           { name:"Enzymes", qs:[
             {q:"Most enzymes are chemically:", o:["Carbohydrates","Lipids","Proteins","Nucleic acids"], a:2, e:"Enzymes are globular proteins whose folded shape forms a specific active site."},
             {q:"The substance on which an enzyme acts is called the:", o:["Product","Substrate","Coenzyme","Inhibitor"], a:1, e:"The substrate binds to the enzyme's active site and is converted into products."},
             {q:"Which model explains that the active site changes shape slightly to fit the substrate?", o:["Lock and key model","Induced fit model","Fluid mosaic model","Sliding filament model"], a:1, e:"In the induced fit model, the enzyme moulds itself around the substrate for a tighter fit."},
             {q:"When an enzyme is heated far above its optimum temperature, it becomes:", o:["More active","Denatured","Saturated","Activated"], a:1, e:"Excess heat breaks the bonds holding the enzyme's shape, destroying the active site — this is denaturation."}
-          ]}
+          ]},
+          { name:"Evolution", qs:[]},
+          { name:"Reproduction", qs:[]},
+          { name:"Support & Movement", qs:[]},
+          { name:"Inheritance", qs:[]},
+          { name:"Circulation", qs:[]},
+          { name:"Immunity", qs:[]},
+          { name:"Respiration", qs:[]},
+          { name:"Digestion", qs:[]},
+          { name:"Homeostasis", qs:[]},
+          { name:"Biotechnology", qs:[]}
         ]},
       { id:"chemistry", name:"Chemistry", color:"#d97706", soft:"#FEF3C7", icon:'<path d="M9 3h6"/><path d="M10 3v6.3L4.8 18a2.4 2.4 0 0 0 2.1 3.5h10.2a2.4 2.4 0 0 0 2.1-3.5L14 9.3V3"/><path d="M7.5 15h9"/>',
         chapters:[
@@ -1702,15 +1717,34 @@
             {q:"The empirical formula of glucose (C\u2086H\u2081\u2082O\u2086) is:", o:["CHO","C\u2082H\u2084O\u2082","CH\u2082O","C\u2086H\u2082O"], a:2, e:"Dividing each subscript by the common factor 6 gives the simplest whole-number ratio: CH\u2082O."},
             {q:"The reactant that is used up first and limits the amount of product formed is the:", o:["Excess reactant","Catalyst","Limiting reactant","Solvent"], a:2, e:"The limiting reactant is completely consumed first, so the reaction stops and product amount is fixed by it."}
           ]},
+          { name:"Atomic Structure", qs:[]},
+          { name:"Gases", qs:[]},
+          { name:"Liquids", qs:[]},
+          { name:"Solid", qs:[]},
+          { name:"Chemical Equilibrium", qs:[]},
+          { name:"Reaction Kinetics", qs:[]},
+          { name:"Thermochemistry and Energetics of Chemical Reaction", qs:[]},
+          { name:"Electrochemistry", qs:[]},
           { name:"Chemical Bonding", qs:[
             {q:"The bond formed between sodium and chlorine in NaCl is:", o:["Covalent","Ionic","Metallic","Hydrogen"], a:1, e:"Sodium transfers an electron to chlorine, and the oppositely charged ions attract — an ionic bond."},
             {q:"The shape of a methane (CH\u2084) molecule is:", o:["Linear","Trigonal planar","Tetrahedral","Bent"], a:2, e:"Four bonding pairs around carbon repel equally, giving a tetrahedral shape with 109.5\u00B0 angles."},
             {q:"The bond angle in a water molecule is approximately:", o:["90\u00B0","104.5\u00B0","109.5\u00B0","120\u00B0"], a:1, e:"The two lone pairs on oxygen push the O\u2013H bonds closer, reducing the angle to about 104.5\u00B0."},
             {q:"Hydrogen bonding is present in which of the following?", o:["CH\u2084","HCl","H\u2082O","H\u2082S"], a:2, e:"Water has H bonded to highly electronegative oxygen, so strong hydrogen bonds form between its molecules."}
-          ]}
+          ]},
+          { name:"S- and P-Block Elements", qs:[]},
+          { name:"Transition Elements", qs:[]},
+          { name:"Fundamental Principles of Organic Chemistry", qs:[]},
+          { name:"Chemistry of Hydrocarbons", qs:[]},
+          { name:"Alkyl Halides", qs:[]},
+          { name:"Alcohols and Phenols", qs:[]},
+          { name:"Aldehydes and Ketones", qs:[]},
+          { name:"Carboxylic Acids", qs:[]},
+          { name:"Macromolecules", qs:[]},
+          { name:"Industrial Chemistry", qs:[]}
         ]},
       { id:"physics", name:"Physics", color:"#0284c7", soft:"#E0F2FE", icon:'<circle cx="12" cy="12" r="2.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(65 12 12)"/>',
         chapters:[
+          { name:"Vectors and Equilibrium", qs:[]},
           { name:"Force & Motion", qs:[
             {q:"The SI unit of force is the:", o:["Joule","Pascal","Newton","Watt"], a:2, e:"Force is measured in newtons; 1 N gives a 1 kg mass an acceleration of 1 m/s\u00B2."},
             {q:"A car starts from rest and accelerates at 2 m/s\u00B2 for 5 seconds. Its final velocity is:", o:["5 m/s","7 m/s","10 m/s","25 m/s"], a:2, e:"Using v = u + at = 0 + (2)(5) = 10 m/s."},
@@ -1722,37 +1756,55 @@
             {q:"The kinetic energy of a 2 kg ball moving at 3 m/s is:", o:["3 J","6 J","9 J","18 J"], a:2, e:"KE = \u00BDmv\u00B2 = \u00BD \u00D7 2 \u00D7 3\u00B2 = 9 J."},
             {q:"Power is measured in:", o:["Joules","Watts","Newtons","Pascals"], a:1, e:"Power is the rate of doing work; its SI unit is the watt (1 W = 1 J/s)."},
             {q:"Energy stored in a stretched or compressed spring is:", o:["Kinetic energy","Heat energy","Elastic potential energy","Chemical energy"], a:2, e:"Work done stretching a spring is stored as elastic potential energy, released when the spring recoils."}
-          ]}
+          ]},
+          { name:"Rotational and Circular Motion", qs:[]},
+          { name:"Fluid Dynamics", qs:[]},
+          { name:"Waves", qs:[]},
+          { name:"Thermodynamics", qs:[]},
+          { name:"Electrostatics", qs:[]},
+          { name:"Current Electricity", qs:[]},
+          { name:"Electromagnetism", qs:[]},
+          { name:"Electromagnetic Induction", qs:[]},
+          { name:"Alternating Current", qs:[]},
+          { name:"Electronics", qs:[]},
+          { name:"Dawn of Modern Physics", qs:[]},
+          { name:"Atomic Spectra", qs:[]},
+          { name:"Nuclear Physics", qs:[]}
         ]},
       { id:"english", name:"English", color:"#e11d63", soft:"#FCE7F3", icon:'<path d="M4 5h9M8.5 3v2c0 3.5-2 6.8-4.5 8.5M6 8.5c1 2.8 3.4 5.2 6 6.5"/><path d="m12.5 21 4.5-10 4.5 10M14.2 17.5h5.6"/>',
         chapters:[
-          { name:"Vocabulary — Synonyms", qs:[
+          { name:"Reading and Thinking Skills", qs:[]},
+          { name:"Formal and Lexical Aspect of Language", qs:[
             {q:"Choose the word closest in meaning to \u201CRAPID\u201D:", o:["Slow","Swift","Weak","Late"], a:1, e:"\u201CRapid\u201D means fast or quick; \u201Cswift\u201D has the same meaning."},
             {q:"Choose the word closest in meaning to \u201CSCARCE\u201D:", o:["Plenty","Common","Rare","Abundant"], a:2, e:"\u201CScarce\u201D means available only in small amounts — rare."},
             {q:"Choose the word closest in meaning to \u201CBRAVE\u201D:", o:["Courageous","Afraid","Careless","Polite"], a:0, e:"A brave person shows courage, so \u201Ccourageous\u201D is the closest synonym."},
             {q:"Choose the word closest in meaning to \u201CBEGIN\u201D:", o:["Finish","Commence","Delay","Repeat"], a:1, e:"\u201CCommence\u201D is a formal synonym of \u201Cbegin\u201D, meaning to start."}
-          ]},
-          { name:"Grammar & Sentence Correction", qs:[
+          ,
             {q:"She ______ to college every day.", o:["go","goes","going","gone"], a:1, e:"With the third-person singular subject \u201Cshe\u201D, the verb takes -s: \u201Cgoes\u201D."},
             {q:"Choose the correct sentence:", o:["Neither of the boys were present.","Neither of the boys was present.","Neither of the boys are present.","Neither of the boys have present."], a:1, e:"\u201CNeither\u201D is singular, so it takes the singular verb \u201Cwas\u201D."},
             {q:"I have lived in this city ______ 2019.", o:["for","from","since","until"], a:2, e:"\u201CSince\u201D is used with a specific point in time (2019); \u201Cfor\u201D is used with a duration."},
             {q:"Choose the correct passive voice of: \u201CShe wrote a letter.\u201D", o:["A letter is written by her.","A letter was written by her.","A letter has written by her.","A letter wrote by her."], a:1, e:"The active sentence is in the past simple, so the passive uses \u201Cwas written\u201D."}
-          ]}
+          ]},
+          { name:"Writing Skills", qs:[]}
         ]},
       { id:"logical", name:"Logical Reasoning", color:"#2563EB", soft:"#DBEAFE", icon:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.3A2.6 2.6 0 1 1 12 12.4c-.8.3-1 .8-1 1.6"/><circle cx="11.4" cy="17.2" r=".6" fill="currentColor"/>',
         chapters:[
-          { name:"Number Series", qs:[
+          { name:"Critical Thinking", qs:[]},
+          { name:"Letter and Symbol Series", qs:[
             {q:"Find the next number in the series: 2, 6, 12, 20, 30, ?", o:["36","40","42","44"], a:2, e:"Each term is n\u00B2 + n: 1\u00B2+1=2, 2\u00B2+2=6, 3\u00B2+3=12 \u2026 so the 6th term is 6\u00B2+6 = 42."},
             {q:"Find the next number in the series: 3, 9, 27, 81, ?", o:["108","162","243","324"], a:2, e:"Each term is multiplied by 3, so 81 \u00D7 3 = 243."},
             {q:"Find the next number in the series: 1, 1, 2, 3, 5, 8, ?", o:["11","12","13","15"], a:2, e:"This is the Fibonacci series — each term is the sum of the previous two: 5 + 8 = 13."},
             {q:"Find the next number in the series: 5, 10, 20, 40, ?", o:["50","60","70","80"], a:3, e:"Each term doubles the previous one, so 40 \u00D7 2 = 80."}
           ]},
-          { name:"Analogy & Patterns", qs:[
+          { name:"Logical Deductions", qs:[]},
+          { name:"Logical Problems", qs:[
             {q:"Book is to Pages as Wall is to:", o:["Roof","Bricks","Room","Door"], a:1, e:"A book is made up of pages, just as a wall is made up of bricks."},
             {q:"Doctor is to Hospital as Teacher is to:", o:["Student","Book","School","Class"], a:2, e:"A doctor works in a hospital; a teacher works in a school — a workplace analogy."},
             {q:"Find the odd one out:", o:["Apple","Mango","Banana","Potato"], a:3, e:"Apple, mango and banana are fruits; potato is a vegetable."},
             {q:"If A = 1, B = 2, C = 3 and so on, then the word CAB equals:", o:["123","312","321","231"], a:1, e:"C = 3, A = 1, B = 2, so CAB is written as 312."}
-          ]}
+          ]},
+          { name:"Course of Action", qs:[]},
+          { name:"Cause and Effect", qs:[]}
         ]}
     ];
 
@@ -2243,21 +2295,30 @@
       for (var c=0;c<s.chapters.length;c++) for (var i=0;i<s.chapters[c].qs.length;i++) qs.push(tagQ(s, s.chapters[c], s.chapters[c].qs[i]));
       return { title:s.name + " Grand Test (" + s.name + ")", kind:"subject", subjectId:s.id, color:s.color, soft:s.soft, subjName:s.name, chapLabel:"Full Subject", qs:qs };
     }
+    /* Only chapters that actually have questions can feed a mixed test
+       (most syllabus chapters are empty until tests are added for them). */
+    function stockedChapters(subj){
+      var out = [];
+      for (var i=0;i<subj.chapters.length;i++) if (subj.chapters[i].qs.length) out.push(subj.chapters[i]);
+      return out;
+    }
     function smartTest(){
       var qs = [];
       for (var s=0;s<SUBJECTS.length;s++){
-        var subj = SUBJECTS[s];
-        qs.push(tagQ(subj, subj.chapters[0], subj.chapters[0].qs[s % subj.chapters[0].qs.length]));
-        qs.push(tagQ(subj, subj.chapters[1], subj.chapters[1].qs[(s+1) % subj.chapters[1].qs.length]));
+        var subj = SUBJECTS[s], stocked = stockedChapters(subj);
+        for (var k=0;k<2 && k<stocked.length;k++){
+          var ch = stocked[(s + k) % stocked.length];
+          qs.push(tagQ(subj, ch, ch.qs[(s + k) % ch.qs.length]));
+        }
       }
       return { title:"Smart Test — Mixed Subjects", kind:"smart", subjectId:"mixed", color:"#2563EB", soft:"#DBEAFE", subjName:"Mixed", chapLabel:"All Subjects", qs:qs };
     }
     function mockTest(){
       var qs = [];
       for (var s=0;s<SUBJECTS.length;s++){
-        var subj = SUBJECTS[s];
-        for (var i=0;i<4;i++){
-          var ch = subj.chapters[i % 2];
+        var subj = SUBJECTS[s], stocked = stockedChapters(subj);
+        for (var i=0;i<4 && stocked.length;i++){
+          var ch = stocked[i % stocked.length];
           qs.push(tagQ(subj, ch, ch.qs[(i + s) % ch.qs.length]));
         }
       }
