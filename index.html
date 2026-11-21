@@ -3557,9 +3557,10 @@
             + '<span class="res-mcq-pdf-btns"><button class="res-mcq-dl" type="button" data-idx="'+j+'" data-act="dl"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><polyline points="6 10 12 16 18 10"/></svg>Download</button></span></div>';
         } else {
           var nn = it.note;
-          if (isNtList){
-            /* Subject-notes list: red PDF tile + title + size, circular
-               download button. Card tap = View, circle = Download. */
+          if (isNt){
+            /* Notes PDF note card (list view AND the filtered notes shown
+               below the subject rows): red PDF tile + title + size,
+               circular download button. Card tap = View, circle = Download. */
             var sizeLine = (nn.fileSizeFormatted ? nn.fileSizeFormatted + " • PDF" : "PDF");
             html += '<div class="res-nt-card" data-idx="'+j+'" role="button" tabindex="0">'
               + '<span class="res-nt-pdf">PDF</span>'
