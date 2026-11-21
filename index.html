@@ -2288,12 +2288,12 @@
     function chapterTest(s, ci){
       var ch = s.chapters[ci], qs = [];
       for (var i=0;i<ch.qs.length;i++) qs.push(tagQ(s, ch, ch.qs[i]));
-      return { title:"Chapter " + ch.name + " (" + s.name + ")", kind:"chapter", subjectId:s.id, color:s.color, soft:s.soft, subjName:s.name, chapLabel:ch.name, qs:qs };
+      return { title:ch.name, kind:"chapter", subjectId:s.id, color:s.color, soft:s.soft, subjName:s.name, chapLabel:ch.name, qs:qs };
     }
     function subjectTest(s){
       var qs = [];
       for (var c=0;c<s.chapters.length;c++) for (var i=0;i<s.chapters[c].qs.length;i++) qs.push(tagQ(s, s.chapters[c], s.chapters[c].qs[i]));
-      return { title:s.name + " Grand Test (" + s.name + ")", kind:"subject", subjectId:s.id, color:s.color, soft:s.soft, subjName:s.name, chapLabel:"Full Subject", qs:qs };
+      return { title:s.name + " Grand Test", kind:"subject", subjectId:s.id, color:s.color, soft:s.soft, subjName:s.name, chapLabel:"Full Subject", qs:qs };
     }
     /* Only chapters that actually have questions can feed a mixed test
        (most syllabus chapters are empty until tests are added for them). */
