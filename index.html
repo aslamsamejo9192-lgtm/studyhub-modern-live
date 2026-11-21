@@ -3245,9 +3245,10 @@
         shownRes.push({ kind:"note", note:notes[i] });
       }
     }
-    /* When a chapter is picked in the Notes filter, the matching notes also
-       show right below the subject rows on this same screen, so the filter
-       result is visible without tapping "View Notes" first. */
+    /* When a chapter is picked in the Notes filter, ONLY that chapter's
+       notes show here — no subject row above them — the same as the Flash
+       Cards and MCQS PDF filters. The count above the list is then just
+       that chapter's file count. */
     function buildNtFilteredNotes(){
       var notes = notesOfKind("notes");
       for (var i=0;i<notes.length;i++){
@@ -3489,7 +3490,7 @@
       }
       shownRes = [];
       if (isFc){ if (resFcList) buildFcList(); else buildFcRows(); }
-      else if (isNt){ if (resNtList) buildNtList(); else { buildNtRows(); if (resNtChap) buildNtFilteredNotes(); } }
+      else if (isNt){ if (resNtList) buildNtList(); else if (resNtChap) buildNtFilteredNotes(); else buildNtRows(); }
       else if (isMcq){ if (resMcqChapter) buildMcqChapterPdfs(); else if (resMcqList) buildMcqChapters(); else buildMcqRows(); }
       else if (notesReady && resType === "Past Papers"){
         for (var n=0;n<liveNotes.length;n++){
@@ -3508,6 +3509,7 @@
         if (emptyEl){
           emptyEl.classList.remove("hidden");
           if (isNt && resNtSearch){ $("resEmptyTitle").textContent = "No notes found"; $("resEmptySub").textContent = "Try a different search."; }
+          else if (isNt && resNtChap){ $("resEmptyTitle").textContent = "No notes found"; $("resEmptySub").textContent = "Try a different filter."; }
           else if (isMcq && !isMcqList && resMcqFChap){ $("resEmptyTitle").textContent = "No PDFs found"; $("resEmptySub").textContent = "Try a different filter."; }
           else if (isMcq && !isMcqList && resMcqFSubj){ $("resEmptyTitle").textContent = "No subjects found"; $("resEmptySub").textContent = "Try a different filter."; }
           else if (isMcqChapter){ $("resEmptyTitle").textContent = "No PDFs Available"; $("resEmptySub").textContent = "This chapter has no PDFs available yet."; }
