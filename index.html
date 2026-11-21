@@ -3245,6 +3245,17 @@
         shownRes.push({ kind:"note", note:notes[i] });
       }
     }
+    /* When a chapter is picked in the Notes filter, the matching notes also
+       show right below the subject rows on this same screen, so the filter
+       result is visible without tapping "View Notes" first. */
+    function buildNtFilteredNotes(){
+      var notes = notesOfKind("notes");
+      for (var i=0;i<notes.length;i++){
+        if (resNtSubj && noteSubjOf(notes[i]) !== resNtSubj) continue;
+        if (noteChapOf(notes[i]) !== resNtChap) continue;
+        shownRes.push({ kind:"note", note:notes[i] });
+      }
+    }
     /* Chapters come from the app's own chapter data for the subject (the
        same source Tests use) PLUS every chapter that real MCQ PDF
        documents carry for the subject — the panel lets the admin upload to
@@ -3478,7 +3489,7 @@
       }
       shownRes = [];
       if (isFc){ if (resFcList) buildFcList(); else buildFcRows(); }
-      else if (isNt){ if (resNtList) buildNtList(); else buildNtRows(); }
+      else if (isNt){ if (resNtList) buildNtList(); else { buildNtRows(); if (resNtChap) buildNtFilteredNotes(); } }
       else if (isMcq){ if (resMcqChapter) buildMcqChapterPdfs(); else if (resMcqList) buildMcqChapters(); else buildMcqRows(); }
       else if (notesReady && resType === "Past Papers"){
         for (var n=0;n<liveNotes.length;n++){
