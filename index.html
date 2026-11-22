@@ -586,6 +586,36 @@
       #resCatView.res-color .res-filter-txt small{font-size:11px;font-weight:700;color:#6B7280}
       #resCatView.res-color .res-filter-val{font-size:13px;font-weight:800;color:#1E1B4B;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:break-word}
       #resCatView.res-color .res-filter-chev{flex:none;color:#6B7280}
+      /* Past Papers page (screenshot layout): purple banner, search,
+         Year + University filter pills, paper cards with Download. */
+      #resPpBanner{display:flex;align-items:center;gap:14px;background:linear-gradient(120deg,#6D28D9 0%,#8B5CF6 55%,#A855F7 100%);border-radius:22px;padding:18px 16px;margin:4px 0 14px;position:relative;overflow:hidden;box-shadow:0 10px 24px rgba(109,40,217,.35)}
+      #resPpBanner .res-pp-ico{flex:none;width:64px;height:64px;border-radius:20px;display:grid;place-items:center;color:#fff;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.35)}
+      #resPpBanner .res-pp-txt{flex:1;min-width:0;padding-right:86px}
+      #resPpBanner .res-pp-txt b{display:block;font-size:26px;font-weight:800;color:#fff;letter-spacing:-.01em}
+      #resPpBanner .res-pp-txt small{display:block;margin-top:4px;font-size:13.5px;font-weight:600;color:rgba(255,255,255,.88);line-height:1.35}
+      #resPpBanner .res-pp-motif{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.85);pointer-events:none}
+      #resPpSearchWrap{margin:0 0 2px}
+      #resPpFilters{margin:14px 0 2px}
+      #resList .res-pp-card{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #EDE9FE;border-radius:20px;box-shadow:0 8px 20px rgba(124,58,237,.10);padding:14px;cursor:pointer}
+      #resList .res-pp-tile{flex:none;width:62px;height:74px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;color:#fff;background:linear-gradient(160deg,#3B82F6,#1D4ED8);font-weight:800;text-align:center}
+      #resList .res-pp-tile b{font-size:12.5px;line-height:1.15}
+      #resList .res-pp-tile small{font-size:10.5px;font-weight:700;opacity:.9}
+      #resList .res-pp-sep{flex:none;width:1px;align-self:stretch;background:#EDE9FE}
+      #resList .res-pp-txt{flex:1;min-width:0}
+      #resList .res-pp-txt b{display:block;font-size:16.5px;font-weight:800;color:#1E1B4B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+      #resList .res-pp-txt small{display:flex;align-items:center;gap:5px;margin-top:5px;font-size:12.5px;font-weight:600;color:#6B7280}
+      #resList .res-pp-dl{flex:none;display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,#8B5CF6,#A855F7);color:#fff;border:0;border-radius:999px;padding:12px 16px;font-size:13.5px;font-weight:800;cursor:pointer;box-shadow:0 6px 16px rgba(139,92,246,.45)}
+      [data-theme="dark"] #resList .res-pp-card{background:#0B1530;border-color:rgba(148,180,255,.18);box-shadow:0 8px 20px rgba(2,6,23,.45)}
+      [data-theme="dark"] #resList .res-pp-sep{background:rgba(148,180,255,.22)}
+      [data-theme="dark"] #resList .res-pp-txt b{color:#F1F5FF}
+      [data-theme="dark"] #resList .res-pp-txt small{color:#94A3B8}
+      @media (max-width:380px){
+        #resPpBanner .res-pp-txt b{font-size:23px}
+        #resPpBanner .res-pp-txt small{font-size:12.5px}
+        #resList .res-pp-card{gap:9px;padding:12px}
+        #resList .res-pp-tile{width:54px;height:66px}
+        #resList .res-pp-dl{padding:11px 12px;font-size:12.5px}
+      }
       /* Colourful subject rows: pastel tile, title + count, purple pill on the right,
          soft colour wash on the right side — screenshot layout, mobile-sized. */
       #resList .subj-row{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,#ffffff 55%,var(--rowwash,#F5F3FF) 100%);border:1px solid #EDE9FE;border-radius:20px;box-shadow:0 6px 18px rgba(124,58,237,.08);padding:13px 14px;margin-top:10px}
@@ -1210,6 +1240,29 @@
               <span class="res-cat-deco" aria-hidden="true"><svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-1.5-1.6-3.8-2-6-2H3v14h3c2.2 0 4.5.4 6 2 1.5-1.6 3.8-2 6-2h3V4h-3c-2.2 0-4.5.4-6 2z"/><path d="M12 6v14"/></svg></span>
               <span class="res-cat-deco-mcq" aria-hidden="true"><svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="2.5" width="11" height="16" rx="2" transform="rotate(9 14 10.5)"/><rect x="3.5" y="4.5" width="12" height="16" rx="2"/><text x="9.5" y="9.2" font-size="3.4" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none">MCQs</text><rect x="5.8" y="11" width="2.4" height="2.4" rx="0.5"/><polyline points="6.3 12.2 7 12.9 8 11.6"/><path d="M9.8 12.2h3.4"/><rect x="5.8" y="15" width="2.4" height="2.4" rx="0.5"/><polyline points="6.3 16.2 7 16.9 8 15.6"/><path d="M9.8 16.2h3.4"/></svg></span>
               <span class="res-cat-deco-mcq-spark" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></svg><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></svg></span>
+            </div>
+            <div class="res-pp-banner hidden" id="resPpBanner">
+              <span class="res-pp-ico"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></span>
+              <span class="res-pp-txt"><b>Past Papers</b><small>Access authentic MDCAT past papers and prepare better!</small></span>
+              <span class="res-pp-motif" aria-hidden="true"><svg width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="11" height="16" rx="2" transform="rotate(8 14.5 10.5)" opacity=".55"/><rect x="4" y="4.5" width="12" height="16" rx="2" fill="rgba(255,255,255,.14)"/><text x="10" y="9" font-size="3.2" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none">MDCAT</text><line x1="6.5" y1="12" x2="13.5" y2="12"/><line x1="6.5" y1="15" x2="13.5" y2="15"/><line x1="6.5" y1="18" x2="11" y2="18"/></svg></span>
+            </div>
+            <div class="searchbar hidden" id="resPpSearchWrap">
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
+              <input id="resPpSearch" type="search" placeholder="Search past papers…" aria-label="Search past papers">
+            </div>
+            <div class="res-filters hidden" id="resPpFilters">
+              <label class="res-filter" for="resPpYearSel">
+                <span class="res-filter-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+                <span class="res-filter-txt"><small>Year</small><span class="res-filter-val" id="resPpYearVal">All Years</span></span>
+                <svg class="res-filter-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                <select id="resPpYearSel" aria-label="Year"></select>
+              </label>
+              <label class="res-filter" for="resPpUniSel">
+                <span class="res-filter-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-6 9 6"/><path d="M4 9v10M20 9v10M8 12v4M12 12v4M16 12v4"/><path d="M2 19h20"/></svg></span>
+                <span class="res-filter-txt"><small>University</small><span class="res-filter-val" id="resPpUniVal">All Universities</span></span>
+                <svg class="res-filter-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                <select id="resPpUniSel" aria-label="University"></select>
+              </label>
             </div>
             <div class="list-head" id="resListHead">
               <h3 id="resListHeadTitle">Flash Cards</h3>
@@ -2282,6 +2335,18 @@
       resNtSearch = v;
       renderResources();
     });
+    $("resPpSearch").addEventListener("input", function(){
+      resPpSearch = this.value.trim().toLowerCase();
+      renderResources();
+    });
+    $("resPpYearSel").addEventListener("change", function(){
+      resPpYear = this.value || null;
+      renderResources();
+    });
+    $("resPpUniSel").addEventListener("change", function(){
+      resPpUni = this.value || null;
+      renderResources();
+    });
 
     /* ==================== TEST BUILDERS ==================== */
     function tagQ(s, ch, q){ return { subject:s.name, subjectId:s.id, color:s.color, chapter:ch.name, q:q.q, o:q.o, a:q.a, e:q.e }; }
@@ -3074,8 +3139,9 @@
        ("Biology · Bioenergetics"); counts come from the real deck arrays. */
     var RES_SUBJS = ["Biology", "Chemistry", "Physics", "English"];
     var resFcSubj = null, resFcChap = null, resFcList = null, resNtSubj = null, resNtChap = null, resNtList = null, resNtSearch = "";
+    var resPpSearch = "", resPpYear = null, resPpUni = null;
     var resMcqList = null, resMcqChapter = null, resMcqFSubj = null, resMcqFChap = null;
-    function resetResState(){ resFcSubj = null; resFcChap = null; resFcList = null; resNtSubj = null; resNtChap = null; resNtList = null; resNtSearch = ""; resMcqList = null; resMcqChapter = null; resMcqFSubj = null; resMcqFChap = null; var si = $("resNtSearch"); if (si) si.value = ""; }
+    function resetResState(){ resFcSubj = null; resFcChap = null; resFcList = null; resNtSubj = null; resNtChap = null; resNtList = null; resNtSearch = ""; resPpSearch = ""; resPpYear = null; resPpUni = null; resMcqList = null; resMcqChapter = null; resMcqFSubj = null; resMcqFChap = null; var si = $("resNtSearch"); if (si) si.value = ""; var psi = $("resPpSearch"); if (psi) psi.value = ""; }
     /* Screenshot colours for the colourful category pages (NOT the app's test colours):
        Physics purple, Chemistry pink, Biology green, English blue. */
     var RES_STYLE = {
@@ -3171,6 +3237,45 @@
       var sv = $("resSubjVal"), cv = $("resChapVal");
       if (sv) sv.textContent = (subjSel.selectedIndex >= 0 && subjSel.options[subjSel.selectedIndex]) ? subjSel.options[subjSel.selectedIndex].text : "All Subjects";
       if (cv) cv.textContent = (chapSel.selectedIndex >= 0 && chapSel.options[chapSel.selectedIndex]) ? chapSel.options[chapSel.selectedIndex].text : "All Chapters";
+    }
+    /* Past Papers: year + university are parsed from the paper itself
+       (title/subject), so new papers uploaded later get the right
+       filter values on their own — nothing is hardcoded. */
+    function ppYearOf(nt){ var m = String(nt.title || "").match(/\b(19|20)\d{2}\b/); return m ? m[0] : ""; }
+    function ppUniOf(nt){
+      var s = String(nt.subject || "").trim();
+      var src = s || String(nt.title || "");
+      var m = src.match(/^([A-Za-z ]+?)\s*MDCAT/i);
+      if (m) return m[1].trim();
+      if (s && RES_SUBJS.indexOf(s) === -1) return s;
+      if (/sindh/i.test(src)) return "Sindh";
+      return "";
+    }
+    function ppLabelOf(nt){
+      var u = ppUniOf(nt), y = ppYearOf(nt);
+      if (u && y) return u + " MDCAT " + y;
+      if (y) return "MDCAT " + y;
+      if (u) return u;
+      return String(nt.title || "Past Paper");
+    }
+    function fillPpFilters(){
+      var ySel = $("resPpYearSel"), uSel = $("resPpUniSel");
+      if (!ySel || !uSel) return;
+      var years = {}, unis = {};
+      for (var i=0;i<liveNotes.length;i++){
+        if (noteKind(liveNotes[i]) !== "pastpaper") continue;
+        var y = ppYearOf(liveNotes[i]); if (y) years[y] = 1;
+        var u = ppUniOf(liveNotes[i]); if (u) unis[u] = 1;
+      }
+      var yo = [{ v:"", t:"All Years" }], ys = Object.keys(years).sort().reverse();
+      for (var a=0;a<ys.length;a++) yo.push({ v:ys[a], t:ys[a] });
+      fillSel(ySel, yo, resPpYear || "");
+      var uo = [{ v:"", t:"All Universities" }], us = Object.keys(unis).sort();
+      for (var b=0;b<us.length;b++) uo.push({ v:us[b], t:us[b] });
+      fillSel(uSel, uo, resPpUni || "");
+      var yv = $("resPpYearVal"), uv = $("resPpUniVal");
+      if (yv) yv.textContent = (ySel.selectedIndex >= 0 && ySel.options[ySel.selectedIndex]) ? ySel.options[ySel.selectedIndex].text : "All Years";
+      if (uv) uv.textContent = (uSel.selectedIndex >= 0 && uSel.options[uSel.selectedIndex]) ? uSel.options[uSel.selectedIndex].text : "All Universities";
     }
     function subjIconOf(name){
       for (var i=0;i<SUBJECTS.length;i++) if (SUBJECTS[i].name === name) return SUBJECTS[i].icon;
@@ -3386,6 +3491,7 @@
       if (hdS) hdS.classList.add("hidden");
       var isFc = resType === "Flashcards", isNt = resType === "PDF Notes";
       var isMcq = resType === "PDF MCQs";
+      var isPp = resType === "Past Papers";
       var isNtList = isNt && !!resNtList;
       var isFcList = isFc && !!resFcList;
       var isMcqList = isMcq && !!resMcqList;
@@ -3398,12 +3504,12 @@
       if (listHeadTitle) listHeadTitle.textContent = catTitle;
       var catHead = $("resCatHead"), listHead = $("resListHead"), searchWrap = $("resNtSearchWrap");
       if (catHead) catHead.classList.toggle("hidden", !((isFc && !isFcList) || (isNt && !isNtList) || (isMcq && !isMcqList)));
-      if (listHead) listHead.classList.toggle("hidden", isFc || isNt || isMcq);
+      if (listHead) listHead.classList.toggle("hidden", isFc || isNt || isMcq || isPp);
       if (searchWrap) searchWrap.classList.toggle("hidden", !(isNt && !isNtList));
       var searchInput = $("resNtSearch");
       if (searchInput) searchInput.placeholder = "Search notes…";
       if (catEl){
-        catEl.classList.toggle("res-color", isFc || isNt || isMcq);
+        catEl.classList.toggle("res-color", isFc || isNt || isMcq || isPp);
         catEl.classList.toggle("res-nt", isNt);
         catEl.classList.toggle("res-fc", isFc);
         catEl.classList.toggle("res-mcq", isMcq);
@@ -3450,6 +3556,11 @@
       if (isFc) fillResFilters("fc");
       if (isNt) fillResFilters("nt");
       if (isMcq) fillResFilters("mcq");
+      if (isPp) fillPpFilters();
+      var ppBanner = $("resPpBanner"), ppSearchWrap = $("resPpSearchWrap"), ppFilt = $("resPpFilters");
+      if (ppBanner) ppBanner.classList.toggle("hidden", !isPp);
+      if (ppSearchWrap) ppSearchWrap.classList.toggle("hidden", !isPp);
+      if (ppFilt) ppFilt.classList.toggle("hidden", !isPp);
       /* Subject list view (View Notes / View Chapters): purple band +
          subject header + chapter pills replace the category header,
          search and dropdowns. */
@@ -3497,6 +3608,9 @@
           var nt = liveNotes[n];
           var k = noteKind(nt);
           if (k !== "pastpaper") continue;
+          if (resPpSearch && String(nt.title || "").toLowerCase().indexOf(resPpSearch) === -1) continue;
+          if (resPpYear && ppYearOf(nt) !== resPpYear) continue;
+          if (resPpUni && ppUniOf(nt) !== resPpUni) continue;
           shownRes.push({ kind: "note", note: nt });
         }
       }
@@ -3513,6 +3627,7 @@
           else if (isMcq && !isMcqList && resMcqFChap){ $("resEmptyTitle").textContent = "No PDFs found"; $("resEmptySub").textContent = "Try a different filter."; }
           else if (isMcq && !isMcqList && resMcqFSubj){ $("resEmptyTitle").textContent = "No subjects found"; $("resEmptySub").textContent = "Try a different filter."; }
           else if (isMcqChapter){ $("resEmptyTitle").textContent = "No PDFs Available"; $("resEmptySub").textContent = "This chapter has no PDFs available yet."; }
+          else if (resType === "Past Papers" && (resPpSearch || resPpYear || resPpUni)){ $("resEmptyTitle").textContent = "No papers found"; $("resEmptySub").textContent = "Try a different search or filter."; }
           else if (isMcqChapters && resMcqFChap){ $("resEmptyTitle").textContent = "No chapters found"; $("resEmptySub").textContent = "Try a different filter."; }
           else if (isMcqChapters){ $("resEmptyTitle").textContent = "No Chapters Available Yet"; $("resEmptySub").textContent = "Check back later for new study materials."; }
           else { $("resEmptyTitle").textContent = "No " + resType + " Available Yet"; $("resEmptySub").textContent = "Check back later for new study materials."; }
@@ -3568,6 +3683,16 @@
               + '<span class="res-nt-pdf">PDF</span>'
               + '<span class="res-nt-txt"><b>'+esc(nn.title)+'</b><small>'+esc(sizeLine)+'</small></span>'
               + '<button class="res-nt-dl" type="button" data-idx="'+j+'" data-act="dl" aria-label="Download"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v14"/><polyline points="6 10 12 16 18 10"/></svg></button></div>';
+          } else if (isPp){
+            /* Past Papers card (screenshot layout): blue MDCAT Paper tile,
+               title + "Sindh MDCAT 2025 • 6.7 MB" line, purple Download
+               pill. Card tap = View in the PDF viewer, pill = Download. */
+            var ppMeta = ppLabelOf(nn) + (nn.fileSizeFormatted ? " • " + esc(nn.fileSizeFormatted) : "");
+            html += '<div class="res-pp-card" data-idx="'+j+'" role="button" tabindex="0">'
+              + '<span class="res-pp-tile"><b>MDCAT</b><small>Paper</small><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></span>'
+              + '<span class="res-pp-sep"></span>'
+              + '<span class="res-pp-txt"><b>'+esc(nn.title)+'</b><small><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'+esc(ppMeta)+'</small></span>'
+              + '<button class="res-pp-dl" type="button" data-idx="'+j+'" data-act="dl"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12"/><polyline points="6 10 12 16 18 10"/></svg>Download</button></div>';
           } else {
           var date = nn.uploadedAt ? new Date(nn.uploadedAt).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}) : "Recent";
           var metaLine = esc(nn.subject) + (nn.fileSizeFormatted ? " · " + esc(nn.fileSizeFormatted) : "") + " · Updated: " + esc(date);
